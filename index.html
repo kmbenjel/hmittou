@@ -27,16 +27,12 @@
         :root { --bg-color: #fdfdfd; --text-color: #333; --title-color: #111; --accent-color: #888; --verse-font-size: 1.4rem; }
         body.dark-mode { --bg-color: #121212; --text-color: #d0d0d0; --title-color: #fff; --accent-color: #777; }
         body { font-family: 'Amiri', serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; text-align: center; transition: background-color 0.3s, color 0.3s; }
-        .controls-wrapper { position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
+        .controls { position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; transition: transform 0.3s ease, opacity 0.3s ease; }
+        .nav-controls { position: fixed; bottom: max(20px, env(safe-area-inset-bottom, 20px)); right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; transition: transform 0.3s ease, opacity 0.3s ease; }
+        @media (max-width: 768px) { .nav-controls { bottom: max(40px, env(safe-area-inset-bottom, 40px)); } }
+        body.hide-controls .controls, body.hide-controls .nav-controls { transform: translateX(100px); opacity: 0; pointer-events: none; }
         .control-btn { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.1); color: #333; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-weight: bold; font-family: sans-serif; transition: 0.3s; }
         body.dark-mode .control-btn { background: rgba(30, 30, 30, 0.7); border-color: rgba(255,255,255,0.1); color: #fff; }
-        @media (max-width: 768px) { 
-            .controls-wrapper { top: auto; right: 0; bottom: 0; left: 0; flex-direction: row; justify-content: space-evenly; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 10px 0 calc(10px + env(safe-area-inset-bottom, 0px)) 0; border-top: 1px solid rgba(0,0,0,0.1); gap: 0; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); }
-            body.dark-mode .controls-wrapper { background: rgba(18, 18, 18, 0.85); border-top: 1px solid rgba(255,255,255,0.05); box-shadow: 0 -4px 15px rgba(0,0,0,0.5); }
-            .control-btn { box-shadow: none; border: none; background: transparent; width: 50px; height: 50px; border-radius: 12px; }
-            body.dark-mode .control-btn { background: transparent; border: none; }
-            .container { padding-bottom: 90px; }
-        }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; display: block; }
         .title { font-size: 2rem; font-weight: 350; margin: 0 0 60px 0; color: var(--title-color); scroll-margin-top: 80px; border-bottom: 1px solid #eee; }
         .subtitle {font-size: 1.2rem;}
@@ -59,10 +55,12 @@
 </head>
 <body>
     <div id="progressBarContainer"><div id="progressBar"></div></div>
-    <div class="controls-wrapper">
+    <div class="controls">
         <button class="control-btn" onclick="toggleTheme()" title="تبديل المظهر">🌙</button>
         <button class="control-btn" onclick="changeFontSize(0.1)" title="تكبير الخط">خ+</button>
         <button class="control-btn" onclick="changeFontSize(-0.1)" title="تصغير الخط">خ-</button>
+    </div>
+    <div class="nav-controls">
         <button class="control-btn" onclick="scrollToTop()" title="إلى الأعلى">↑</button>
         <button class="control-btn" onclick="scrollToPart2()" title="إلى الثانية">2</button>
         <button class="control-btn" onclick="scrollToBottom()" title="إلى الأسفل">↓</button>
@@ -1217,6 +1215,17 @@
         function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
         function scrollToBottom() { document.getElementById('bottom').scrollIntoView({behavior: 'smooth'}); }
         function scrollToPart2() { document.getElementById('part2').scrollIntoView({behavior: 'smooth'}); }
+
+        // Hide controls on scroll down, show on scroll up
+        let lastScrollY = window.scrollY;
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > lastScrollY && window.scrollY > 100) {
+                document.body.classList.add('hide-controls');
+            } else {
+                document.body.classList.remove('hide-controls');
+            }
+            lastScrollY = window.scrollY;
+        });
 
         // Progress Bar
         window.addEventListener('scroll', () => {
