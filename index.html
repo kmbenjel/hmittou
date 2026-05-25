@@ -1220,6 +1220,75 @@
         function changeFontSize(delta) { 
             let s = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--verse-font-size'));
             document.documentElement.style.setProperty('--verse-font-size', (s + delta) + 'rem');
+            setTimeout(applyKashida, 60);
+        }
+
+        // ── Kashida (Tatweel) Stretching ──────────────────────────────────────
+        // Arabic left-joining letters: those that connect to the following letter
+        const KASHIDA_JOINERS = /[بتثجحخسشصضطظعغفقكلمنهيئؤى][ً-ٰٟ]*/g;
+        const TATWEEL = 'ـ';
+
+        function applyKashida() {
+            if (window.innerWidth < 680) return;
+            const verses = document.querySelectorAll('.verse');
+            if (!verses.length) return;
+
+            // Build a hidden ruler with matching font properties
+            const cs = getComputedStyle(verses[0]);
+            const ruler = document.createElement('span');
+            Object.assign(ruler.style, {
+                position: 'fixed', top: '-9999px', left: '-9999px',
+                visibility: 'hidden', whiteSpace: 'nowrap',
+                fontFamily: cs.fontFamily, fontSize: cs.fontSize,
+                fontWeight: cs.fontWeight, direction: 'rtl'
+            });
+            document.body.appendChild(ruler);
+
+            // Width of a single tatweel in this font/size
+            ruler.textContent = TATWEEL.repeat(10);
+            const twW = ruler.getBoundingClientRect().width / 10;
+
+            verses.forEach(el => {
+                // Preserve original text (without previous kashida)
+                if (!el.dataset.orig) el.dataset.orig = el.textContent;
+                const orig = el.dataset.orig;
+
+                const colW = el.getBoundingClientRect().width;
+                if (colW <= 0 || twW <= 0) { el.textContent = orig; return; }
+
+                ruler.textContent = orig;
+                const txtW = ruler.getBoundingClientRect().width;
+                const gap = colW - txtW;
+                if (gap < twW) { el.textContent = orig; return; }
+
+                const needed = Math.floor(gap / twW);
+
+                // Find all valid insertion positions (after joiner + its diacritics,
+                // before the next letter — not at word boundary)
+                const positions = [];
+                KASHIDA_JOINERS.lastIndex = 0;
+                let m;
+                while ((m = KASHIDA_JOINERS.exec(orig)) !== null) {
+                    const p = m.index + m[0].length;
+                    if (p < orig.length && orig[p] !== ' ') positions.push(p);
+                }
+
+                if (!positions.length) { el.textContent = orig; return; }
+
+                // Distribute kashidas evenly across all positions
+                const counts = new Array(positions.length).fill(0);
+                for (let i = 0; i < needed; i++) counts[i % positions.length]++;
+
+                let out = '', prev = 0;
+                for (let i = 0; i < positions.length; i++) {
+                    out += orig.slice(prev, positions[i]) + TATWEEL.repeat(counts[i]);
+                    prev = positions[i];
+                }
+                out += orig.slice(prev);
+                el.textContent = out;
+            });
+
+            document.body.removeChild(ruler);
         }
         function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
         function scrollToBottom() { document.getElementById('bottom').scrollIntoView({behavior: 'smooth'}); }
@@ -1256,5 +1325,10 @@
         document.querySelectorAll('.bayt').forEach((bayt) => {
             observer.observe(bayt);
         });
+
+        // Run kashida after fonts are ready, and on resize
+        document.fonts.ready.then(applyKashida);
+        let _kTimer;
+        window.addEventListener('resize', () => { clearTimeout(_kTimer); _kTimer = setTimeout(applyKashida, 250); });
     </script>
 </body></html>
