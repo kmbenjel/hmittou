@@ -39,14 +39,14 @@
         .poem-section { display: block; margin-bottom: 15px; margin-top: 10px; counter-reset: bayt-num; }
         .bayt { margin-bottom: 35px; display: block; opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; counter-increment: bayt-num; }
         .bayt.visible { opacity: 1; transform: translateY(0); }
-        .bayt::before { content: counter(bayt-num, arabic-indic); display: block; font-size: 0.7rem; color: var(--accent-color); opacity: 0.5; text-align: start; margin-bottom: 2px; font-family: 'Amiri', serif; line-height: 1; }
+        .bayt::before { content: counter(bayt-num); display: block; font-size: 0.7rem; color: var(--accent-color); opacity: 0.5; text-align: start; margin-bottom: 2px; font-family: sans-serif; line-height: 1; }
         #progressBarContainer { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: transparent; z-index: 2000; }
         #progressBar { height: 100%; width: 0%; background: linear-gradient(90deg, #888, #333); }
         body.dark-mode #progressBar { background: linear-gradient(90deg, #555, #fff); }
         .verse { font-size: var(--verse-font-size); line-height: 1.8; white-space: pre-wrap; margin: 5px 0; }
         @media (min-width: 680px) {
-            .bayt { display: flex; flex-direction: row; align-items: baseline; margin-bottom: 42px; }
-            .bayt::before { flex-shrink: 0; width: 2.2rem; margin-bottom: 0; align-self: center; text-align: center; padding-inline-end: 0.5rem; }
+            .bayt { display: flex; flex-direction: row; align-items: center; margin-bottom: 42px; position: relative; padding-right: 2.5rem; }
+            .bayt::before { position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: block; width: 2rem; margin-bottom: 0; text-align: center; font-size: 0.65rem; opacity: 0.4; line-height: 1; }
             .verse { flex: 1; white-space: normal; }
             .verse:first-child { text-align: right; padding-inline-end: 1.8rem; border-inline-end: 1px solid rgba(136,136,136,0.22); }
             .verse:last-child { text-align: left; padding-inline-start: 1.8rem; }
