@@ -1229,9 +1229,16 @@
         const TATWEEL = 'ـ';
 
         function applyKashida() {
-            if (window.innerWidth < 680) return;
             const verses = document.querySelectorAll('.verse');
             if (!verses.length) return;
+
+            // On mobile: clear any previously added kashidas and exit
+            if (window.innerWidth < 680) {
+                verses.forEach(el => {
+                    if (el.dataset.orig) el.textContent = el.dataset.orig;
+                });
+                return;
+            }
 
             // Build a hidden ruler with matching font properties
             const cs = getComputedStyle(verses[0]);
@@ -1253,15 +1260,23 @@
                 if (!el.dataset.orig) el.dataset.orig = el.textContent;
                 const orig = el.dataset.orig;
 
-                const colW = el.getBoundingClientRect().width;
-                if (colW <= 0 || twW <= 0) { el.textContent = orig; return; }
+                // Subtract padding and border to get true content width
+                const elCs = getComputedStyle(el);
+                const padL = parseFloat(elCs.paddingLeft) || 0;
+                const padR = parseFloat(elCs.paddingRight) || 0;
+                const borL = parseFloat(elCs.borderLeftWidth) || 0;
+                const borR = parseFloat(elCs.borderRightWidth) || 0;
+                const availW = el.getBoundingClientRect().width - padL - padR - borL - borR;
+
+                if (availW <= 0 || twW <= 0) { el.textContent = orig; return; }
 
                 ruler.textContent = orig;
                 const txtW = ruler.getBoundingClientRect().width;
-                const gap = colW - txtW;
-                if (gap < twW) { el.textContent = orig; return; }
+                const gap = availW - txtW;
+                // 3px safety buffer to prevent subpixel wrapping
+                if (gap < twW + 3) { el.textContent = orig; return; }
 
-                const needed = Math.floor(gap / twW);
+                const needed = Math.floor((gap - 3) / twW);
 
                 // Find all valid insertion positions (after joiner + its diacritics,
                 // before the next letter — not at word boundary)
