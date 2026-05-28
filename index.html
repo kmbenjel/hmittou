@@ -1362,5 +1362,15 @@
         document.fonts.ready.then(applyKashida);
         let _kTimer;
         window.addEventListener('resize', () => { clearTimeout(_kTimer); _kTimer = setTimeout(applyKashida, 250); });
+
+        // Clean copied text by stripping out Tatweel (Kashida) characters
+        document.addEventListener('copy', (e) => {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            const text = selection.toString();
+            const cleanedText = text.replace(/ـ/g, '');
+            e.clipboardData.setData('text/plain', cleanedText);
+            e.preventDefault();
+        });
     </script>
 </body></html>
