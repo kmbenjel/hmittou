@@ -27,12 +27,15 @@
         :root { --bg-color: #fdfdfd; --text-color: #333; --title-color: #111; --accent-color: #888; --verse-font-size: 1.4rem; }
         body.dark-mode { --bg-color: #121212; --text-color: #d0d0d0; --title-color: #fff; --accent-color: #777; }
         body { font-family: 'Amiri', serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; text-align: center; transition: background-color 0.3s, color 0.3s; }
-        .controls { position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; transition: transform 0.3s ease, opacity 0.3s ease; }
-        .nav-controls { position: fixed; bottom: max(20px, env(safe-area-inset-bottom, 20px)); right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; transition: transform 0.3s ease, opacity 0.3s ease; }
+        .controls { position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
+        .nav-controls { position: fixed; bottom: max(20px, env(safe-area-inset-bottom, 20px)); right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
         @media (max-width: 768px) { .nav-controls { bottom: max(40px, env(safe-area-inset-bottom, 40px)); } }
-        body.hide-controls .controls, body.hide-controls .nav-controls { transform: translateX(100px); opacity: 0; pointer-events: none; }
-        .control-btn { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.1); color: #333; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-weight: bold; font-family: sans-serif; transition: 0.3s; }
-        body.dark-mode .control-btn { background: rgba(30, 30, 30, 0.7); border-color: rgba(255,255,255,0.1); color: #fff; }
+        .control-btn { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.08); color: #333; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-weight: bold; font-family: sans-serif; transition: opacity 0.3s ease, background-color 0.3s, transform 0.2s; opacity: 0.45; }
+        body.dark-mode .control-btn { background: rgba(30, 30, 30, 0.65); border-color: rgba(255,255,255,0.08); color: #fff; }
+        @media (hover: hover) {
+            .control-btn:hover { opacity: 1; transform: scale(1.05); }
+        }
+        .control-btn:active { transform: scale(0.95); }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; display: block; }
         .title { font-size: 2.2rem; font-weight: 350; margin: 40px 0 50px 0; color: var(--title-color); scroll-margin-top: 80px; position: relative; padding-bottom: 25px; font-family: 'Amiri', serif; }
         .title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent-color), transparent); opacity: 0.6; }
@@ -1348,16 +1351,7 @@
         function scrollToBottom() { document.getElementById('bottom').scrollIntoView({behavior: 'smooth'}); }
         function scrollToPart2() { document.getElementById('part2').scrollIntoView({behavior: 'smooth'}); }
 
-        // Hide controls on scroll down, show on scroll up
-        let lastScrollY = window.scrollY;
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > lastScrollY && window.scrollY > 100) {
-                document.body.classList.add('hide-controls');
-            } else {
-                document.body.classList.remove('hide-controls');
-            }
-            lastScrollY = window.scrollY;
-        });
+
 
         // Progress Bar
         window.addEventListener('scroll', () => {
