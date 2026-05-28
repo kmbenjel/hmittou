@@ -37,15 +37,15 @@
         .title { font-size: 2rem; font-weight: 350; margin: 0 0 60px 0; color: var(--title-color); scroll-margin-top: 80px; border-bottom: 1px solid #eee; }
         .subtitle {font-size: 1.2rem;}
         
-        .poem-section { display: block; margin-bottom: 15px; margin-top: 10px; counter-reset: bayt-num; padding: 0 40px; }
+        .poem-section { display: block; margin-bottom: 15px; margin-top: 10px; counter-reset: bayt-num; padding: 0 25px; }
         .bayt { margin-bottom: 35px; display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative; counter-increment: bayt-num; }
         .bayt::before {
             content: counter(bayt-num);
             position: absolute;
-            right: -30px;
+            right: -20px;
             top: 50%;
             transform: translateY(-50%);
-            width: 25px;
+            width: 20px;
             text-align: center;
             font-size: 0.8rem;
             color: var(--accent-color);
@@ -60,7 +60,9 @@
         .verse { font-size: var(--verse-font-size); line-height: 1.8; white-space: nowrap; margin: 0; font-family: 'Amiri', serif; position: relative; text-align: center; }
         
         @media (min-width: 680px) {
+            .poem-section { max-width: 580px; margin: 0 auto; padding: 0 30px; }
             .bayt { flex-direction: row; justify-content: center; gap: 30px; margin-bottom: 42px; }
+            .bayt::before { right: -25px; }
         }
         .signature { font-size: 1.1rem; margin: 10px 0 30px 0; color: var(--accent-color); font-style: italic; }
         .separator { height: 1px; background: #eee; margin: 30px auto; width: 40%; }
@@ -76,10 +78,10 @@
             .controls, .nav-controls, #progressBarContainer, .social-links, footer { display: none !important; }
             .container { max-width: 100%; width: 100%; padding: 0; margin: 0; border: none; }
             .title { margin: 0 0 20px 0; border-bottom: none; font-size: 24pt; }
-            .poem-section { padding: 0 40px; margin: 0; }
+            .poem-section { max-width: 580px; margin: 0 auto; padding: 0 30px; }
             .bayt { flex-direction: row !important; justify-content: center; gap: 30px; margin-bottom: 20px; page-break-inside: avoid; position: relative; }
             .verse { font-size: 14pt; }
-            .bayt::before { content: counter(bayt-num); position: absolute; right: -30px; top: 50%; transform: translateY(-50%); width: 25px; text-align: center; color: #000; opacity: 1; font-size: 10pt; font-family: 'Amiri', serif; }
+            .bayt::before { content: counter(bayt-num); position: absolute; right: -25px; top: 50%; transform: translateY(-50%); width: 25px; text-align: center; color: #000; opacity: 1; font-size: 10pt; font-family: 'Amiri', serif; }
         }
     </style>
 </head>
