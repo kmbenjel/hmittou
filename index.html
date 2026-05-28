@@ -36,23 +36,31 @@
         .container { max-width: 800px; margin: 0 auto; padding: 20px; display: block; }
         .title { font-size: 2rem; font-weight: 350; margin: 0 0 60px 0; color: var(--title-color); scroll-margin-top: 80px; border-bottom: 1px solid #eee; }
         .subtitle {font-size: 1.2rem;}
-        .poem-section { display: block; margin-bottom: 15px; margin-top: 10px; counter-reset: bayt-num; }
-        .bayt { margin-bottom: 35px; display: block; position: relative;  opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; counter-increment: bayt-num; }
-        .bayt.visible { opacity: 1; transform: translateY(0); }
+        
+        .poem-section { display: block; margin-bottom: 15px; margin-top: 10px; counter-reset: bayt-num; padding: 0 15px; }
+        .bayt { margin-bottom: 35px; display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative; counter-increment: bayt-num; }
         
         #progressBarContainer { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: transparent; z-index: 2000; }
         #progressBar { height: 100%; width: 0%; background: linear-gradient(90deg, #888, #333); }
         body.dark-mode #progressBar { background: linear-gradient(90deg, #555, #fff); }
         
-        .verse:first-child::before { content: counter(bayt-num); display: inline-block; margin-left: 10px; font-size: 0.8rem; color: var(--accent-color); opacity: 0.7; font-family: 'Amiri', serif; }
-.verse { font-size: var(--verse-font-size); line-height: 1.8; white-space: nowrap; margin: 5px 0; font-family: 'Amiri', serif; }
+        .verse { font-size: var(--verse-font-size); line-height: 1.8; white-space: nowrap; margin: 0; font-family: 'Amiri', serif; position: relative; text-align: center; }
+        .verse:first-child::before {
+            content: counter(bayt-num);
+            position: absolute;
+            right: -35px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 25px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            opacity: 0.7;
+            font-family: 'Amiri', serif;
+        }
+        
         @media (min-width: 680px) {
-            .bayt { display: flex; flex-direction: row; align-items: center; margin-bottom: 42px; position: relative; padding: 0; }
-            
-            .verse { flex: 1; white-space: nowrap; }
-            .verse:first-child { text-align: center; padding-inline-end: 0.8rem; border-inline-end: 1px solid rgba(136,136,136,0.22); }
-            .verse:last-child { text-align: center; padding-inline-start: 0.8rem; }
-            body.dark-mode .verse:first-child { border-inline-end-color: rgba(200,200,200,0.12); }
+            .bayt { flex-direction: row; justify-content: center; gap: 30px; margin-bottom: 42px; }
         }
         .signature { font-size: 1.1rem; margin: 10px 0 30px 0; color: var(--accent-color); font-style: italic; }
         .separator { height: 1px; background: #eee; margin: 30px auto; width: 40%; }
@@ -62,6 +70,17 @@
         .social-links a:hover { border-bottom: 1px solid var(--accent-color); }
         .social-links a i { font-size: 1.1rem; color: var(--accent-color); }
         footer { width: 100%; padding: 20px 0; text-align: center; color: var(--accent-color); border-top: 1px solid #eee; margin-top: 10px; }
+        
+        @media print {
+            body { background: #fff; color: #000; padding: 0; margin: 0; font-size: 12pt; }
+            .controls, .nav-controls, #progressBarContainer, .social-links, footer { display: none !important; }
+            .container { max-width: 100%; width: 100%; padding: 0; margin: 0; border: none; }
+            .title { margin: 0 0 20px 0; border-bottom: none; font-size: 24pt; }
+            .poem-section { padding-right: 0; margin: 0; }
+            .bayt { flex-direction: row !important; justify-content: center; gap: 30px; margin-bottom: 20px; page-break-inside: avoid; }
+            .verse { font-size: 14pt; }
+            .verse:first-child::before { right: -40px; color: #000; opacity: 1; font-size: 10pt; }
+        }
     </style>
 </head>
 <body>
@@ -1231,18 +1250,10 @@
         const TATWEEL = 'ـ';
 
         function applyKashida() {
+            const bayts = document.querySelectorAll('.bayt');
+            if (!bayts.length) return;
+
             const verses = document.querySelectorAll('.verse');
-            if (!verses.length) return;
-
-            // On mobile: clear any previously added kashidas and exit
-            if (window.innerWidth < 680) {
-                verses.forEach(el => {
-                    if (el.dataset.orig) el.textContent = el.dataset.orig;
-                });
-                return;
-            }
-
-            // Build a hidden ruler with matching font properties
             const cs = getComputedStyle(verses[0]);
             const ruler = document.createElement('span');
             Object.assign(ruler.style, {
@@ -1253,62 +1264,75 @@
             });
             document.body.appendChild(ruler);
 
-            // Width of a single tatweel in this font/size
             ruler.textContent = TATWEEL.repeat(10);
             const twW = ruler.getBoundingClientRect().width / 10;
 
-            verses.forEach(el => {
-                // Preserve original text (without previous kashida)
-                if (!el.dataset.orig) el.dataset.orig = el.textContent;
-                const orig = el.dataset.orig;
+            if (twW <= 0) {
+                document.body.removeChild(ruler);
+                return;
+            }
 
-                // Subtract padding and border to get true content width
-                const oldText = el.textContent; el.textContent = ' '; const colW = el.getBoundingClientRect().width; el.textContent = oldText; const elCs = getComputedStyle(el);
-                const padL = parseFloat(elCs.paddingLeft) || 0;
-                const padR = parseFloat(elCs.paddingRight) || 0;
-                const borL = parseFloat(elCs.borderLeftWidth) || 0;
-                const borR = parseFloat(elCs.borderRightWidth) || 0;
-                const availW = colW - padL - padR - borL - borR;
-
-                if (availW <= 0 || twW <= 0) { el.textContent = orig; return; }
-
-                ruler.textContent = orig;
-                const txtW = ruler.getBoundingClientRect().width;
-                const gap = availW - txtW;
-                // 3px safety buffer to prevent subpixel wrapping
-                if (gap < twW + 3) { el.textContent = orig; return; }
-
-                const needed = Math.floor((gap - 3) / twW);
-
-                // Find all valid insertion positions (after joiner + its diacritics,
-                // before the next letter — not at word boundary)
-                const positions = [];
-                KASHIDA_JOINERS.lastIndex = 0;
-                let m;
-                while ((m = KASHIDA_JOINERS.exec(orig)) !== null) {
-                    const p = m.index + m[0].length;
-                    if (p < orig.length && orig[p] !== ' ') positions.push(p);
-                }
-
-                if (!positions.length) { el.textContent = orig; return; }
-
-                // Distribute kashidas evenly across all positions
-                const counts = new Array(positions.length).fill(0);
-                const maxPerPos = 1;
-                const toDistribute = Math.min(needed, positions.length * maxPerPos);
-                for (let i = 0; i < toDistribute; i++) counts[i % positions.length]++;
-
-                let out = '', prev = 0;
-                for (let i = 0; i < positions.length; i++) {
-                    out += orig.slice(prev, positions[i]) + TATWEEL.repeat(counts[i]);
-                    prev = positions[i];
-                }
-                out += orig.slice(prev);
-                el.textContent = out;
+            bayts.forEach(bayt => {
+                const shatrs = bayt.querySelectorAll('.verse');
+                if (shatrs.length !== 2) return;
+                
+                const s1 = shatrs[0];
+                const s2 = shatrs[1];
+                
+                if (!s1.dataset.orig) s1.dataset.orig = s1.textContent;
+                if (!s2.dataset.orig) s2.dataset.orig = s2.textContent;
+                
+                const orig1 = s1.dataset.orig;
+                const orig2 = s2.dataset.orig;
+                
+                ruler.textContent = orig1;
+                const w1 = ruler.getBoundingClientRect().width;
+                
+                ruler.textContent = orig2;
+                const w2 = ruler.getBoundingClientRect().width;
+                
+                const targetW = Math.max(w1, w2);
+                
+                stretchShatr(s1, orig1, w1, targetW, twW);
+                stretchShatr(s2, orig2, w2, targetW, twW);
             });
 
             document.body.removeChild(ruler);
         }
+
+        function stretchShatr(el, orig, currentW, targetW, twW) {
+            const gap = targetW - currentW;
+            if (gap < twW + 3) {
+                el.textContent = orig;
+                return;
+            }
+            
+            const needed = Math.floor((gap - 3) / twW);
+            const positions = [];
+            KASHIDA_JOINERS.lastIndex = 0;
+            let m;
+            while ((m = KASHIDA_JOINERS.exec(orig)) !== null) {
+                const p = m.index + m[0].length;
+                if (p < orig.length && orig[p] !== ' ') positions.push(p);
+            }
+            
+            if (!positions.length) {
+                el.textContent = orig;
+                return;
+            }
+            
+            const counts = new Array(positions.length).fill(0);
+            for (let i = 0; i < needed; i++) counts[i % positions.length]++;
+            
+            let out = '', prev = 0;
+            for (let i = 0; i < positions.length; i++) {
+                out += orig.slice(prev, positions[i]) + TATWEEL.repeat(counts[i]);
+                prev = positions[i];
+            }
+            out += orig.slice(prev);
+            el.textContent = out;
+        }
+
         function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
         function scrollToBottom() { document.getElementById('bottom').scrollIntoView({behavior: 'smooth'}); }
         function scrollToPart2() { document.getElementById('part2').scrollIntoView({behavior: 'smooth'}); }
@@ -1330,19 +1354,6 @@
             let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             let scrolled = (winScroll / height) * 100;
             document.getElementById('progressBar').style.width = scrolled + '%';
-        });
-
-        // Intersection Observer for fade-in verses
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('.bayt').forEach((bayt) => {
-            observer.observe(bayt);
         });
 
         // Run kashida after fonts are ready, and on resize
