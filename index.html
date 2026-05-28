@@ -34,8 +34,9 @@
         .control-btn { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.1); color: #333; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-weight: bold; font-family: sans-serif; transition: 0.3s; }
         body.dark-mode .control-btn { background: rgba(30, 30, 30, 0.7); border-color: rgba(255,255,255,0.1); color: #fff; }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; display: block; }
-        .title { font-size: 2rem; font-weight: 350; margin: 0 0 60px 0; color: var(--title-color); scroll-margin-top: 80px; border-bottom: 1px solid #eee; }
-        .subtitle {font-size: 1.2rem;}
+        .title { font-size: 2.2rem; font-weight: 350; margin: 40px 0 50px 0; color: var(--title-color); scroll-margin-top: 80px; position: relative; padding-bottom: 25px; font-family: 'Amiri', serif; }
+        .title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent-color), transparent); opacity: 0.6; }
+        .subtitle { font-size: 1.2rem; color: var(--accent-color); margin-top: 8px; font-weight: normal; }
         
         .poem-section { display: block; margin: 0 auto 15px auto; margin-top: 10px; counter-reset: bayt-num; padding: 0 25px 0 10px; max-width: 300px; }
         .bayt { margin-bottom: 35px; display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative; counter-increment: bayt-num; }
@@ -77,7 +78,8 @@
             body { background: #fff; color: #000; padding: 0; margin: 0; font-size: 12pt; }
             .controls, .nav-controls, #progressBarContainer, .social-links, footer { display: none !important; }
             .container { max-width: 100%; width: 100%; padding: 0; margin: 0; border: none; }
-            .title { margin: 0 0 20px 0; border-bottom: none; font-size: 24pt; }
+            .title { margin: 0 0 20px 0; font-size: 24pt; padding-bottom: 10px; }
+            .title::after { display: none !important; }
             .poem-section { max-width: 580px; margin: 0 auto; padding: 0 30px; }
             .bayt { flex-direction: row !important; justify-content: center; gap: 30px; margin-bottom: 20px; page-break-inside: avoid; position: relative; }
             .verse { font-size: 14pt; }
