@@ -1286,14 +1286,6 @@
             });
             document.body.appendChild(ruler);
 
-            ruler.textContent = TATWEEL.repeat(10);
-            const twW = ruler.getBoundingClientRect().width / 10;
-
-            if (twW <= 0) {
-                document.body.removeChild(ruler);
-                return;
-            }
-
             bayts.forEach(bayt => {
                 const shatrs = bayt.querySelectorAll('.verse');
                 if (shatrs.length !== 2) return;
@@ -1315,21 +1307,21 @@
                 
                 const targetW = Math.max(w1, w2);
                 
-                stretchShatr(s1, orig1, w1, targetW, twW);
-                stretchShatr(s2, orig2, w2, targetW, twW);
+                stretchShatr(s1, orig1, targetW, ruler);
+                stretchShatr(s2, orig2, targetW, ruler);
             });
 
             document.body.removeChild(ruler);
         }
 
-        function stretchShatr(el, orig, currentW, targetW, twW) {
-            const gap = targetW - currentW;
-            if (gap < twW + 3) {
-                el.textContent = orig;
-                return;
-            }
+        function stretchShatr(el, orig, targetW, ruler) {
+            el.textContent = orig;
+            ruler.textContent = orig;
+            let currentW = ruler.getBoundingClientRect().width;
             
-            const needed = Math.floor((gap - 3) / twW);
+            if (currentW >= targetW - 3) return; // Already close enough
+            
+            // Find all valid insertion positions
             const positions = [];
             KASHIDA_JOINERS.lastIndex = 0;
             let m;
@@ -1338,21 +1330,44 @@
                 if (p < orig.length && orig[p] !== ' ') positions.push(p);
             }
             
-            if (!positions.length) {
-                el.textContent = orig;
-                return;
+            if (!positions.length) return;
+            
+            // Incrementally add tatweels and measure
+            let counts = new Array(positions.length).fill(0);
+            let bestText = orig;
+            let bestW = currentW;
+            
+            // Max rounds to prevent infinite loops (max 30 tatweels)
+            for (let round = 0; round < 30; round++) {
+                counts[round % positions.length]++;
+                
+                let out = '', prev = 0;
+                for (let i = 0; i < positions.length; i++) {
+                    out += orig.slice(prev, positions[i]) + TATWEEL.repeat(counts[i]);
+                    prev = positions[i];
+                }
+                out += orig.slice(prev);
+                
+                ruler.textContent = out;
+                let newW = ruler.getBoundingClientRect().width;
+                
+                if (newW >= targetW) {
+                    // Decide if being slightly shorter was closer to target than slightly longer
+                    const overshot = newW - targetW;
+                    const undershot = targetW - bestW;
+                    if (undershot < overshot && bestW > currentW) {
+                        el.textContent = bestText;
+                    } else {
+                        el.textContent = out;
+                    }
+                    return;
+                }
+                
+                bestText = out;
+                bestW = newW;
             }
             
-            const counts = new Array(positions.length).fill(0);
-            for (let i = 0; i < needed; i++) counts[i % positions.length]++;
-            
-            let out = '', prev = 0;
-            for (let i = 0; i < positions.length; i++) {
-                out += orig.slice(prev, positions[i]) + TATWEEL.repeat(counts[i]);
-                prev = positions[i];
-            }
-            out += orig.slice(prev);
-            el.textContent = out;
+            el.textContent = bestText;
         }
 
         function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
