@@ -37,8 +37,8 @@
             font-style: normal;
             font-display: swap;
         }
-        :root { --bg-color: #fdfdfd; --text-color: #333; --title-color: #111; --accent-color: #888; --verse-font-size: 1.4rem; }
-        body.dark-mode { --bg-color: #121212; --text-color: #d0d0d0; --title-color: #fff; --accent-color: #777; }
+        :root { --bg-color: #fdfdfd; --text-color: #333; --title-color: #111; --accent-color: #888; --verse-font-size: 1.4rem; --card-bg: #fcfcfb; }
+        body.dark-mode { --bg-color: #121212; --text-color: #d0d0d0; --title-color: #fff; --accent-color: #777; --card-bg: #181818; }
         body { font-family: 'Scheherazade New', 'Amiri', serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; text-align: center; transition: background-color 0.3s, color 0.3s; }
         .controls { position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; animation: slideInControls 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
         .nav-controls { position: fixed; bottom: max(20px, env(safe-area-inset-bottom, 20px)); right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; animation: slideInNav 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
@@ -91,8 +91,16 @@
         .verse { font-size: var(--verse-font-size); line-height: 1.8; white-space: nowrap; margin: 0; font-family: 'Scheherazade New', 'Amiri', serif; position: relative; text-align: center; }
         
         @media (min-width: 680px) {
-            .poem-section { max-width: 580px; margin: 0 auto; padding: 0 30px; }
-            .bayt { flex-direction: row; justify-content: center; gap: 30px; margin-bottom: 42px; padding: 8px 16px; margin-inline: -16px; }
+            .poem-section {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 45px 50px;
+                background: var(--card-bg);
+                border: 1px solid rgba(0, 0, 0, 0.04);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.015);
+                border-radius: 12px;
+            }
+            .bayt { flex-direction: row; justify-content: center; gap: 30px; margin-bottom: 24px; padding: 8px 16px; margin-inline: -16px; }
             .bayt::before { right: -25px; }
         }
         .signature { font-size: 1rem; margin: 40px 0 40px 0; color: var(--accent-color); line-height: 1.8; position: relative; padding-top: 30px; }
@@ -111,7 +119,7 @@
             .container { max-width: 100%; width: 100%; padding: 0; margin: 0; border: none; }
             .title { margin: 0 0 20px 0; font-size: 24pt; padding-bottom: 10px; }
             .title::after { display: none !important; }
-            .poem-section { max-width: 580px; margin: 0 auto; padding: 0 30px; }
+            .poem-section { max-width: 580px; margin: 0 auto; padding: 0 30px; background: none !important; border: none !important; box-shadow: none !important; }
             .bayt { flex-direction: row !important; justify-content: center; gap: 30px; margin-bottom: 20px; page-break-inside: avoid; position: relative; }
             .verse { font-size: 14pt; }
             .bayt::before { content: counter(bayt-num); position: absolute; right: -25px; top: 50%; transform: translateY(-50%); width: 25px; text-align: center; color: #000; opacity: 1; font-size: 10pt; font-family: 'Scheherazade New', 'Amiri', serif; }
