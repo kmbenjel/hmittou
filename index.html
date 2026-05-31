@@ -21,12 +21,12 @@
     <meta property="og:url" content="https://kmbenjel.github.io/hmittou/">
     <meta property="twitter:card" content="summary">
     <title>حمار الشعراء - د. عبد الهادي حميتو</title>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg-color: #fdfdfd; --text-color: #333; --title-color: #111; --accent-color: #888; --verse-font-size: 1.4rem; }
         body.dark-mode { --bg-color: #121212; --text-color: #d0d0d0; --title-color: #fff; --accent-color: #777; }
-        body { font-family: 'Amiri', serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; text-align: center; transition: background-color 0.3s, color 0.3s; }
+        body { font-family: 'Scheherazade New', 'Amiri', serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; text-align: center; transition: background-color 0.3s, color 0.3s; }
         .controls { position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; animation: slideInControls 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
         .nav-controls { position: fixed; bottom: max(20px, env(safe-area-inset-bottom, 20px)); right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; animation: slideInNav 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
         @keyframes slideInControls {
@@ -45,7 +45,7 @@
         }
         .control-btn:active { transform: scale(0.95); }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; display: block; }
-        .title { font-size: 2.2rem; font-weight: 350; margin: 40px 0 50px 0; color: var(--title-color); scroll-margin-top: 80px; position: relative; padding-bottom: 25px; font-family: 'Amiri', serif; }
+        .title { font-size: 2.2rem; font-weight: 350; margin: 40px 0 50px 0; color: var(--title-color); scroll-margin-top: 80px; position: relative; padding-bottom: 25px; font-family: 'Scheherazade New', 'Amiri', serif; }
         .title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent-color), transparent); opacity: 0.6; }
         .subtitle { font-size: 1.2rem; color: var(--accent-color); margin-top: 8px; font-weight: normal; }
         
@@ -67,7 +67,7 @@
             font-size: 0.8rem;
             color: var(--accent-color);
             opacity: 0.7;
-            font-family: 'Amiri', serif;
+            font-family: 'Scheherazade New', 'Amiri', serif;
             transition: color 0.25s ease, opacity 0.25s ease;
         }
         
@@ -75,7 +75,7 @@
         #progressBar { height: 100%; width: 0%; background: linear-gradient(90deg, #888, #333); }
         body.dark-mode #progressBar { background: linear-gradient(90deg, #555, #fff); }
         
-        .verse { font-size: var(--verse-font-size); line-height: 1.8; white-space: nowrap; margin: 0; font-family: 'Amiri', serif; position: relative; text-align: center; }
+        .verse { font-size: var(--verse-font-size); line-height: 1.8; white-space: nowrap; margin: 0; font-family: 'Scheherazade New', 'Amiri', serif; position: relative; text-align: center; }
         
         @media (min-width: 680px) {
             .poem-section { max-width: 580px; margin: 0 auto; padding: 0 30px; }
@@ -101,7 +101,7 @@
             .poem-section { max-width: 580px; margin: 0 auto; padding: 0 30px; }
             .bayt { flex-direction: row !important; justify-content: center; gap: 30px; margin-bottom: 20px; page-break-inside: avoid; position: relative; }
             .verse { font-size: 14pt; }
-            .bayt::before { content: counter(bayt-num); position: absolute; right: -25px; top: 50%; transform: translateY(-50%); width: 25px; text-align: center; color: #000; opacity: 1; font-size: 10pt; font-family: 'Amiri', serif; }
+            .bayt::before { content: counter(bayt-num); position: absolute; right: -25px; top: 50%; transform: translateY(-50%); width: 25px; text-align: center; color: #000; opacity: 1; font-size: 10pt; font-family: 'Scheherazade New', 'Amiri', serif; }
         }
     </style>
 </head>
