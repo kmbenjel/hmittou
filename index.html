@@ -1485,6 +1485,18 @@
                         }
                     }
                 }
+                
+                // Rule: Do not stretch very short words (fewer than 3 letters, excluding diacritics/tatweels)
+                const lastSpaceBefore = orig.lastIndexOf(' ', m.index);
+                const startOfWord = lastSpaceBefore === -1 ? 0 : lastSpaceBefore + 1;
+                let endOfWord = orig.indexOf(' ', p);
+                if (endOfWord === -1) endOfWord = orig.length;
+                const word = orig.slice(startOfWord, endOfWord);
+                const cleanWord = word.replace(/[\u064B-\u065F\u0670\u0640]/g, '');
+                if (cleanWord.length < 3) {
+                    continue;
+                }
+                
                 positions.push(p);
             }
             
@@ -1650,6 +1662,21 @@
                 if (bestPair) {
                     s1.textContent = bestPair.st1.text;
                     s2.textContent = bestPair.st2.text;
+                    
+                    if (isDesktop) {
+                        const deficit1 = targetW - bestPair.st1.width;
+                        const deficit2 = targetW - bestPair.st2.width;
+                        
+                        const spaces1 = (bestPair.st1.text.match(/ /g) || []).length;
+                        const spaces2 = (bestPair.st2.text.match(/ /g) || []).length;
+                        
+                        if (spaces1 > 0 && deficit1 > 0 && deficit1 < tatweelWidth) {
+                            s1.style.wordSpacing = (deficit1 / spaces1) + 'px';
+                        }
+                        if (spaces2 > 0 && deficit2 > 0 && deficit2 < tatweelWidth) {
+                            s2.style.wordSpacing = (deficit2 / spaces2) + 'px';
+                        }
+                    }
                 } else {
                     s1.textContent = orig1;
                     s2.textContent = orig2;
