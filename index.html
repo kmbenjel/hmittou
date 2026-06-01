@@ -1441,7 +1441,7 @@
             while ((m = KASHIDA_JOINERS.exec(orig)) !== null) {
                 const p = m.index + m[0].length;
                 if (p >= orig.length) continue;
-                if (!/[بتثجحخدذرزسشصضطظعغفقكلمنهويىئؤةء]/.test(orig[p])) continue;
+                if (!/[بتثجحخدذرزسشصضطظعغفقكلمنهويىئؤةـ]/.test(orig[p])) continue;
                 if (isInsideLa(orig, m.index, p)) continue;
                 
                 // Rule: Block stretching after any letter carrying tanween (fatha U+064B, damma U+064C, kasra U+064D)
