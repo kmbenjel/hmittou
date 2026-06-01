@@ -29,16 +29,15 @@
         :root { --bg-color: #f5f5f4; --text-color: #333; --title-color: #111; --accent-color: #888; --verse-font-size: 1.4rem; --card-bg: #ffffff; }
         body.dark-mode { --bg-color: #121212; --text-color: #d0d0d0; --title-color: #fff; --accent-color: #777; --card-bg: #1c1c1e; }
         body { font-family: 'Amiri', serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; text-align: center; transition: background-color 0.3s, color 0.3s; }
-        /* ── Bottom Film Navigation Dock ── */
+        /* By default (on mobile), hide all desktop floating controls */
+        .controls, .nav-controls, .left-controls {
+            display: none !important;
+        }
+
+        /* ── Bottom Film Navigation Dock (Mobile Only) ── */
         :root {
             --dock-btn-size: 2.1rem;
             --dock-gap: 0.35rem;
-        }
-        @media (min-width: 680px) {
-            :root {
-                --dock-btn-size: 2.7rem;
-                --dock-gap: 0.75rem;
-            }
         }
         @media (max-width: 359px) {
             :root {
@@ -47,70 +46,154 @@
             }
         }
         .bottom-dock {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 800px;
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 0.5rem 0.6rem max(0.5rem, env(safe-area-inset-bottom, 0.5rem)) 0.6rem;
-            box-sizing: border-box;
-            z-index: 1000;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
-            transition: background-color 0.3s, border-color 0.3s;
+            display: none; /* Hidden on desktop */
         }
-        @media (max-width: 359px) {
+        
+        @media (max-width: 679px) {
             .bottom-dock {
-                padding: 0.4rem 0.4rem max(0.4rem, env(safe-area-inset-bottom, 0.4rem)) 0.4rem;
+                position: fixed;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 100%;
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                background: rgba(255, 255, 255, 0.45); /* High-end opacity translucency */
+                backdrop-filter: blur(20px); /* Heavy iOS-like blur */
+                -webkit-backdrop-filter: blur(20px);
+                border-top: 1px solid rgba(0, 0, 0, 0.05);
+                padding: 0.5rem 0.6rem max(0.5rem, env(safe-area-inset-bottom, 0.5rem)) 0.6rem;
+                box-sizing: border-box;
+                z-index: 1000;
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+                transition: background-color 0.3s, border-color 0.3s;
+            }
+            @media (max-width: 359px) {
+                .bottom-dock {
+                    padding: 0.4rem 0.4rem max(0.4rem, env(safe-area-inset-bottom, 0.4rem)) 0.4rem;
+                }
+            }
+            body.dark-mode .bottom-dock {
+                background: rgba(18, 18, 18, 0.45); /* High-end opacity translucency */
+                border-top-color: rgba(255, 255, 255, 0.06);
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+            }
+            .dock-group {
+                display: flex;
+                gap: var(--dock-gap);
+            }
+            .dock-btn {
+                background: rgba(0, 0, 0, 0.025);
+                border: 1px solid rgba(0, 0, 0, 0.04);
+                color: var(--text-color);
+                width: var(--dock-btn-size);
+                height: var(--dock-btn-size);
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: calc(var(--dock-btn-size) * 0.43);
+                transition: background-color 0.2s, transform 0.15s, opacity 0.2s;
+                opacity: 0.85;
+            }
+            body.dark-mode .dock-btn {
+                background: rgba(255, 255, 255, 0.03);
+                border-color: rgba(255, 255, 255, 0.04);
+                color: #fff;
+            }
+            .dock-btn:active {
+                transform: scale(0.9);
+            }
+            @media (hover: hover) {
+                .dock-btn:hover {
+                    background: rgba(0, 0, 0, 0.08);
+                    opacity: 1;
+                    transform: translateY(-2px);
+                }
+                body.dark-mode .dock-btn:hover {
+                    background: rgba(255, 255, 255, 0.08);
+                }
             }
         }
-        body.dark-mode .bottom-dock {
-            background: rgba(18, 18, 18, 0.75);
-            border-top-color: rgba(255, 255, 255, 0.06);
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
-        }
-        .dock-group {
-            display: flex;
-            gap: var(--dock-gap);
-        }
-        .dock-btn {
-            background: rgba(0, 0, 0, 0.025);
-            border: 1px solid rgba(0, 0, 0, 0.04);
-            color: var(--text-color);
-            width: var(--dock-btn-size);
-            height: var(--dock-btn-size);
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: calc(var(--dock-btn-size) * 0.43);
-            transition: background-color 0.2s, transform 0.15s, opacity 0.2s;
-            opacity: 0.85;
-        }
-        body.dark-mode .dock-btn {
-            background: rgba(255, 255, 255, 0.03);
-            border-color: rgba(255, 255, 255, 0.04);
-            color: #fff;
-        }
-        .dock-btn:active {
-            transform: scale(0.9);
-        }
-        @media (hover: hover) {
-            .dock-btn:hover {
-                background: rgba(0, 0, 0, 0.08);
-                opacity: 1;
-                transform: translateY(-2px);
+
+        /* ── Rich Desktop Floating Controls (Desktop Only) ── */
+        @media (min-width: 680px) {
+            .controls {
+                position: fixed;
+                top: 1.25rem;
+                right: 1.25rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.625rem;
+                z-index: 1000;
+                animation: slideInControls 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards;
             }
-            body.dark-mode .dock-btn:hover {
-                background: rgba(255, 255, 255, 0.08);
+            .nav-controls {
+                position: fixed;
+                bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem));
+                right: 1.25rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.625rem;
+                z-index: 1000;
+                animation: slideInNav 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards;
+            }
+            .left-controls {
+                position: fixed;
+                bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem));
+                left: 1.25rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.625rem;
+                z-index: 1000;
+                animation: slideInLeftControls 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards;
+            }
+            @keyframes slideInControls {
+                0% { transform: translateX(80px); opacity: 0; }
+                100% { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideInNav {
+                0% { transform: translate(80px, 80px); opacity: 0; }
+                100% { transform: translate(0, 0); opacity: 1; }
+            }
+            @keyframes slideInLeftControls {
+                0% { transform: translate(-80px, 80px); opacity: 0; }
+                100% { transform: translate(0, 0); opacity: 1; }
+            }
+            .control-btn {
+                background: rgba(255, 255, 255, 0.65);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                border: 1px solid rgba(0, 0, 0, 0.08);
+                color: var(--text-color);
+                width: 2.8125rem;
+                height: 2.8125rem;
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
+                font-size: 1.1rem;
+                transition: opacity 0.3s ease, background-color 0.3s, transform 0.2s;
+                opacity: 0.8;
+            }
+            body.dark-mode .control-btn {
+                background: rgba(30, 30, 30, 0.65);
+                border-color: rgba(255, 255, 255, 0.08);
+                color: #fff;
+                opacity: 0.85;
+            }
+            @media (hover: hover) {
+                .control-btn:hover {
+                    opacity: 1;
+                    transform: scale(1.05);
+                }
+            }
+            .control-btn:active {
+                transform: scale(0.95);
             }
         }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; display: block; }
@@ -256,6 +339,24 @@
 </head>
 <body>
     <div id="progressBarContainer"><div id="progressBar"></div></div>
+    
+    <!-- Rich Desktop Floating Controls (Hidden on Mobile) -->
+    <div class="controls">
+        <button class="control-btn" onclick="toggleTheme()" title="تبديل المظهر"><i class="fa-solid fa-circle-half-stroke"></i></button>
+        <button class="control-btn" onclick="changeFontSize(0.1)" title="تكبير الخط"><i class="fa-solid fa-plus"></i></button>
+        <button class="control-btn" onclick="changeFontSize(-0.1)" title="تصغير الخط"><i class="fa-solid fa-minus"></i></button>
+    </div>
+    <div class="nav-controls">
+        <button class="control-btn" onclick="scrollToTop()" title="إلى الأعلى"><i class="fa-solid fa-chevron-up"></i></button>
+        <button class="control-btn" onclick="scrollToPart2()" title="التكملة"><i class="fa-solid fa-circle" style="font-size: 0.45rem; opacity: 0.85;"></i></button>
+        <button class="control-btn" onclick="scrollToBottom()" title="إلى الأسفل"><i class="fa-solid fa-chevron-down"></i></button>
+    </div>
+    <div class="left-controls">
+        <button class="control-btn" onclick="scrollToSound()" title="سماع القصيدة"><i class="fab fa-soundcloud"></i></button>
+        <button class="control-btn" onclick="scrollToWhatsapp()" title="إرسال في واتساب"><i class="fab fa-whatsapp"></i></button>
+        <button class="control-btn" onclick="scrollToPdf()" title="تحميل ديوان PDF"><i class="fas fa-file-pdf"></i></button>
+    </div>
+    
     <div class="container">
         <div class="poem-section">
             <div class="title">حمار الشعراء</div>
