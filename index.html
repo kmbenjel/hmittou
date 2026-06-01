@@ -1409,15 +1409,32 @@
                 if (!/[اأإآبتثجحخدذرزسشصضطظعغفقكلمنهويىئؤةء]/.test(orig[p])) continue;
                 if (isInsideLa(orig, m.index, p)) continue;
                 
-                // Prefix laam check
-                if (orig[m.index] === 'ل') {
+                // Rule: Block stretching after any letter carrying tanween (fatha U+064B, damma U+064C, kasra U+064D)
+                if (m[0].includes('\u064B') || m[0].includes('\u064C') || m[0].includes('\u064D')) continue;
+                
+                // Prefix check (for letters like ل, ب, ف, ك at the start of a word)
+                const matchedChar = orig[m.index];
+                if (['ل', 'ب', 'ف', 'ك'].includes(matchedChar)) {
                     const lastSpaceBefore = orig.lastIndexOf(' ', m.index);
-                    const wordStart = lastSpaceBefore === -1 ? 0 : lastSpaceBefore + 1;
-                    const wordPrefix = orig.slice(wordStart, m.index + 1);
-                    const cleanPrefix = wordPrefix.replace(/[\u064B-\u065F\u0670\u0640]/g, '');
-                    const blockedPrefixes = ['ل', 'ول', 'فل', 'بل', 'كل', 'ال', 'لل', 'وال', 'ولل', 'فال', 'فلل', 'بال', 'بلل', 'كال', 'كلل'];
-                    if (blockedPrefixes.includes(cleanPrefix)) {
-                        continue;
+                    const isWordStart = lastSpaceBefore === -1 || m.index === lastSpaceBefore + 1;
+                    
+                    if (isWordStart) {
+                        const wordPrefix = orig.slice(lastSpaceBefore === -1 ? 0 : lastSpaceBefore + 1, m.index + 1);
+                        const cleanPrefix = wordPrefix.replace(/[\u064B-\u065F\u0670\u0640]/g, '');
+                        
+                        // For baa, faa, kaf: only block if followed by ال
+                        if (['ب', 'ف', 'ك'].includes(matchedChar)) {
+                            const remainder = orig.slice(p).replace(/[\u064B-\u065F\u0670\u0640]/g, '');
+                            if (remainder.startsWith('ال')) {
+                                continue;
+                            }
+                        } else if (matchedChar === 'ل') {
+                            // For laam: block all standard prefixes
+                            const blockedPrefixes = ['ل', 'ول', 'فل', 'بل', 'كل', 'ال', 'لل', 'وال', 'ولل', 'فال', 'فلل', 'بال', 'بلل', 'كال', 'كلل'];
+                            if (blockedPrefixes.includes(cleanPrefix)) {
+                                continue;
+                            }
+                        }
                     }
                 }
                 positions.push(p);
