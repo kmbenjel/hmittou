@@ -403,45 +403,45 @@
         /* ── Mobile print (single-column, portrait) ── */
         @media print {
             body.print-mobile { font-size: 13pt; }
-            body.print-mobile .poem-section { max-width: 100%; margin: 0; padding: 5mm 10mm; }
+            body.print-mobile .poem-section { max-width: 100%; margin: 0; padding: 5mm 5mm; }
             body.print-mobile .title { font-size: 26pt; margin: 0 0 20pt 0; text-align: center; }
             body.print-mobile .subtitle { font-size: 16pt; margin-top: 5pt; }
             body.print-mobile .bayt { display: flex !important; flex-direction: column !important; align-items: center !important; gap: 8pt !important; margin-bottom: 20pt !important; position: relative; }
-            body.print-mobile .verse { font-size: 16.5pt !important; line-height: 2.1 !important; text-align: center !important; white-space: normal !important; width: 100% !important; display: block !important; }
+            body.print-mobile .verse { font-size: 21pt !important; line-height: 1.85 !important; text-align: center !important; white-space: normal !important; width: 100% !important; display: block !important; }
             body.print-mobile .bayt::before { content: counter(bayt-num); position: absolute; right: -15pt; top: 8pt; font-size: 10pt; color: #555; opacity: 1; font-family: 'Amiri', serif; width: auto; }
             body.print-mobile .resource-grid { flex-direction: column !important; gap: 10px !important; }
             
-            /* Max 4 lines (bayts) per page to guarantee no overflow on stacked layout (Page 1 has title + 3 bayts, subsequent pages have 4 bayts) */
-            body.print-mobile .bayt:nth-child(4n + 5) { page-break-before: always; break-before: page; }
+            /* Max 6 lines (bayts) per page to fill the page beautifully with 21pt fonts (Page 1 has title + 4 bayts, subsequent pages have 6 bayts) */
+            body.print-mobile .bayt:nth-child(6n) { page-break-before: always; break-before: page; }
         }
-        /* ── Desktop print (side-by-side, landscape) ── */
+        /* ── Desktop print (side-by-side, portrait) ── */
         @media print {
             body.print-desktop { font-size: 12pt; }
-            body.print-desktop .poem-section { max-width: 800px; margin: 0 auto; padding: 5mm 15mm; }
+            body.print-desktop .poem-section { max-width: 768px; margin: 0 auto; padding: 5mm 5mm; background: #fff !important; border: 1px solid #ddd !important; box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important; border-radius: 12px !important; box-sizing: border-box !important; }
             body.print-desktop .title { font-size: 28pt; margin: 0 0 22pt 0; text-align: center; }
             body.print-desktop .subtitle { font-size: 18pt; margin-top: 6pt; }
             
-            /* Clean flex-based row layout for maximum Skia compatibility (no CSS Grid bugs) */
-            body.print-desktop .bayt { display: flex !important; flex-direction: row !important; justify-content: space-between !important; width: 100% !important; margin-bottom: 18pt !important; padding: 0 !important; box-sizing: border-box !important; position: relative; }
-            body.print-desktop .verse { font-size: 18pt !important; line-height: 2.0 !important; white-space: normal !important; width: 45% !important; display: block !important; }
+            /* Clean flex-based row layout for portrait desktop matching the kaseedah card */
+            body.print-desktop .bayt { display: flex !important; flex-direction: row !important; justify-content: space-between !important; width: 100% !important; margin-bottom: 20pt !important; padding: 0 !important; box-sizing: border-box !important; position: relative; }
+            body.print-desktop .verse { font-size: 21pt !important; line-height: 1.85 !important; white-space: normal !important; width: 45% !important; display: block !important; }
             body.print-desktop .verse:first-child { text-align: left !important; }
             body.print-desktop .verse:last-child { text-align: right !important; }
-            body.print-desktop .bayt::before { content: counter(bayt-num); position: absolute; right: -30pt; top: 50%; transform: translateY(-50%); width: 22pt; text-align: center; color: #444; opacity: 1; font-size: 11pt; font-family: 'Amiri', serif; }
+            body.print-desktop .bayt::before { content: counter(bayt-num); position: absolute; right: -25pt; top: 50%; transform: translateY(-50%); width: 22pt; text-align: center; color: #444; opacity: 1; font-size: 11pt; font-family: 'Amiri', serif; }
             body.print-desktop .resource-grid { display: flex !important; flex-direction: row !important; justify-content: center !important; gap: 20px !important; }
             
-            /* Max 5 lines (bayts) per page to guarantee elegant spacious landscape rows (Page 1 has title + 4 bayts, subsequent pages have 5 bayts) */
-            body.print-desktop .bayt:nth-child(5n + 6) { page-break-before: always; break-before: page; }
+            /* Max 8 lines (bayts) per page (Page 1 has title + 6 bayts, subsequent pages have 8 bayts) */
+            body.print-desktop .bayt:nth-child(8n + 8) { page-break-before: always; break-before: page; }
         }
     </style>
     <script>
         const printLayout = new URLSearchParams(window.location.search).get('print');
         if (printLayout === 'mobile') {
             const style = document.createElement('style');
-            style.innerHTML = `@page { size: letter portrait; margin: 20mm 20mm 20mm 20mm; }`;
+            style.innerHTML = `@page { size: letter portrait; margin: 12mm 12mm 12mm 12mm; }`;
             document.head.appendChild(style);
         } else if (printLayout === 'desktop') {
             const style = document.createElement('style');
-            style.innerHTML = `@page { size: A4 landscape; margin: 20mm 20mm 20mm 20mm; }`;
+            style.innerHTML = `@page { size: A4 portrait; margin: 12mm 12mm 12mm 12mm; }`;
             document.head.appendChild(style);
         }
     </script>
