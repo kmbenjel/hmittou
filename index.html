@@ -80,29 +80,35 @@
         .verse { font-size: var(--verse-font-size); line-height: 1.8; white-space: nowrap; margin: 0; font-family: 'Amiri', serif; position: relative; text-align: center; }
         
         .signature {
-            margin: 50px auto 30px auto;
-            padding: 25px 0 10px 0;
-            max-width: 480px;
-            border-top: 1px dashed rgba(136, 136, 136, 0.2);
-            line-height: 1.8;
+            margin: 90px auto 40px auto;
+            padding: 35px 0 10px 0;
+            max-width: 500px;
+            line-height: 2;
             text-align: center;
+            position: relative;
+        }
+        .signature::before {
+            content: '❦';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            opacity: 0.35;
         }
         .signature .poet-name {
-            font-size: 1.35rem;
-            font-weight: bold;
+            font-size: 1.2rem;
+            font-weight: 500;
             color: var(--title-color);
             display: block;
-            margin-bottom: 8px;
-        }
-        .signature .poet-name::before, .signature .poet-name::after {
-            content: ' ✤ ';
-            color: var(--accent-color);
-            opacity: 0.5;
-            font-size: 0.95rem;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
         }
         .signature .poet-date {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--accent-color);
+            opacity: 0.85;
             display: block;
         }
         .separator { height: 1px; background: #eee; margin: 30px auto; width: 40%; }
