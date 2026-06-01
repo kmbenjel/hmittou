@@ -91,6 +91,7 @@
         .verse { font-size: var(--verse-font-size); line-height: 1.8; white-space: nowrap; margin: 0; font-family: 'Scheherazade New', 'Amiri', serif; position: relative; text-align: center; }
         
         @media (min-width: 680px) {
+            html { font-size: 19px; }
             .poem-section {
                 width: fit-content;
                 max-width: 95vw;
@@ -1298,7 +1299,7 @@
             let html = document.documentElement;
             let currentSize = parseFloat(getComputedStyle(html).fontSize) || 16;
             let newSize = currentSize + (delta * 16);
-            if (newSize >= 12 && newSize <= 28) {
+            if (newSize >= 12 && newSize <= 32) {
                 html.style.fontSize = newSize + 'px';
                 setTimeout(applyKashida, 60);
             }
