@@ -1408,29 +1408,6 @@
             return false;
         }
 
-        // Helper to check if a position is between the last two letters of any word
-        function isBeforeLastLetter(orig, p) {
-            const diacritics = /[\u064B-\u065F\u0670\u0640]/;
-            let i = p;
-            while (i < orig.length && diacritics.test(orig[i])) {
-                i++;
-            }
-            if (i === orig.length || orig[i] === ' ') return true; // Already past the word end
-            
-            // i is the index of the first letter after p.
-            // Let's check if this letter 'i' is the last letter of the word.
-            let j = i + 1;
-            while (j < orig.length && diacritics.test(orig[j])) {
-                j++;
-            }
-            if (j === orig.length || orig[j] === ' ') {
-                // Yes! There are no more letters in this word after i.
-                // So i is the last letter of the word, meaning p is between the last two letters!
-                return true;
-            }
-            return false;
-        }
-
         function getPossibleStretches(orig, isDesktop, naturalWidth, tatweelWidth) {
             const KASHIDA_JOINERS = /[بتثجحخسشصضطظعغفقكلمنهيئـ][ً-ٰٟ]*/g;
             const TATWEEL = 'ـ';
@@ -1439,16 +1416,11 @@
             const positions = [];
             KASHIDA_JOINERS.lastIndex = 0;
             let m;
-            const lastSpace = orig.lastIndexOf(' ');
-            const lastWord = lastSpace === -1 ? orig : orig.slice(lastSpace + 1);
 
             while ((m = KASHIDA_JOINERS.exec(orig)) !== null) {
                 const p = m.index + m[0].length;
                 if (p >= orig.length || orig[p] === ' ') continue;
                 if (isInsideLa(orig, m.index, p)) continue;
-                if (isBeforeLastLetter(orig, p)) continue;
-                // Rule 3: No tatweel inside the last word of any shatr (unless it is an enjambment tatweel word)
-                if (p > lastSpace && !lastWord.includes('ـ')) continue;
                 
                 // Prefix laam check
                 if (orig[m.index] === 'ل') {
