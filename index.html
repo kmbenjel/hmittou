@@ -21,6 +21,9 @@
     <meta property="og:url" content="https://kmbenjel.github.io/hmittou/">
     <meta property="twitter:card" content="summary">
     <title>حمار الشعراء - د. عبد الهادي حميتو</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @font-face {
@@ -39,7 +42,7 @@
         }
         :root { --bg-color: #f5f5f4; --text-color: #333; --title-color: #111; --accent-color: #888; --verse-font-size: 1.4rem; --card-bg: #ffffff; }
         body.dark-mode { --bg-color: #121212; --text-color: #d0d0d0; --title-color: #fff; --accent-color: #777; --card-bg: #1c1c1e; }
-        body { font-family: 'Scheherazade New', serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; text-align: center; transition: background-color 0.3s, color 0.3s; }
+        body { font-family: 'Amiri', 'Scheherazade New', serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; text-align: center; transition: background-color 0.3s, color 0.3s; }
         .controls { position: fixed; top: 1.25rem; right: 1.25rem; display: flex; flex-direction: column; gap: 0.625rem; z-index: 1000; animation: slideInControls 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
         .nav-controls { position: fixed; bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem)); right: 1.25rem; display: flex; flex-direction: column; gap: 0.625rem; z-index: 1000; animation: slideInNav 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
         @keyframes slideInControls {
@@ -58,7 +61,7 @@
         }
         .control-btn:active { transform: scale(0.95); }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; display: block; }
-        .title { font-size: 2.2rem; font-weight: 350; margin: 40px 0 50px 0; color: var(--title-color); scroll-margin-top: 80px; position: relative; padding-bottom: 25px; font-family: 'Scheherazade New', serif; text-align: center; }
+        .title { font-size: 2.2rem; font-weight: 350; margin: 40px 0 50px 0; color: var(--title-color); scroll-margin-top: 80px; position: relative; padding-bottom: 25px; font-family: 'Amiri', 'Scheherazade New', serif; text-align: center; }
         .title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent-color), transparent); opacity: 0.6; }
         .subtitle { font-size: 1.2rem; color: var(--accent-color); margin-top: 8px; font-weight: normal; }
         
@@ -80,7 +83,7 @@
             font-size: 0.8rem;
             color: var(--accent-color);
             opacity: 0.7;
-            font-family: 'Scheherazade New', serif;
+            font-family: 'Amiri', 'Scheherazade New', serif;
             transition: color 0.25s ease, opacity 0.25s ease;
         }
         
@@ -88,7 +91,7 @@
         #progressBar { height: 100%; width: 0%; background: linear-gradient(90deg, #888, #333); }
         body.dark-mode #progressBar { background: linear-gradient(90deg, #555, #fff); }
         
-        .verse { font-size: var(--verse-font-size); line-height: 1.8; white-space: nowrap; margin: 0; font-family: 'Scheherazade New', serif; position: relative; text-align: center; }
+        .verse { font-size: var(--verse-font-size); line-height: 1.8; white-space: nowrap; margin: 0; font-family: 'Amiri', 'Scheherazade New', serif; position: relative; text-align: center; }
         
         .signature { font-size: 1rem; margin: 40px 0 40px 0; color: var(--accent-color); line-height: 1.8; position: relative; padding-top: 30px; }
         .signature::before { content: '✤'; position: absolute; top: 0; left: 50%; transform: translateX(-50%); font-size: 1.1rem; color: var(--accent-color); opacity: 0.45; }
@@ -106,7 +109,7 @@
         .whatsapp-icon { background: rgba(37, 211, 102, 0.1); color: #25d366; }
         .pdf-icon { background: rgba(235, 87, 87, 0.1); color: #eb5757; }
         .resource-info { display: flex; flex-direction: column; text-align: right; margin-right: 0.8rem; flex-grow: 1; }
-        .resource-label { font-size: 1.05rem; font-weight: normal; color: var(--text-color); font-family: 'Scheherazade New', serif; }
+        .resource-label { font-size: 1.05rem; font-weight: normal; color: var(--text-color); font-family: 'Amiri', 'Scheherazade New', serif; }
         @keyframes flashEffect {
             0% { box-shadow: 0 0 0 0px rgba(136, 136, 136, 0.4); }
             50% { box-shadow: 0 0 0 8px rgba(136, 136, 136, 0.15); }
@@ -173,7 +176,7 @@
             .poem-section { max-width: 580px; margin: 0 auto; padding: 0 30px; background: none !important; border: none !important; box-shadow: none !important; }
             .bayt { flex-direction: row !important; justify-content: center; gap: 30px; margin-bottom: 20px; page-break-inside: avoid; position: relative; }
             .verse { font-size: 14pt; }
-            .bayt::before { content: counter(bayt-num); position: absolute; right: -25px; top: 50%; transform: translateY(-50%); width: 25px; text-align: center; color: #000; opacity: 1; font-size: 10pt; font-family: 'Scheherazade New', serif; }
+            .bayt::before { content: counter(bayt-num); position: absolute; right: -25px; top: 50%; transform: translateY(-50%); width: 25px; text-align: center; color: #000; opacity: 1; font-size: 10pt; font-family: 'Amiri', 'Scheherazade New', serif; }
         }
         @media (max-height: 35rem) {
             .controls {
