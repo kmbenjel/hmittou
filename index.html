@@ -1419,7 +1419,8 @@
 
             while ((m = KASHIDA_JOINERS.exec(orig)) !== null) {
                 const p = m.index + m[0].length;
-                if (p >= orig.length || orig[p] === ' ') continue;
+                if (p >= orig.length) continue;
+                if (!/[اأإآبتثجحخدذرزسشصضطظعغفقكلمنهويىئؤةء]/.test(orig[p])) continue;
                 if (isInsideLa(orig, m.index, p)) continue;
                 
                 // Prefix laam check
