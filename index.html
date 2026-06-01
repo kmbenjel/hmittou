@@ -108,16 +108,53 @@
         .signature { font-size: 1rem; margin: 40px 0 40px 0; color: var(--accent-color); line-height: 1.8; position: relative; padding-top: 30px; }
         .signature::before { content: '✤'; position: absolute; top: 0; left: 50%; transform: translateX(-50%); font-size: 1.1rem; color: var(--accent-color); opacity: 0.45; }
         .separator { height: 1px; background: #eee; margin: 30px auto; width: 40%; }
-        .social-links { margin: 60px auto 20px auto; display: flex; flex-direction: column; gap: 8px; align-items: center; background-color: #f5f5f5; padding: 25px 20px; border-radius: 8px; max-width: 600px; width: fit-content; }
-        body.dark-mode .social-links { background-color: #1a1a1a; }
-        .social-links a { color: var(--text-color); text-decoration: none; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 6px 12px; transition: 0.3s; border-bottom: 1px solid transparent; width: fit-content; }
-        .social-links a:hover { border-bottom: 1px solid var(--accent-color); }
-        .social-links a i { font-size: 1.1rem; color: var(--accent-color); }
+        /* ── Resource Section & Media Cabinet ── */
+        .resource-section { margin: 5rem auto 2.5rem auto; max-width: 38.75rem; width: auto; background: var(--card-bg); border: 0.06rem solid rgba(0, 0, 0, 0.04); box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.015); border-radius: 0.75rem; padding: 1.8rem 2rem; text-align: right; box-sizing: border-box; }
+        .resource-title { font-size: 1.25rem; font-weight: 350; margin-bottom: 1.5rem; color: var(--title-color); position: relative; padding-bottom: 0.5rem; display: inline-block; font-family: 'Scheherazade New', 'Amiri', serif; }
+        .resource-title::after { content: ''; position: absolute; bottom: 0; right: 0; width: 2.5rem; height: 0.06rem; background: var(--accent-color); opacity: 0.6; }
+        .resource-grid { display: flex; flex-direction: column; gap: 1rem; width: 100%; }
+        .resource-card { display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem; border-radius: 0.5rem; background: rgba(0, 0, 0, 0.01); border: 0.06rem solid rgba(0, 0, 0, 0.03); text-decoration: none; color: var(--text-color); transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease; scroll-margin-bottom: 100px; }
+        body.dark-mode .resource-card { background: rgba(255, 255, 255, 0.015); border-color: rgba(255, 255, 255, 0.03); }
+        .resource-card:hover { transform: translateY(-0.125rem); background: rgba(0, 0, 0, 0.025); box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.02); }
+        body.dark-mode .resource-card:hover { background: rgba(255, 255, 255, 0.035); }
+        .resource-icon { display: flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; font-size: 1.2rem; transition: transform 0.2s ease; }
+        .soundcloud-icon { background: rgba(255, 119, 0, 0.1); color: #ff7700; }
+        .whatsapp-icon { background: rgba(37, 211, 102, 0.1); color: #25d366; }
+        .pdf-icon { background: rgba(235, 87, 87, 0.1); color: #eb5757; }
+        .resource-info { display: flex; flex-direction: column; gap: 0.2rem; text-align: right; }
+        .resource-label { font-size: 1.05rem; font-weight: bold; color: var(--title-color); font-family: 'Scheherazade New', 'Amiri', serif; }
+        .resource-sub { font-size: 0.85rem; color: var(--accent-color); }
+        @keyframes flashEffect {
+            0% { box-shadow: 0 0 0 0px rgba(136, 136, 136, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(136, 136, 136, 0.15); }
+            100% { box-shadow: 0 0 0 0px rgba(136, 136, 136, 0); }
+        }
+        .highlight-flash { animation: flashEffect 1.5s ease-out; }
+ 
+        /* ── Left-side Floating Controls ── */
+        .left-controls { position: fixed; bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem)); left: 1.25rem; display: flex; flex-direction: column; gap: 0.625rem; z-index: 1000; animation: slideInLeftControls 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
+        @keyframes slideInLeftControls {
+            0% { transform: translate(-80px, 80px); opacity: 0; }
+            100% { transform: translate(0, 0); opacity: 1; }
+        }
+        @media (max-width: 768px) { .left-controls { bottom: max(2.5rem, env(safe-area-inset-bottom, 2.5rem)); } }
+        @media (max-height: 35rem) {
+            .left-controls { flex-direction: row-reverse; bottom: max(0.625rem, env(safe-area-inset-bottom, 0.625rem)); left: 0.625rem; }
+        }
+ 
+        /* Desktop side-by-side resources */
+        @media (min-width: 680px) {
+            .resource-section { padding: 2.2rem 2.5rem; width: 100%; max-width: 38.75rem; }
+            .resource-grid { flex-direction: row; justify-content: space-between; }
+            .resource-card { flex: 1; flex-direction: column; text-align: center; padding: 1.5rem 1rem; gap: 0.8rem; }
+            .resource-info { align-items: center; }
+        }
+ 
         footer { width: 100%; padding: 20px 0; text-align: center; color: var(--accent-color); border-top: 1px solid #eee; margin-top: 10px; }
-        
+ 
         @media print {
             body { background: #fff; color: #000; padding: 0; margin: 0; font-size: 12pt; }
-            .controls, .nav-controls, #progressBarContainer, .social-links, footer { display: none !important; }
+            .controls, .nav-controls, .left-controls, #progressBarContainer, .resource-section, footer { display: none !important; }
             .container { max-width: 100%; width: 100%; padding: 0; margin: 0; border: none; }
             .title { margin: 0 0 20px 0; font-size: 24pt; padding-bottom: 10px; }
             .title::after { display: none !important; }
@@ -151,6 +188,11 @@
         <button class="control-btn" onclick="scrollToTop()" title="إلى الأعلى"><i class="fa-solid fa-chevron-up"></i></button>
         <button class="control-btn" onclick="scrollToPart2()" title="إلى الثانية"><span style="font-size: 0.95rem; opacity: 0.75; font-weight: 300; font-family: sans-serif;">◇</span></button>
         <button class="control-btn" onclick="scrollToBottom()" title="إلى الأسفل"><i class="fa-solid fa-chevron-down"></i></button>
+    </div>
+    <div class="left-controls">
+        <button class="control-btn" onclick="scrollToSound()" title="سماع القصيدة"><i class="fab fa-soundcloud"></i></button>
+        <button class="control-btn" onclick="scrollToWhatsapp()" title="إرسال في واتساب"><i class="fab fa-whatsapp"></i></button>
+        <button class="control-btn" onclick="scrollToPdf()" title="تحميل ديوان PDF"><i class="fas fa-file-pdf"></i></button>
     </div>
     <div class="container">
         <div class="title">حمار الشعراء</div>
@@ -1412,6 +1454,25 @@
         function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
         function scrollToBottom() { document.getElementById('bottom').scrollIntoView({behavior: 'smooth'}); }
         function scrollToPart2() { document.getElementById('part2').scrollIntoView({behavior: 'smooth'}); }
+
+        function scrollToSound() {
+            document.getElementById('soundcloud-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            highlightResource('soundcloud-card');
+        }
+        function scrollToWhatsapp() {
+            document.getElementById('whatsapp-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            highlightResource('whatsapp-card');
+        }
+        function scrollToPdf() {
+            document.getElementById('pdf-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            highlightResource('pdf-card');
+        }
+        function highlightResource(id) {
+            const card = document.getElementById(id);
+            if (!card) return;
+            card.classList.add('highlight-flash');
+            setTimeout(() => card.classList.remove('highlight-flash'), 1500);
+        }
 
 
 
