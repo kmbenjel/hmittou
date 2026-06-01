@@ -127,7 +127,7 @@
         @media (min-width: 680px) {
             .controls {
                 position: fixed;
-                top: 24px;
+                top: 80px;
                 right: max(24px, calc(50% - 24rem - 72px));
                 display: flex;
                 flex-direction: column;
@@ -330,15 +330,37 @@
         body.dark-mode footer { border-top-color: rgba(255, 255, 255, 0.08); }
  
         @media print {
-            body { background: #fff; color: #000; padding: 0; margin: 0; font-size: 12pt; }
-            .bottom-dock, #progressBarContainer, .resource-section, footer { display: none !important; }
+            /* ── Universal print resets ── */
+            body { background: #fff !important; color: #000 !important; padding: 0; margin: 0; }
+            .bottom-dock, #progressBarContainer, .resource-section, footer,
+            .controls, .nav-controls, .left-controls { display: none !important; }
             .container { max-width: 100%; width: 100%; padding: 0; margin: 0; border: none; }
-            .title { margin: 0 0 20px 0; font-size: 24pt; padding-bottom: 10px; }
+            .title { padding-bottom: 10px; }
             .title::after { display: none !important; }
-            .poem-section { max-width: 580px; margin: 0 auto; padding: 0 30px; background: none !important; border: none !important; box-shadow: none !important; }
-            .bayt { flex-direction: row !important; justify-content: center; gap: 30px; margin-bottom: 20px; page-break-inside: avoid; position: relative; }
-            .verse { font-size: 14pt; }
-            .bayt::before { content: counter(bayt-num); position: absolute; right: -25px; top: 50%; transform: translateY(-50%); width: 25px; text-align: center; color: #000; opacity: 1; font-size: 10pt; font-family: 'Amiri', serif; }
+            .poem-section { background: none !important; border: none !important; box-shadow: none !important; break-inside: avoid; }
+            .bayt { page-break-inside: avoid; break-inside: avoid; position: relative; }
+            .verse { font-family: 'Amiri', serif !important; }
+            .signature { page-break-inside: avoid; break-inside: avoid; }
+        }
+        /* ── Mobile print (single-column, portrait) ── */
+        @media print and (max-width: 500px) {
+            body { font-size: 13pt; }
+            .poem-section { max-width: 100%; margin: 0; padding: 8mm 10mm; }
+            .title { font-size: 20pt; margin: 0 0 14pt 0; text-align: center; }
+            .bayt { display: flex; flex-direction: column; align-items: center; gap: 4pt; margin-bottom: 14pt; }
+            .verse { font-size: 13pt; line-height: 1.9; text-align: center; white-space: normal; }
+            .bayt::before { content: counter(bayt-num); position: absolute; left: 0; top: 50%; transform: translateY(-50%); font-size: 8pt; color: #777; opacity: 1; font-family: 'Amiri', serif; width: auto; }
+        }
+        /* ── Desktop print (side-by-side, landscape) ── */
+        @media print and (min-width: 501px) {
+            body { font-size: 12pt; }
+            .poem-section { max-width: 700px; margin: 0 auto; padding: 10mm 18mm; }
+            .title { font-size: 22pt; margin: 0 0 16pt 0; text-align: center; }
+            .bayt { display: grid !important; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-bottom: 13pt; padding: 0; }
+            .verse { font-size: 13.5pt; line-height: 1.85; white-space: normal; }
+            .verse:first-child { text-align: left; }
+            .verse:last-child { text-align: right; }
+            .bayt::before { content: counter(bayt-num); position: absolute; right: -28pt; top: 50%; transform: translateY(-50%); width: 22pt; text-align: center; color: #555; opacity: 1; font-size: 9pt; font-family: 'Amiri', serif; }
         }
     </style>
 </head>
