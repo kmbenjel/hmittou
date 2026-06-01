@@ -79,8 +79,32 @@
         
         .verse { font-size: var(--verse-font-size); line-height: 1.8; white-space: nowrap; margin: 0; font-family: 'Amiri', serif; position: relative; text-align: center; }
         
-        .signature { font-size: 1rem; margin: 40px 0 40px 0; color: var(--accent-color); line-height: 1.8; position: relative; padding-top: 30px; }
-        .signature::before { content: '✤'; position: absolute; top: 0; left: 50%; transform: translateX(-50%); font-size: 1.1rem; color: var(--accent-color); opacity: 0.45; }
+        .signature {
+            margin: 50px auto 30px auto;
+            padding: 25px 0 10px 0;
+            max-width: 480px;
+            border-top: 1px dashed rgba(136, 136, 136, 0.2);
+            line-height: 1.8;
+            text-align: center;
+        }
+        .signature .poet-name {
+            font-size: 1.35rem;
+            font-weight: bold;
+            color: var(--title-color);
+            display: block;
+            margin-bottom: 8px;
+        }
+        .signature .poet-name::before, .signature .poet-name::after {
+            content: ' ✤ ';
+            color: var(--accent-color);
+            opacity: 0.5;
+            font-size: 0.95rem;
+        }
+        .signature .poet-date {
+            font-size: 0.95rem;
+            color: var(--accent-color);
+            display: block;
+        }
         .separator { height: 1px; background: #eee; margin: 30px auto; width: 40%; }
         /* ── Resource Section & Media Cabinet ── */
         .resource-section { margin: 2rem auto 0 auto; width: 100%; text-align: center; box-sizing: border-box; }
@@ -863,7 +887,10 @@
                 <div class="verse">فَلَسْتُ أَمْتَطِي حِمَارَ الشُّعَرَا</div>
             </div>
 
-            <div class="signature">د. عبد الهادي حميتو<br>سلا: فاتح رمضان المعظّم 1437هـ - الموافق 7 يونيو 2016م</div>
+            <div class="signature">
+                <span class="poet-name">د. عبد الهادي حميتو</span>
+                <span class="poet-date">سلا: فاتح رمضان المعظّم 1437هـ - الموافق 7 يونيو 2016م</span>
+            </div>
         </div>
 
         <div style="margin-top: 120px;"></div>
@@ -1317,7 +1344,9 @@
                 <div class="verse">ثُمَّ عَلَيْكُمْ مَعْشَرًا فَمَعْشَرَا</div>
             </div>
 
-            <div class="signature">د. عبد الهادي حميتو</div>
+            <div class="signature">
+                <span class="poet-name">د. عبد الهادي حميتو</span>
+            </div>
         </div>
 
         <div class="resource-section" id="bottom">
