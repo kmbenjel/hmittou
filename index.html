@@ -128,7 +128,7 @@
             .controls {
                 position: fixed;
                 top: 24px;
-                right: 24px;
+                right: max(24px, calc(50% - 24rem - 72px));
                 display: flex;
                 flex-direction: column;
                 gap: 12px;
@@ -138,7 +138,7 @@
             .nav-controls {
                 position: fixed;
                 bottom: max(24px, env(safe-area-inset-bottom, 24px));
-                right: 24px;
+                right: max(24px, calc(50% - 24rem - 72px));
                 display: flex;
                 flex-direction: column;
                 gap: 12px;
@@ -148,7 +148,7 @@
             .left-controls {
                 position: fixed;
                 bottom: max(24px, env(safe-area-inset-bottom, 24px));
-                left: 24px;
+                left: max(24px, calc(50% - 24rem - 72px));
                 display: flex;
                 flex-direction: column;
                 gap: 12px;
