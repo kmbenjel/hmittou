@@ -29,23 +29,72 @@
         :root { --bg-color: #f5f5f4; --text-color: #333; --title-color: #111; --accent-color: #888; --verse-font-size: 1.4rem; --card-bg: #ffffff; }
         body.dark-mode { --bg-color: #121212; --text-color: #d0d0d0; --title-color: #fff; --accent-color: #777; --card-bg: #1c1c1e; }
         body { font-family: 'Amiri', serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; text-align: center; transition: background-color 0.3s, color 0.3s; }
-        .controls { position: fixed; top: 1.25rem; right: 1.25rem; display: flex; flex-direction: column; gap: 0.625rem; z-index: 1000; animation: slideInControls 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
-        .nav-controls { position: fixed; bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem)); right: 1.25rem; display: flex; flex-direction: column; gap: 0.625rem; z-index: 1000; animation: slideInNav 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
-        @keyframes slideInControls {
-            0% { transform: translateX(80px); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
+        /* ── Bottom Film Navigation Dock ── */
+        .bottom-dock {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0.5rem 1rem max(0.5rem, env(safe-area-inset-bottom, 0.5rem)) 1rem;
+            box-sizing: border-box;
+            z-index: 1000;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+            transition: background-color 0.3s, border-color 0.3s;
         }
-        @keyframes slideInNav {
-            0% { transform: translate(80px, 80px); opacity: 0; }
-            100% { transform: translate(0, 0); opacity: 1; }
+        body.dark-mode .bottom-dock {
+            background: rgba(18, 18, 18, 0.75);
+            border-top-color: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
         }
-        @media (max-width: 768px) { .nav-controls { bottom: max(2.5rem, env(safe-area-inset-bottom, 2.5rem)); } }
-        .control-btn { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.08); color: #333; width: 2.8125rem; height: 2.8125rem; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.08); font-weight: bold; font-family: sans-serif; font-size: 1.1rem; transition: opacity 0.3s ease, background-color 0.3s, transform 0.2s; opacity: 0.8; }
-        body.dark-mode .control-btn { background: rgba(30, 30, 30, 0.65); border-color: rgba(255,255,255,0.08); color: #fff; opacity: 0.85; }
+        .dock-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .dock-btn {
+            background: rgba(0, 0, 0, 0.025);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            color: var(--text-color);
+            width: 2.3rem;
+            height: 2.3rem;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            transition: background-color 0.2s, transform 0.15s, opacity 0.2s;
+            opacity: 0.85;
+        }
+        body.dark-mode .dock-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.04);
+            color: #fff;
+        }
+        .dock-btn:active {
+            transform: scale(0.9);
+        }
         @media (hover: hover) {
-            .control-btn:hover { opacity: 1; transform: scale(1.05); }
+            .dock-btn:hover {
+                background: rgba(0, 0, 0, 0.08);
+                opacity: 1;
+                transform: translateY(-2px);
+            }
+            body.dark-mode .dock-btn:hover {
+                background: rgba(255, 255, 255, 0.08);
+            }
         }
-        .control-btn:active { transform: scale(0.95); }
+        .bottom-dock .soundcloud-btn { color: #ff7700; background: rgba(255, 119, 0, 0.08); border-color: rgba(255, 119, 0, 0.1); }
+        .bottom-dock .whatsapp-btn { color: #25d366; background: rgba(37, 211, 102, 0.08); border-color: rgba(37, 211, 102, 0.1); }
+        .bottom-dock .pdf-btn { color: #eb5757; background: rgba(235, 87, 87, 0.08); border-color: rgba(235, 87, 87, 0.1); }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; display: block; }
         .title { font-size: 2.2rem; font-weight: 350; margin: 40px 0 50px 0; color: var(--title-color); scroll-margin-top: 80px; position: relative; padding-bottom: 25px; font-family: 'Amiri', serif; text-align: center; }
         .title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent-color), transparent); opacity: 0.6; }
@@ -163,16 +212,6 @@
             .poem-section > .title { margin-top: 0; }
         }
  
-        /* ── Left-side Floating Controls ── */
-        .left-controls { position: fixed; bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem)); left: 1.25rem; display: flex; flex-direction: column; gap: 0.625rem; z-index: 1000; animation: slideInLeftControls 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
-        @keyframes slideInLeftControls {
-            0% { transform: translate(-80px, 80px); opacity: 0; }
-            100% { transform: translate(0, 0); opacity: 1; }
-        }
-        @media (max-width: 768px) { .left-controls { bottom: max(2.5rem, env(safe-area-inset-bottom, 2.5rem)); } }
-        @media (max-height: 35rem) {
-            .left-controls { flex-direction: row-reverse; bottom: max(0.625rem, env(safe-area-inset-bottom, 0.625rem)); left: 0.625rem; }
-        }
         /* Desktop side-by-side resources */
         @media (min-width: 680px) {
             .resource-grid { flex-direction: row; justify-content: space-between; gap: 1.5rem; }
@@ -181,11 +220,12 @@
             .resource-info { margin-right: 0; margin-top: 0.8rem; align-items: center; text-align: center; }
         }
  
-        footer { width: 100%; padding: 20px 0; text-align: center; color: var(--accent-color); border-top: 1px solid #eee; margin-top: 10px; }
+        footer { width: 100%; padding: 20px 0 90px 0; text-align: center; color: var(--accent-color); border-top: 1px solid #eee; margin-top: 10px; transition: border-color 0.3s; }
+        body.dark-mode footer { border-top-color: rgba(255, 255, 255, 0.08); }
  
         @media print {
             body { background: #fff; color: #000; padding: 0; margin: 0; font-size: 12pt; }
-            .controls, .nav-controls, .left-controls, #progressBarContainer, .resource-section, footer { display: none !important; }
+            .bottom-dock, #progressBarContainer, .resource-section, footer { display: none !important; }
             .container { max-width: 100%; width: 100%; padding: 0; margin: 0; border: none; }
             .title { margin: 0 0 20px 0; font-size: 24pt; padding-bottom: 10px; }
             .title::after { display: none !important; }
@@ -194,37 +234,10 @@
             .verse { font-size: 14pt; }
             .bayt::before { content: counter(bayt-num); position: absolute; right: -25px; top: 50%; transform: translateY(-50%); width: 25px; text-align: center; color: #000; opacity: 1; font-size: 10pt; font-family: 'Amiri', serif; }
         }
-        @media (max-height: 35rem) {
-            .controls {
-                flex-direction: row-reverse;
-                top: 0.625rem;
-                right: 0.625rem;
-            }
-            .nav-controls {
-                flex-direction: row-reverse;
-                bottom: max(0.625rem, env(safe-area-inset-bottom, 0.625rem));
-                right: 0.625rem;
-            }
-        }
     </style>
 </head>
 <body>
     <div id="progressBarContainer"><div id="progressBar"></div></div>
-    <div class="controls">
-        <button class="control-btn" onclick="toggleTheme()" title="تبديل المظهر"><i class="fa-solid fa-circle-half-stroke"></i></button>
-        <button class="control-btn" onclick="changeFontSize(0.1)" title="تكبير الخط"><i class="fa-solid fa-plus"></i></button>
-        <button class="control-btn" onclick="changeFontSize(-0.1)" title="تصغير الخط"><i class="fa-solid fa-minus"></i></button>
-    </div>
-    <div class="nav-controls">
-        <button class="control-btn" onclick="scrollToTop()" title="إلى الأعلى"><i class="fa-solid fa-chevron-up"></i></button>
-        <button class="control-btn" onclick="scrollToPart2()" title="التكملة"><i class="fa-solid fa-circle" style="font-size: 0.45rem; opacity: 0.85;"></i></button>
-        <button class="control-btn" onclick="scrollToBottom()" title="إلى الأسفل"><i class="fa-solid fa-chevron-down"></i></button>
-    </div>
-    <div class="left-controls">
-        <button class="control-btn" onclick="scrollToSound()" title="سماع القصيدة"><i class="fab fa-soundcloud"></i></button>
-        <button class="control-btn" onclick="scrollToWhatsapp()" title="إرسال في واتساب"><i class="fab fa-whatsapp"></i></button>
-        <button class="control-btn" onclick="scrollToPdf()" title="تحميل ديوان PDF"><i class="fas fa-file-pdf"></i></button>
-    </div>
     <div class="container">
         <div class="poem-section">
             <div class="title">حمار الشعراء</div>
@@ -1736,4 +1749,26 @@
             e.preventDefault();
         });
     </script>
+    <div class="bottom-dock">
+        <!-- Resource Group (Left) -->
+        <div class="dock-group resources-group">
+            <button class="dock-btn soundcloud-btn" onclick="scrollToSound()" title="سماع القصيدة"><i class="fab fa-soundcloud"></i></button>
+            <button class="dock-btn whatsapp-btn" onclick="scrollToWhatsapp()" title="إرسال في واتساب"><i class="fab fa-whatsapp"></i></button>
+            <button class="dock-btn pdf-btn" onclick="scrollToPdf()" title="تحميل ديوان PDF"><i class="fas fa-file-pdf"></i></button>
+        </div>
+        
+        <!-- Navigation Group (Center) -->
+        <div class="dock-group nav-group">
+            <button class="dock-btn" onclick="scrollToTop()" title="إلى الأعلى"><i class="fa-solid fa-chevron-up"></i></button>
+            <button class="dock-btn" onclick="scrollToPart2()" title="التكملة"><i class="fa-solid fa-circle" style="font-size: 0.45rem; opacity: 0.85;"></i></button>
+            <button class="dock-btn" onclick="scrollToBottom()" title="إلى الأسفل"><i class="fa-solid fa-chevron-down"></i></button>
+        </div>
+        
+        <!-- Settings Group (Right) -->
+        <div class="dock-group settings-group">
+            <button class="dock-btn" onclick="toggleTheme()" title="تبديل المظهر"><i class="fa-solid fa-circle-half-stroke"></i></button>
+            <button class="dock-btn" onclick="changeFontSize(0.1)" title="تكبير الخط"><i class="fa-solid fa-plus"></i></button>
+            <button class="dock-btn" onclick="changeFontSize(-0.1)" title="تصغير الخط"><i class="fa-solid fa-minus"></i></button>
+        </div>
+    </div>
 </body></html>
