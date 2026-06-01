@@ -1572,7 +1572,7 @@
             });
 
             // 2. Second pass: Calculate optimal stretched text in-memory and write results batch-wise
-            const thresholdW = maxW * 0.88; // Wise threshold to identify small bayts
+            const thresholdW = maxW * 0.92; // Wise threshold to identify small bayts
             
             baytData.forEach(data => {
                 const { s1, s2, orig1, orig2, w1, w2 } = data;
@@ -1581,8 +1581,8 @@
                 if (isDesktop) {
                     // On desktop, dynamic threshold extension for small bayts
                     if (targetW < thresholdW) {
-                        const isVeryPoor = targetW < maxW * 0.75;
-                        const extension = isVeryPoor ? 100 : 80;
+                        const isVeryPoor = targetW < maxW * 0.80;
+                        const extension = isVeryPoor ? 130 : 100;
                         targetW = Math.min(thresholdW, targetW + extension);
                     }
                 }
