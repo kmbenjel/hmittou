@@ -40,8 +40,8 @@
         :root { --bg-color: #f5f5f4; --text-color: #333; --title-color: #111; --accent-color: #888; --verse-font-size: 1.4rem; --card-bg: #ffffff; }
         body.dark-mode { --bg-color: #121212; --text-color: #d0d0d0; --title-color: #fff; --accent-color: #777; --card-bg: #1c1c1e; }
         body { font-family: 'Scheherazade New', 'Amiri', serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; text-align: center; transition: background-color 0.3s, color 0.3s; }
-        .controls { position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; animation: slideInControls 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
-        .nav-controls { position: fixed; bottom: max(20px, env(safe-area-inset-bottom, 20px)); right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; animation: slideInNav 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
+        .controls { position: fixed; top: 1.25rem; right: 1.25rem; display: flex; flex-direction: column; gap: 0.625rem; z-index: 1000; animation: slideInControls 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
+        .nav-controls { position: fixed; bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem)); right: 1.25rem; display: flex; flex-direction: column; gap: 0.625rem; z-index: 1000; animation: slideInNav 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
         @keyframes slideInControls {
             0% { transform: translateX(80px); opacity: 0; }
             100% { transform: translateX(0); opacity: 1; }
@@ -50,8 +50,8 @@
             0% { transform: translate(80px, 80px); opacity: 0; }
             100% { transform: translate(0, 0); opacity: 1; }
         }
-        @media (max-width: 768px) { .nav-controls { bottom: max(40px, env(safe-area-inset-bottom, 40px)); } }
-        .control-btn { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.08); color: #333; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.08); font-weight: bold; font-family: sans-serif; transition: opacity 0.3s ease, background-color 0.3s, transform 0.2s; opacity: 0.8; }
+        @media (max-width: 768px) { .nav-controls { bottom: max(2.5rem, env(safe-area-inset-bottom, 2.5rem)); } }
+        .control-btn { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.08); color: #333; width: 2.8125rem; height: 2.8125rem; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.08); font-weight: bold; font-family: sans-serif; font-size: 1.1rem; transition: opacity 0.3s ease, background-color 0.3s, transform 0.2s; opacity: 0.8; }
         body.dark-mode .control-btn { background: rgba(30, 30, 30, 0.65); border-color: rgba(255,255,255,0.08); color: #fff; opacity: 0.85; }
         @media (hover: hover) {
             .control-btn:hover { opacity: 1; transform: scale(1.05); }
