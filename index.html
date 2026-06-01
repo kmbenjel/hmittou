@@ -38,13 +38,13 @@
 
         /* ── Bottom Film Navigation Dock (Mobile Only) ── */
         :root {
-            --dock-btn-size: 2.1rem;
-            --dock-gap: 0.35rem;
+            --dock-btn-size: 34px;
+            --dock-gap: 6px;
         }
         @media (max-width: 359px) {
             :root {
-                --dock-btn-size: 1.85rem;
-                --dock-gap: 0.25rem;
+                --dock-btn-size: 30px;
+                --dock-gap: 4px;
             }
         }
         .bottom-dock {
@@ -65,7 +65,7 @@
                 backdrop-filter: blur(20px); /* Heavy iOS-like blur */
                 -webkit-backdrop-filter: blur(20px);
                 border-top: 1px solid rgba(0, 0, 0, 0.05);
-                padding: 0.5rem 0.6rem max(0.5rem, env(safe-area-inset-bottom, 0.5rem)) 0.6rem;
+                padding: 8px 10px max(8px, env(safe-area-inset-bottom, 8px)) 10px;
                 box-sizing: border-box;
                 z-index: 1000;
                 box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
@@ -73,7 +73,7 @@
             }
             @media (max-width: 359px) {
                 .bottom-dock {
-                    padding: 0.4rem 0.4rem max(0.4rem, env(safe-area-inset-bottom, 0.4rem)) 0.4rem;
+                    padding: 6px 6px max(6px, env(safe-area-inset-bottom, 6px)) 6px;
                 }
             }
             body.dark-mode .bottom-dock {
@@ -127,31 +127,31 @@
         @media (min-width: 680px) {
             .controls {
                 position: fixed;
-                top: 1.25rem;
-                right: 1.25rem;
+                top: 20px;
+                right: 20px;
                 display: flex;
                 flex-direction: column;
-                gap: 0.625rem;
+                gap: 10px;
                 z-index: 1000;
                 animation: slideInControls 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards;
             }
             .nav-controls {
                 position: fixed;
-                bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem));
-                right: 1.25rem;
+                bottom: max(20px, env(safe-area-inset-bottom, 20px));
+                right: 20px;
                 display: flex;
                 flex-direction: column;
-                gap: 0.625rem;
+                gap: 10px;
                 z-index: 1000;
                 animation: slideInNav 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards;
             }
             .left-controls {
                 position: fixed;
-                bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem));
-                left: 1.25rem;
+                bottom: max(20px, env(safe-area-inset-bottom, 20px));
+                left: 20px;
                 display: flex;
                 flex-direction: column;
-                gap: 0.625rem;
+                gap: 10px;
                 z-index: 1000;
                 animation: slideInLeftControls 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards;
             }
@@ -173,15 +173,15 @@
                 -webkit-backdrop-filter: blur(8px);
                 border: 1px solid rgba(0, 0, 0, 0.08);
                 color: var(--text-color);
-                width: 2.8125rem;
-                height: 2.8125rem;
+                width: 45px;
+                height: 45px;
                 border-radius: 50%;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
-                font-size: 1.1rem;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                font-size: 18px;
                 transition: opacity 0.3s ease, background-color 0.3s, transform 0.2s;
                 opacity: 0.8;
             }
@@ -353,7 +353,7 @@
     </div>
     <div class="nav-controls">
         <button class="control-btn" onclick="scrollToTop()" title="إلى الأعلى"><i class="fa-solid fa-chevron-up"></i></button>
-        <button class="control-btn" onclick="scrollToPart2()" title="التكملة"><i class="fa-solid fa-circle" style="font-size: 0.45rem; opacity: 0.85;"></i></button>
+        <button class="control-btn" onclick="scrollToPart2()" title="التكملة"><i class="fa-solid fa-circle" style="font-size: 7px; opacity: 0.85;"></i></button>
         <button class="control-btn" onclick="scrollToBottom()" title="إلى الأسفل"><i class="fa-solid fa-chevron-down"></i></button>
     </div>
     <div class="left-controls">
