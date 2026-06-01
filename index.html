@@ -115,10 +115,12 @@
         body.dark-mode .resource-card { background: rgba(255, 255, 255, 0.015); border-color: rgba(255, 255, 255, 0.03); }
         .resource-card:hover { transform: translateY(-0.125rem); background: rgba(0, 0, 0, 0.025); box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.02); }
         body.dark-mode .resource-card:hover { background: rgba(255, 255, 255, 0.035); }
-        .resource-icon { display: flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; font-size: 1.2rem; transition: transform 0.2s ease; background: rgba(136, 136, 136, 0.08); color: var(--accent-color); }
-        body.dark-mode .resource-icon { background: rgba(255, 255, 255, 0.04); }
+        .resource-icon { display: flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; font-size: 1.2rem; transition: transform 0.2s ease; }
+        .soundcloud-icon { background: rgba(255, 119, 0, 0.1); color: #ff7700; }
+        .whatsapp-icon { background: rgba(37, 211, 102, 0.1); color: #25d366; }
+        .pdf-icon { background: rgba(235, 87, 87, 0.1); color: #eb5757; }
         .resource-info { display: flex; flex-direction: column; gap: 0.2rem; text-align: center; }
-        .resource-label { font-size: 1.05rem; font-weight: bold; color: var(--title-color); font-family: 'Scheherazade New', 'Amiri', serif; }
+        .resource-label { font-size: 1.05rem; font-weight: normal; color: var(--text-color); font-family: 'Scheherazade New', 'Amiri', serif; }
         @keyframes flashEffect {
             0% { box-shadow: 0 0 0 0px rgba(136, 136, 136, 0.4); }
             50% { box-shadow: 0 0 0 8px rgba(136, 136, 136, 0.15); }
@@ -1317,7 +1319,7 @@
         <div class="resource-section" id="bottom">
             <div class="resource-grid">
                 <a href="https://soundcloud.com/kmbenjel/5e0789b4-8301-496a-813c-f5b5369a7fae" target="_blank" class="resource-card" id="soundcloud-card">
-                    <div class="resource-icon">
+                    <div class="resource-icon soundcloud-icon">
                         <i class="fab fa-soundcloud"></i>
                     </div>
                     <div class="resource-info">
@@ -1325,7 +1327,7 @@
                     </div>
                 </a>
                 <a href="https://api.whatsapp.com/send?text=%D8%AD%D9%85%D8%A7%D8%B1%20%D8%A7%D9%84%D8%B4%D8%B9%D8%B1%D8%A7%D8%A1%0A%D8%A3%D8%B1%D8%AC%D9%88%D8%B2%D8%AA%D8%A7%D9%86%20%D9%84%D9%84%D8%B9%D9%84%D9%91%D8%A7%D9%85%D8%A9%20%D8%A7%D9%84%D8%AF%D9%83%D8%AA%D9%88%D8%B1%20%D8%B9%D8%A8%D8%AF%20%D8%A7%D9%84%D9%87%D8%A7%D8%AF%D9%8I%20%D8%AD%D9%85%D9%8A%D8%AA%D9%88%0Ahttps%3A//kmbenjel.github.io/hmittou" target="_blank" class="resource-card" id="whatsapp-card">
-                    <div class="resource-icon">
+                    <div class="resource-icon whatsapp-icon">
                         <i class="fab fa-whatsapp"></i>
                     </div>
                     <div class="resource-info">
@@ -1333,7 +1335,7 @@
                     </div>
                 </a>
                 <a href="hmittou.pdf" download class="resource-card" id="pdf-card">
-                    <div class="resource-icon">
+                    <div class="resource-icon pdf-icon">
                         <i class="fas fa-file-pdf"></i>
                     </div>
                     <div class="resource-info">
