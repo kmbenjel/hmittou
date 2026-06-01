@@ -1447,6 +1447,19 @@
                 // Rule: Block stretching after any letter carrying tanween (fatha U+064B, damma U+064C, kasra U+064D)
                 if (m[0].includes('\u064B') || m[0].includes('\u064C') || m[0].includes('\u064D')) continue;
                 
+                // Rule: Block stretching before final yaa / alif maqsura to preserve font ligatures
+                const followingChar = orig[p];
+                if (['ى', 'ي'].includes(followingChar)) {
+                    let nextIdx = p + 1;
+                    const diacritics = /[\u064B-\u065F\u0670]/;
+                    while (nextIdx < orig.length && diacritics.test(orig[nextIdx])) {
+                        nextIdx++;
+                    }
+                    if (nextIdx >= orig.length || /[\s\p{P}]/u.test(orig[nextIdx])) {
+                        continue;
+                    }
+                }
+                
                 // Prefix check (for letters like ل, ب, ف, ك at the start of a word)
                 const matchedChar = orig[m.index];
                 if (['ل', 'ب', 'ف', 'ك'].includes(matchedChar)) {
@@ -1474,6 +1487,20 @@
                 }
                 positions.push(p);
             }
+            
+            // Filter positions to ensure at most one kashida per word (keeping the first valid one)
+            const uniquePositions = [];
+            let lastSpaceIdx = -2;
+            for (let i = 0; i < positions.length; i++) {
+                const pos = positions[i];
+                const currentWordStart = orig.lastIndexOf(' ', pos - 1);
+                if (currentWordStart > lastSpaceIdx) {
+                    uniquePositions.push(pos);
+                    lastSpaceIdx = currentWordStart;
+                }
+            }
+            positions.length = 0;
+            positions.push(...uniquePositions);
             
             const results = [];
             // State 0: natural width
