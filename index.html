@@ -279,6 +279,8 @@
         .soundcloud-icon { background: rgba(255, 119, 0, 0.1); color: #ff7700; }
         .whatsapp-icon { background: rgba(37, 211, 102, 0.1); color: #25d366; }
         .pdf-icon { background: rgba(235, 87, 87, 0.1); color: #eb5757; }
+        #web-card { display: none !important; }
+        .web-icon { background: rgba(0, 122, 255, 0.1); color: #007aff; }
         .resource-info { display: flex; flex-direction: column; text-align: right; margin-right: 0.8rem; flex-grow: 1; }
         .resource-label { font-size: 1.05rem; font-weight: normal; color: var(--text-color); font-family: 'Amiri', serif; }
         @keyframes flashEffect {
@@ -332,7 +334,7 @@
         @media print {
             /* ── Universal print resets ── */
             body { background: #fff !important; color: #000 !important; padding: 0; margin: 0; }
-            .bottom-dock, #progressBarContainer, .resource-section, footer,
+            .bottom-dock, #progressBarContainer,
             .controls, .nav-controls, .left-controls { display: none !important; }
             .container { max-width: 100%; width: 100%; padding: 0; margin: 0; border: none; }
             .title { padding-bottom: 10px; }
@@ -341,6 +343,62 @@
             .bayt { page-break-inside: avoid; break-inside: avoid; position: relative; }
             .verse { font-family: 'Amiri', serif !important; }
             .signature { page-break-inside: avoid; break-inside: avoid; }
+
+            /* Colorless print styles for resources and footer */
+            .resource-section {
+                background: none !important;
+                border: none !important;
+                box-shadow: none !important;
+                margin-top: 35px !important;
+                margin-bottom: 15px !important;
+                padding: 15px 0 !important;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            .resource-grid {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: center !important;
+                gap: 20px !important;
+            }
+            .resource-card {
+                background: none !important;
+                border: 1px solid #000 !important;
+                box-shadow: none !important;
+                color: #000 !important;
+                flex: 1 !important;
+                padding: 12px 10px !important;
+                break-inside: avoid;
+            }
+            .resource-icon {
+                background: none !important;
+                color: #000 !important;
+                border: 1px solid #000 !important;
+            }
+            .resource-label {
+                color: #000 !important;
+            }
+            #pdf-card {
+                display: none !important;
+            }
+            #web-card {
+                display: flex !important;
+            }
+            footer {
+                border-top: 1px solid #000 !important;
+                color: #000 !important;
+                background: none !important;
+                margin-top: 15px !important;
+                padding: 15px 0 25px 0 !important;
+                break-inside: avoid;
+            }
+            footer a {
+                color: #000 !important;
+                text-decoration: underline !important;
+            }
+            footer a i.fab.fa-facebook {
+                color: #000 !important;
+            }
         }
         /* ── Mobile print (single-column, portrait) ── */
         @media print and (max-width: 500px) {
@@ -350,6 +408,7 @@
             .bayt { display: flex; flex-direction: column; align-items: center; gap: 4pt; margin-bottom: 14pt; }
             .verse { font-size: 13pt; line-height: 1.9; text-align: center; white-space: normal; }
             .bayt::before { content: counter(bayt-num); position: absolute; left: 0; top: 50%; transform: translateY(-50%); font-size: 8pt; color: #777; opacity: 1; font-family: 'Amiri', serif; width: auto; }
+            .resource-grid { flex-direction: column !important; gap: 10px !important; }
         }
         /* ── Desktop print (side-by-side, landscape) ── */
         @media print and (min-width: 501px) {
@@ -1543,6 +1602,16 @@
                         </div>
                         <div class="resource-info">
                             <div class="resource-label">بي دي إف</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="https://benjelloun.dev/hmittou" target="_blank" class="resource-card" id="web-card">
+                    <div class="resource-content-wrapper">
+                        <div class="resource-icon web-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <div class="resource-info">
+                            <div class="resource-label">ويب</div>
                         </div>
                     </div>
                 </a>
