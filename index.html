@@ -402,36 +402,44 @@
         }
         /* ── Mobile print (single-column, portrait) ── */
         @media print {
-            body.print-mobile { font-size: 13pt; }
-            body.print-mobile .poem-section { max-width: 100%; margin: 0; padding: 8mm 10mm; }
-            body.print-mobile .title { font-size: 20pt; margin: 0 0 14pt 0; text-align: center; }
-            body.print-mobile .bayt { display: flex !important; flex-direction: column !important; align-items: center !important; gap: 6pt !important; margin-bottom: 16pt !important; }
-            body.print-mobile .verse { font-size: 13pt !important; line-height: 1.9 !important; text-align: center !important; white-space: normal !important; width: 100% !important; display: block !important; }
-            body.print-mobile .bayt::before { content: counter(bayt-num); position: absolute; left: 0; top: 50%; transform: translateY(-50%); font-size: 8pt; color: #777; opacity: 1; font-family: 'Amiri', serif; width: auto; }
-            body.print-mobile .resource-grid { flex-direction: column !important; gap: 10px !important; }
+            body.print-mobile { font-size: 14pt; }
+            body.print-mobile .poem-section { max-width: 100%; margin: 0; padding: 5mm 5mm; }
+            body.print-mobile .title { font-size: 28pt; margin: 0 0 24pt 0; text-align: center; }
+            body.print-mobile .subtitle { font-size: 18pt; margin-top: 5pt; }
+            body.print-mobile .bayt { display: flex !important; flex-direction: column !important; align-items: center !important; gap: 10pt !important; margin-bottom: 24pt !important; }
+            body.print-mobile .verse { font-size: 17.5pt !important; line-height: 2.2 !important; text-align: center !important; white-space: normal !important; width: 100% !important; display: block !important; }
+            body.print-mobile .bayt::before { content: counter(bayt-num); position: absolute; left: -10pt; top: 50%; transform: translateY(-50%); font-size: 10pt; color: #555; opacity: 1; font-family: 'Amiri', serif; width: auto; }
+            body.print-mobile .resource-grid { flex-direction: column !important; gap: 12px !important; }
+            
+            /* Max 6 lines per page (Page 1 has title + 4 bayts, subsequent pages have 6 bayts) */
+            body.print-mobile .bayt:nth-child(6n) { page-break-before: always; break-before: page; }
         }
         /* ── Desktop print (side-by-side, landscape) ── */
         @media print {
-            body.print-desktop { font-size: 12pt; }
-            body.print-desktop .poem-section { max-width: 700px; margin: 0 auto; padding: 10mm 18mm; }
-            body.print-desktop .title { font-size: 22pt; margin: 0 0 16pt 0; text-align: center; }
-            body.print-desktop .bayt { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 2.5rem !important; margin-bottom: 13pt !important; padding: 0 !important; }
-            body.print-desktop .verse { font-size: 13.5pt !important; line-height: 1.85 !important; white-space: normal !important; display: block !important; }
+            body.print-desktop { font-size: 13pt; }
+            body.print-desktop .poem-section { max-width: 800px; margin: 0 auto; padding: 5mm 10mm; }
+            body.print-desktop .title { font-size: 32pt; margin: 0 0 28pt 0; text-align: center; }
+            body.print-desktop .subtitle { font-size: 20pt; margin-top: 6pt; }
+            body.print-desktop .bayt { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 4rem !important; margin-bottom: 22pt !important; padding: 0 !important; }
+            body.print-desktop .verse { font-size: 19pt !important; line-height: 2.1 !important; white-space: normal !important; display: block !important; }
             body.print-desktop .verse:first-child { text-align: left !important; }
             body.print-desktop .verse:last-child { text-align: right !important; }
-            body.print-desktop .bayt::before { content: counter(bayt-num); position: absolute; right: -28pt; top: 50%; transform: translateY(-50%); width: 22pt; text-align: center; color: #555; opacity: 1; font-size: 9pt; font-family: 'Amiri', serif; }
-            body.print-desktop .resource-grid { display: flex !important; flex-direction: row !important; justify-content: center !important; gap: 20px !important; }
+            body.print-desktop .bayt::before { content: counter(bayt-num); position: absolute; right: -35pt; top: 50%; transform: translateY(-50%); width: 25pt; text-align: center; color: #444; opacity: 1; font-size: 11pt; font-family: 'Amiri', serif; }
+            body.print-desktop .resource-grid { display: flex !important; flex-direction: row !important; justify-content: center !important; gap: 24px !important; }
+            
+            /* Max 6 lines per page (Page 1 has title + 4 bayts, subsequent pages have 6 bayts) */
+            body.print-desktop .bayt:nth-child(6n) { page-break-before: always; break-before: page; }
         }
     </style>
     <script>
         const printLayout = new URLSearchParams(window.location.search).get('print');
         if (printLayout === 'mobile') {
             const style = document.createElement('style');
-            style.innerHTML = `@page { size: letter portrait; margin: 15mm 20mm; }`;
+            style.innerHTML = `@page { size: letter portrait; margin: 25mm 25mm 25mm 25mm; }`;
             document.head.appendChild(style);
         } else if (printLayout === 'desktop') {
             const style = document.createElement('style');
-            style.innerHTML = `@page { size: A4 landscape; margin: 12mm 20mm; }`;
+            style.innerHTML = `@page { size: A4 landscape; margin: 22mm 25mm 22mm 25mm; }`;
             document.head.appendChild(style);
         }
     </script>
