@@ -374,9 +374,9 @@
         <button class="control-btn" onclick="changeFontSize(-0.1)" title="تصغير الخط"><i class="fa-solid fa-minus"></i></button>
     </div>
     <div class="nav-controls">
-        <button class="control-btn" onclick="pageUp()" title="صفحة للأعلى"><i class="fa-solid fa-chevron-up"></i></button>
+        <button class="control-btn" onclick="scrollToTop()" title="إلى الأعلى"><i class="fa-solid fa-chevron-up"></i></button>
         <button class="control-btn" onclick="scrollToPart2()" title="التكملة"><i class="fa-solid fa-circle" style="font-size: 7px; opacity: 0.85;"></i></button>
-        <button class="control-btn" onclick="pageDown()" title="صفحة للأسفل"><i class="fa-solid fa-chevron-down"></i></button>
+        <button class="control-btn" onclick="scrollToBottom()" title="إلى الأسفل"><i class="fa-solid fa-chevron-down"></i></button>
     </div>
     <div class="left-controls">
         <button class="control-btn" onclick="scrollToSound()" title="سماع القصيدة"><i class="fab fa-soundcloud"></i></button>
@@ -1847,8 +1847,6 @@
 
         function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
         function scrollToBottom() { document.getElementById('bottom').scrollIntoView({behavior: 'smooth'}); }
-        function pageUp() { window.scrollBy({ top: -window.innerHeight * 0.8, behavior: 'smooth' }); }
-        function pageDown() { window.scrollBy({ top: window.innerHeight * 0.8, behavior: 'smooth' }); }
         function scrollToPart2() { document.getElementById('part2').scrollIntoView({behavior: 'smooth'}); }
 
         function updatePdfLink() {
@@ -1918,9 +1916,9 @@
         
         <!-- Navigation Group (Center) -->
         <div class="dock-group nav-group">
-            <button class="dock-btn" onclick="pageUp()" title="صفحة للأعلى"><i class="fa-solid fa-chevron-up"></i></button>
+            <button class="dock-btn" onclick="scrollToTop()" title="إلى الأعلى"><i class="fa-solid fa-chevron-up"></i></button>
             <button class="dock-btn" onclick="scrollToPart2()" title="التكملة"><i class="fa-solid fa-circle" style="font-size: 0.45em; opacity: 0.85;"></i></button>
-            <button class="dock-btn" onclick="pageDown()" title="صفحة للأسفل"><i class="fa-solid fa-chevron-down"></i></button>
+            <button class="dock-btn" onclick="scrollToBottom()" title="إلى الأسفل"><i class="fa-solid fa-chevron-down"></i></button>
         </div>
         
         <!-- Resource Group (Left in RTL, last in markup) -->
