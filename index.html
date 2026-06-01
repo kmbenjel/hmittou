@@ -39,7 +39,7 @@
         }
         :root { --bg-color: #f5f5f4; --text-color: #333; --title-color: #111; --accent-color: #888; --verse-font-size: 1.4rem; --card-bg: #ffffff; }
         body.dark-mode { --bg-color: #121212; --text-color: #d0d0d0; --title-color: #fff; --accent-color: #777; --card-bg: #1c1c1e; }
-        body { font-family: 'Scheherazade New', 'Amiri', serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; text-align: center; transition: background-color 0.3s, color 0.3s; }
+        body { font-family: 'Scheherazade New', serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; text-align: center; transition: background-color 0.3s, color 0.3s; }
         .controls { position: fixed; top: 1.25rem; right: 1.25rem; display: flex; flex-direction: column; gap: 0.625rem; z-index: 1000; animation: slideInControls 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
         .nav-controls { position: fixed; bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem)); right: 1.25rem; display: flex; flex-direction: column; gap: 0.625rem; z-index: 1000; animation: slideInNav 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
         @keyframes slideInControls {
@@ -58,7 +58,7 @@
         }
         .control-btn:active { transform: scale(0.95); }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; display: block; }
-        .title { font-size: 2.2rem; font-weight: 350; margin: 40px 0 50px 0; color: var(--title-color); scroll-margin-top: 80px; position: relative; padding-bottom: 25px; font-family: 'Scheherazade New', 'Amiri', serif; }
+        .title { font-size: 2.2rem; font-weight: 350; margin: 40px 0 50px 0; color: var(--title-color); scroll-margin-top: 80px; position: relative; padding-bottom: 25px; font-family: 'Scheherazade New', serif; text-align: center; }
         .title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent-color), transparent); opacity: 0.6; }
         .subtitle { font-size: 1.2rem; color: var(--accent-color); margin-top: 8px; font-weight: normal; }
         
@@ -80,7 +80,7 @@
             font-size: 0.8rem;
             color: var(--accent-color);
             opacity: 0.7;
-            font-family: 'Scheherazade New', 'Amiri', serif;
+            font-family: 'Scheherazade New', serif;
             transition: color 0.25s ease, opacity 0.25s ease;
         }
         
@@ -88,23 +88,8 @@
         #progressBar { height: 100%; width: 0%; background: linear-gradient(90deg, #888, #333); }
         body.dark-mode #progressBar { background: linear-gradient(90deg, #555, #fff); }
         
-        .verse { font-size: var(--verse-font-size); line-height: 1.8; white-space: nowrap; margin: 0; font-family: 'Scheherazade New', 'Amiri', serif; position: relative; text-align: center; }
+        .verse { font-size: var(--verse-font-size); line-height: 1.8; white-space: nowrap; margin: 0; font-family: 'Scheherazade New', serif; position: relative; text-align: center; }
         
-        @media (min-width: 680px) {
-            html { font-size: 19px; }
-            .poem-section {
-                width: fit-content;
-                max-width: 95vw;
-                margin: 0 auto;
-                padding: 2.8rem 3.125rem;
-                background: var(--card-bg);
-                border: 0.06rem solid rgba(0, 0, 0, 0.04);
-                box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.015);
-                border-radius: 0.75rem;
-            }
-            .bayt { flex-direction: row; justify-content: center; gap: 3.75rem; margin-bottom: 1.5rem; padding: 0.5rem 1rem; margin-inline: -1rem; }
-            .bayt::before { right: -2.4rem; width: 2rem; text-align: center; font-size: 0.9rem; opacity: 0.75; }
-        }
         .signature { font-size: 1rem; margin: 40px 0 40px 0; color: var(--accent-color); line-height: 1.8; position: relative; padding-top: 30px; }
         .signature::before { content: '✤'; position: absolute; top: 0; left: 50%; transform: translateX(-50%); font-size: 1.1rem; color: var(--accent-color); opacity: 0.45; }
         .separator { height: 1px; background: #eee; margin: 30px auto; width: 40%; }
@@ -121,13 +106,43 @@
         .whatsapp-icon { background: rgba(37, 211, 102, 0.1); color: #25d366; }
         .pdf-icon { background: rgba(235, 87, 87, 0.1); color: #eb5757; }
         .resource-info { display: flex; flex-direction: column; text-align: right; margin-right: 0.8rem; flex-grow: 1; }
-        .resource-label { font-size: 1.05rem; font-weight: normal; color: var(--text-color); font-family: 'Scheherazade New', 'Amiri', serif; }
+        .resource-label { font-size: 1.05rem; font-weight: normal; color: var(--text-color); font-family: 'Scheherazade New', serif; }
         @keyframes flashEffect {
             0% { box-shadow: 0 0 0 0px rgba(136, 136, 136, 0.4); }
             50% { box-shadow: 0 0 0 8px rgba(136, 136, 136, 0.15); }
             100% { box-shadow: 0 0 0 0px rgba(136, 136, 136, 0); }
         }
         .highlight-flash { animation: flashEffect 1.5s ease-out; }
+ 
+        @media (min-width: 680px) {
+            html { font-size: 19px; }
+            .container { max-width: 95vw; }
+            .poem-section, .resource-section {
+                width: 48rem;
+                max-width: 95vw;
+                margin: 0 auto;
+                background: var(--card-bg);
+                border: 0.06rem solid rgba(0, 0, 0, 0.04);
+                box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.015);
+                border-radius: 0.75rem;
+                box-sizing: border-box;
+            }
+            .poem-section {
+                padding: 2.8rem 5.5rem;
+                margin-bottom: 3.5rem;
+            }
+            .resource-section {
+                padding: 2.5rem 3.5rem;
+                margin-top: 3.5rem;
+                margin-bottom: 2rem;
+            }
+            .bayt { display: grid; grid-template-columns: 1fr 1fr; gap: 3.75rem; margin-bottom: 1.5rem; padding: 0.5rem 1rem; margin-inline: -1rem; }
+            .bayt::before { right: -3.5rem; width: 2.2rem; text-align: right; font-size: 0.9rem; opacity: 0.75; }
+            .verse:first-child { text-align: left; }
+            .verse:last-child { text-align: right; }
+            .verse { font-feature-settings: 'calt' 1; }
+            .poem-section > .title { margin-top: 0; }
+        }
  
         /* ── Left-side Floating Controls ── */
         .left-controls { position: fixed; bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem)); left: 1.25rem; display: flex; flex-direction: column; gap: 0.625rem; z-index: 1000; animation: slideInLeftControls 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards; }
@@ -141,7 +156,6 @@
         }
         /* Desktop side-by-side resources */
         @media (min-width: 680px) {
-            .resource-section { padding: 1rem 0 0 0; width: 100%; max-width: 100%; text-align: center; }
             .resource-grid { flex-direction: row; justify-content: space-between; gap: 1.5rem; }
             .resource-card { flex: 1; padding: 1.5rem 1rem; }
             .resource-content-wrapper { flex-direction: column; align-items: center; width: 100%; text-align: center; }
@@ -159,7 +173,7 @@
             .poem-section { max-width: 580px; margin: 0 auto; padding: 0 30px; background: none !important; border: none !important; box-shadow: none !important; }
             .bayt { flex-direction: row !important; justify-content: center; gap: 30px; margin-bottom: 20px; page-break-inside: avoid; position: relative; }
             .verse { font-size: 14pt; }
-            .bayt::before { content: counter(bayt-num); position: absolute; right: -25px; top: 50%; transform: translateY(-50%); width: 25px; text-align: center; color: #000; opacity: 1; font-size: 10pt; font-family: 'Scheherazade New', 'Amiri', serif; }
+            .bayt::before { content: counter(bayt-num); position: absolute; right: -25px; top: 50%; transform: translateY(-50%); width: 25px; text-align: center; color: #000; opacity: 1; font-size: 10pt; font-family: 'Scheherazade New', serif; }
         }
         @media (max-height: 35rem) {
             .controls {
@@ -193,8 +207,8 @@
         <button class="control-btn" onclick="scrollToPdf()" title="تحميل ديوان PDF"><i class="fas fa-file-pdf"></i></button>
     </div>
     <div class="container">
-        <div class="title">حمار الشعراء</div>
         <div class="poem-section">
+            <div class="title">حمار الشعراء</div>
             <div class="bayt">
                 <div class="verse">جَشَّمْتَنِي النَّظْمَ عَلَى بَحْرٍ عَرَا</div>
                 <div class="verse">مِنَ الْقَوَافِي نَبَذُوهُ بِالْعَرَا</div>
@@ -864,11 +878,11 @@
         </div>
 
         <div style="margin-top: 120px;"></div>
-        <div class = title>
-        <div id="part2">حمار الشعراء</div>
-        <div class="subtitle">التكملة</div>
-        </div>
         <div class="poem-section">
+            <div class="title">
+                <div id="part2">حمار الشعراء</div>
+                <div class="subtitle">التكملة</div>
+            </div>
             <div class="bayt">
                 <div class="verse">يَا شَيْخُ يَحْيَى لَوْ أَعَدْتَ النَّظَرَا</div>
                 <div class="verse">رَأَيْتَ فِي الرَّجَزِ مِثْلَمَا أَرَى</div>
@@ -975,7 +989,7 @@
             </div>
 
             <div class="bayt">
-                <div class="verse">إِنَّ الْحِمَارَ شَرُّ ظَهْرٍ يُـمْتَطَى</div>
+                <div class="verse">إِنَّ الْحِمَارَ شَرُّ ظَهْرٍ يُمْتَطَى</div>
                 <div class="verse">وَشَرُّ مَرْكُوبٍ لِمَنْ يَبْغِي السُّرَى</div>
             </div>
 
@@ -1315,40 +1329,40 @@
             </div>
 
             <div class="signature">د. عبد الهادي حميتو</div>
-            <div class="separator"></div>
-            <div class="resource-section" id="bottom">
-                <div class="resource-grid">
-                    <a href="https://soundcloud.com/kmbenjel/5e0789b4-8301-496a-813c-f5b5369a7fae" target="_blank" class="resource-card" id="soundcloud-card">
-                        <div class="resource-content-wrapper">
-                            <div class="resource-icon soundcloud-icon">
-                                <i class="fab fa-soundcloud"></i>
-                            </div>
-                            <div class="resource-info">
-                                <div class="resource-label">سماع</div>
-                            </div>
+        </div>
+
+        <div class="resource-section" id="bottom">
+            <div class="resource-grid">
+                <a href="https://soundcloud.com/kmbenjel/5e0789b4-8301-496a-813c-f5b5369a7fae" target="_blank" class="resource-card" id="soundcloud-card">
+                    <div class="resource-content-wrapper">
+                        <div class="resource-icon soundcloud-icon">
+                            <i class="fab fa-soundcloud"></i>
                         </div>
-                    </a>
-                    <a href="https://api.whatsapp.com/send?text=%D8%AD%D9%85%D8%A7%D8%B1%20%D8%A7%D9%84%D8%B4%D8%B9%D8%B1%D8%A7%D8%A1%0A%D8%A3%D8%B1%D8%AC%D9%88%D8%B2%D8%AA%D8%A7%D9%86%20%D9%84%D9%84%D8%B9%D9%84%D9%91%D8%A7%D9%85%D8%A9%20%D8%A7%D9%84%D8%AF%D9%83%D8%AA%D9%88%D8%B1%20%D8%B9%D8%A8%D8%AF%20%D8%A7%D9%84%D9%87%D8%A7%D8%AF%D9%8I%20%D8%AD%D9%85%D9%8A%D8%AA%D9%88%0Ahttps%3A//kmbenjel.github.io/hmittou" target="_blank" class="resource-card" id="whatsapp-card">
-                        <div class="resource-content-wrapper">
-                            <div class="resource-icon whatsapp-icon">
-                                <i class="fab fa-whatsapp"></i>
-                            </div>
-                            <div class="resource-info">
-                                <div class="resource-label">إرسال</div>
-                            </div>
+                        <div class="resource-info">
+                            <div class="resource-label">سماع</div>
                         </div>
-                    </a>
-                    <a href="hmittou.pdf" download class="resource-card" id="pdf-card">
-                        <div class="resource-content-wrapper">
-                            <div class="resource-icon pdf-icon">
-                                <i class="fas fa-file-pdf"></i>
-                            </div>
-                            <div class="resource-info">
-                                <div class="resource-label">بي دي إف</div>
-                            </div>
+                    </div>
+                </a>
+                <a href="https://api.whatsapp.com/send?text=%D8%AD%D9%85%D8%A7%D8%B1%20%D8%A7%D9%84%D8%B4%D8%B9%D8%B1%D8%A7%D8%A1%0A%D8%A3%D8%B1%D8%AC%D9%88%D8%B2%D8%AA%D8%A7%D9%86%20%D9%84%D9%84%D8%B9%D9%84%D9%91%D8%A7%D9%85%D8%A9%20%D8%A7%D9%84%D8%AF%D9%83%D8%AA%D9%88%D8%B1%20%D8%B9%D8%A8%D8%AF%20%D8%A7%D9%84%D9%87%D8%A7%D8%AF%D9%8I%20%D8%AD%D9%85%D9%8A%D8%AA%D9%88%0Ahttps%3A//kmbenjel.github.io/hmittou" target="_blank" class="resource-card" id="whatsapp-card">
+                    <div class="resource-content-wrapper">
+                        <div class="resource-icon whatsapp-icon">
+                            <i class="fab fa-whatsapp"></i>
                         </div>
-                    </a>
-                </div>
+                        <div class="resource-info">
+                            <div class="resource-label">إرسال</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="hmittou.pdf" download class="resource-card" id="pdf-card">
+                    <div class="resource-content-wrapper">
+                        <div class="resource-icon pdf-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="resource-info">
+                            <div class="resource-label">بي دي إف</div>
+                        </div>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
@@ -1370,77 +1384,98 @@
 
         // ── Kashida (Tatweel) Stretching ──────────────────────────────────────
         // Arabic left-joining letters: those that connect to the following letter
-        const KASHIDA_JOINERS = /[بتثجحخسشصضطظعغفقكلمنهيئؤى][ً-ٰٟ]*/g;
+        // We include U+0640 (Tatweel 'ـ') in KASHIDA_JOINERS so that original tatweels can be extended.
+        const KASHIDA_JOINERS = /[بتثجحخسشصضطظعغفقكلمنهيئـ][ً-ٰٟ]*/g;
         const TATWEEL = 'ـ';
 
-        function applyKashida() {
-            const bayts = document.querySelectorAll('.bayt');
-            if (!bayts.length) return;
-
-            const verses = document.querySelectorAll('.verse');
-            const cs = getComputedStyle(verses[0]);
-            const ruler = document.createElement('span');
-            Object.assign(ruler.style, {
-                position: 'fixed', top: '-9999px', left: '-9999px',
-                visibility: 'hidden', whiteSpace: 'nowrap',
-                fontFamily: cs.fontFamily, fontSize: cs.fontSize,
-                fontWeight: cs.fontWeight, direction: 'rtl'
-            });
-            document.body.appendChild(ruler);
-
-            bayts.forEach(bayt => {
-                const shatrs = bayt.querySelectorAll('.verse');
-                if (shatrs.length !== 2) return;
-                
-                const s1 = shatrs[0];
-                const s2 = shatrs[1];
-                
-                if (!s1.dataset.orig) s1.dataset.orig = s1.textContent;
-                if (!s2.dataset.orig) s2.dataset.orig = s2.textContent;
-                
-                const orig1 = s1.dataset.orig;
-                const orig2 = s2.dataset.orig;
-                
-                ruler.textContent = orig1;
-                const w1 = ruler.getBoundingClientRect().width;
-                
-                ruler.textContent = orig2;
-                const w2 = ruler.getBoundingClientRect().width;
-                
-                const targetW = Math.max(w1, w2);
-                
-                stretchShatr(s1, orig1, targetW, ruler);
-                stretchShatr(s2, orig2, targetW, ruler);
-            });
-
-            document.body.removeChild(ruler);
+        // Helper to check if a matched position is inside the 'لا' ligature
+        function isInsideLa(orig, matchIndex, p) {
+            if (orig[matchIndex] !== 'ل') return false;
+            const diacritics = /[\u064B-\u065F\u0670\u0640]/;
+            let i = p;
+            while (i < orig.length && diacritics.test(orig[i])) {
+                i++;
+            }
+            if (i < orig.length) {
+                const nextChar = orig[i];
+                if (['ا', 'أ', 'إ', 'آ'].includes(nextChar)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
-        function stretchShatr(el, orig, targetW, ruler) {
-            el.textContent = orig;
-            ruler.textContent = orig;
-            let currentW = ruler.getBoundingClientRect().width;
+        // Helper to check if a position is between the last two letters of any word
+        function isBeforeLastLetter(orig, p) {
+            const diacritics = /[\u064B-\u065F\u0670\u0640]/;
+            let i = p;
+            while (i < orig.length && diacritics.test(orig[i])) {
+                i++;
+            }
+            if (i === orig.length || orig[i] === ' ') return true; // Already past the word end
             
-            if (currentW >= targetW - 3) return; // Already close enough
+            // i is the index of the first letter after p.
+            // Let's check if this letter 'i' is the last letter of the word.
+            let j = i + 1;
+            while (j < orig.length && diacritics.test(orig[j])) {
+                j++;
+            }
+            if (j === orig.length || orig[j] === ' ') {
+                // Yes! There are no more letters in this word after i.
+                // So i is the last letter of the word, meaning p is between the last two letters!
+                return true;
+            }
+            return false;
+        }
+
+        function getPossibleStretches(orig, isDesktop, ruler) {
+            const KASHIDA_JOINERS = /[بتثجحخسشصضطظعغفقكلمنهيئـ][ً-ٰٟ]*/g;
+            const TATWEEL = 'ـ';
             
-            // Find all valid insertion positions
+            // Find all valid positions
             const positions = [];
             KASHIDA_JOINERS.lastIndex = 0;
             let m;
+            const lastSpace = orig.lastIndexOf(' ');
+            const lastWord = lastSpace === -1 ? orig : orig.slice(lastSpace + 1);
+
             while ((m = KASHIDA_JOINERS.exec(orig)) !== null) {
                 const p = m.index + m[0].length;
-                if (p < orig.length && orig[p] !== ' ') positions.push(p);
+                if (p >= orig.length || orig[p] === ' ') continue;
+                if (isInsideLa(orig, m.index, p)) continue;
+                if (isBeforeLastLetter(orig, p)) continue;
+                // Rule 3: No tatweel inside the last word of any shatr (unless it is an enjambment tatweel word)
+                if (p > lastSpace && !lastWord.includes('ـ')) continue;
+                
+                // Prefix laam check
+                if (orig[m.index] === 'ل') {
+                    const lastSpaceBefore = orig.lastIndexOf(' ', m.index);
+                    const wordStart = lastSpaceBefore === -1 ? 0 : lastSpaceBefore + 1;
+                    const wordPrefix = orig.slice(wordStart, m.index + 1);
+                    const cleanPrefix = wordPrefix.replace(/[\u064B-\u065F\u0670\u0640]/g, '');
+                    const blockedPrefixes = ['ل', 'ول', 'فل', 'بل', 'كل', 'ال', 'لل', 'وال', 'ولل', 'فال', 'فلل', 'بال', 'بلل', 'كال', 'كلل'];
+                    if (blockedPrefixes.includes(cleanPrefix)) {
+                        continue;
+                    }
+                }
+                positions.push(p);
             }
             
-            if (!positions.length) return;
+            const results = [];
+            // State 0: natural width
+            ruler.textContent = orig;
+            results.push({
+                text: orig,
+                width: ruler.getBoundingClientRect().width,
+                tatweels: 0
+            });
             
-            // Incrementally add tatweels and measure
+            if (positions.length === 0) return results;
+            
             let counts = new Array(positions.length).fill(0);
-            let bestText = orig;
-            let bestW = currentW;
+            const maxTatweels = isDesktop ? 36 : 30;
             
-            // Max rounds to prevent infinite loops (max 30 tatweels)
-            for (let round = 0; round < 30; round++) {
+            for (let round = 0; round < maxTatweels; round++) {
                 counts[round % positions.length]++;
                 
                 let out = '', prev = 0;
@@ -1451,25 +1486,142 @@
                 out += orig.slice(prev);
                 
                 ruler.textContent = out;
-                let newW = ruler.getBoundingClientRect().width;
-                
-                if (newW >= targetW) {
-                    // Decide if being slightly shorter was closer to target than slightly longer
-                    const overshot = newW - targetW;
-                    const undershot = targetW - bestW;
-                    if (undershot < overshot && bestW > currentW) {
-                        el.textContent = bestText;
-                    } else {
-                        el.textContent = out;
-                    }
-                    return;
-                }
-                
-                bestText = out;
-                bestW = newW;
+                results.push({
+                    text: out,
+                    width: ruler.getBoundingClientRect().width,
+                    tatweels: round + 1
+                });
             }
             
-            el.textContent = bestText;
+            return results;
+        }
+
+        function applyKashida() {
+            const bayts = document.querySelectorAll('.bayt');
+            if (!bayts.length) return;
+
+            const verses = document.querySelectorAll('.verse');
+            // Clear any lingering spacing styles from the DOM elements
+            verses.forEach(v => {
+                v.style.wordSpacing = '';
+                v.style.letterSpacing = '';
+            });
+
+            const cs = getComputedStyle(verses[0]);
+
+            const ruler = document.createElement('span');
+            Object.assign(ruler.style, {
+                position: 'fixed', top: '-9999px', left: '-9999px',
+                visibility: 'hidden', whiteSpace: 'nowrap',
+                fontFamily: cs.fontFamily, fontSize: cs.fontSize,
+                fontWeight: cs.fontWeight, direction: 'rtl'
+            });
+            document.body.appendChild(ruler);
+
+            const isDesktop = window.innerWidth >= 680;
+
+            // 1. First pass: restore original text, measure all natural widths, and find the global maximum shatr width
+            let maxW = 0;
+            bayts.forEach(bayt => {
+                const shatrs = bayt.querySelectorAll('.verse');
+                if (shatrs.length !== 2) return;
+                
+                if (!shatrs[0].dataset.orig) shatrs[0].dataset.orig = shatrs[0].textContent;
+                if (!shatrs[1].dataset.orig) shatrs[1].dataset.orig = shatrs[1].textContent;
+                
+                const orig1 = shatrs[0].dataset.orig;
+                const orig2 = shatrs[1].dataset.orig;
+                
+                // Restore to orig so we measure the true natural width
+                shatrs[0].textContent = orig1;
+                shatrs[1].textContent = orig2;
+                
+                ruler.textContent = orig1;
+                const w1 = ruler.getBoundingClientRect().width;
+                
+                ruler.textContent = orig2;
+                const w2 = ruler.getBoundingClientRect().width;
+                
+                maxW = Math.max(maxW, w1, w2);
+            });
+
+            // 2. Second pass: stretch both shatrs of all bayts towards the dynamic targets
+            const thresholdW = maxW * 0.88; // Wise threshold to identify small bayts
+            
+            bayts.forEach(bayt => {
+                const shatrs = bayt.querySelectorAll('.verse');
+                if (shatrs.length !== 2) return;
+                
+                const s1 = shatrs[0];
+                const s2 = shatrs[1];
+                const orig1 = s1.dataset.orig;
+                const orig2 = s2.dataset.orig;
+                
+                // Clear any previous spacing adjustments
+                s1.style.wordSpacing = '';
+                s1.style.letterSpacing = '';
+                s2.style.wordSpacing = '';
+                s2.style.letterSpacing = '';
+                
+                // Find natural widths
+                ruler.textContent = orig1;
+                const w1 = ruler.getBoundingClientRect().width;
+                ruler.textContent = orig2;
+                const w2 = ruler.getBoundingClientRect().width;
+                
+                let targetW = Math.max(w1, w2);
+                if (isDesktop) {
+                    // On desktop, dynamic threshold extension for small bayts
+                    if (targetW < thresholdW) {
+                        const isVeryPoor = targetW < maxW * 0.75;
+                        const extension = isVeryPoor ? 100 : 80;
+                        targetW = Math.min(thresholdW, targetW + extension);
+                    }
+                }
+                
+                // Generate all possible stretched states and their widths
+                const stretches1 = getPossibleStretches(orig1, isDesktop, ruler);
+                const stretches2 = getPossibleStretches(orig2, isDesktop, ruler);
+                
+                let bestPair = null;
+                let bestScore = Infinity;
+                
+                for (let i = 0; i < stretches1.length; i++) {
+                    const st1 = stretches1[i];
+                    for (let j = 0; j < stretches2.length; j++) {
+                        const st2 = stretches2[j];
+                        
+                        const widthDiff = Math.abs(st1.width - st2.width);
+                        const avgW = (st1.width + st2.width) / 2;
+                        
+                        let targetPenalty = 0;
+                        if (avgW < targetW) {
+                            targetPenalty = (targetW - avgW) * 0.5;
+                        } else {
+                            targetPenalty = (avgW - targetW) * 0.15;
+                        }
+                        
+                        // Total score: heavily weight uniformity (widthDiff), with target guidance
+                        const score = widthDiff * 8.0 + targetPenalty;
+                        
+                        if (score < bestScore) {
+                            bestScore = score;
+                            bestPair = { st1, st2 };
+                        }
+                    }
+                }
+                
+                // Set the best texts!
+                if (bestPair) {
+                    s1.textContent = bestPair.st1.text;
+                    s2.textContent = bestPair.st2.text;
+                } else {
+                    s1.textContent = orig1;
+                    s2.textContent = orig2;
+                }
+            });
+
+            document.body.removeChild(ruler);
         }
 
         function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
@@ -1505,8 +1657,10 @@
             document.getElementById('progressBar').style.width = scrolled + '%';
         });
 
-        // Run kashida after fonts are ready, and on resize
+        // Run kashida after fonts are ready, on load, and immediately to ensure it always executes
         document.fonts.ready.then(applyKashida);
+        window.addEventListener('load', applyKashida);
+        applyKashida();
         let _kTimer;
         window.addEventListener('resize', () => { clearTimeout(_kTimer); _kTimer = setTimeout(applyKashida, 250); });
 
