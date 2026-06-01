@@ -1431,7 +1431,7 @@
             return false;
         }
 
-        function getPossibleStretches(orig, isDesktop, ruler) {
+        function getPossibleStretches(orig, isDesktop, naturalWidth, tatweelWidth) {
             const KASHIDA_JOINERS = /[بتثجحخسشصضطظعغفقكلمنهيئـ][ً-ٰٟ]*/g;
             const TATWEEL = 'ـ';
             
@@ -1466,10 +1466,9 @@
             
             const results = [];
             // State 0: natural width
-            ruler.textContent = orig;
             results.push({
                 text: orig,
-                width: ruler.getBoundingClientRect().width,
+                width: naturalWidth,
                 tatweels: 0
             });
             
@@ -1488,10 +1487,9 @@
                 }
                 out += orig.slice(prev);
                 
-                ruler.textContent = out;
                 results.push({
                     text: out,
-                    width: ruler.getBoundingClientRect().width,
+                    width: naturalWidth + (round + 1) * tatweelWidth,
                     tatweels: round + 1
                 });
             }
@@ -1523,8 +1521,17 @@
 
             const isDesktop = window.innerWidth >= 680;
 
-            // 1. First pass: restore original text, measure all natural widths, and find the global maximum shatr width
+            // Measure the width of a single tatweel character under current styles.
+            // We use 50 repetitions to achieve extremely precise subpixel decimal resolution.
+            ruler.textContent = TATWEEL.repeat(50);
+            const tatweelWidth = ruler.getBoundingClientRect().width / 50;
+
+            // 1. First pass: Measure all original natural widths using the ruler
+            // We also initialize the dataset.orig to preserve the raw poetical text.
+            // Note: We do NOT write to the actual DOM elements in this pass to prevent layout thrashing!
             let maxW = 0;
+            const baytData = [];
+
             bayts.forEach(bayt => {
                 const shatrs = bayt.querySelectorAll('.verse');
                 if (shatrs.length !== 2) return;
@@ -1535,10 +1542,6 @@
                 const orig1 = shatrs[0].dataset.orig;
                 const orig2 = shatrs[1].dataset.orig;
                 
-                // Restore to orig so we measure the true natural width
-                shatrs[0].textContent = orig1;
-                shatrs[1].textContent = orig2;
-                
                 ruler.textContent = orig1;
                 const w1 = ruler.getBoundingClientRect().width;
                 
@@ -1546,31 +1549,22 @@
                 const w2 = ruler.getBoundingClientRect().width;
                 
                 maxW = Math.max(maxW, w1, w2);
+
+                baytData.push({
+                    s1: shatrs[0],
+                    s2: shatrs[1],
+                    orig1: orig1,
+                    orig2: orig2,
+                    w1: w1,
+                    w2: w2
+                });
             });
 
-            // 2. Second pass: stretch both shatrs of all bayts towards the dynamic targets
+            // 2. Second pass: Calculate optimal stretched text in-memory and write results batch-wise
             const thresholdW = maxW * 0.88; // Wise threshold to identify small bayts
             
-            bayts.forEach(bayt => {
-                const shatrs = bayt.querySelectorAll('.verse');
-                if (shatrs.length !== 2) return;
-                
-                const s1 = shatrs[0];
-                const s2 = shatrs[1];
-                const orig1 = s1.dataset.orig;
-                const orig2 = s2.dataset.orig;
-                
-                // Clear any previous spacing adjustments
-                s1.style.wordSpacing = '';
-                s1.style.letterSpacing = '';
-                s2.style.wordSpacing = '';
-                s2.style.letterSpacing = '';
-                
-                // Find natural widths
-                ruler.textContent = orig1;
-                const w1 = ruler.getBoundingClientRect().width;
-                ruler.textContent = orig2;
-                const w2 = ruler.getBoundingClientRect().width;
+            baytData.forEach(data => {
+                const { s1, s2, orig1, orig2, w1, w2 } = data;
                 
                 let targetW = Math.max(w1, w2);
                 if (isDesktop) {
@@ -1582,9 +1576,9 @@
                     }
                 }
                 
-                // Generate all possible stretched states and their widths
-                const stretches1 = getPossibleStretches(orig1, isDesktop, ruler);
-                const stretches2 = getPossibleStretches(orig2, isDesktop, ruler);
+                // Generate all possible stretched states and their widths purely in-memory!
+                const stretches1 = getPossibleStretches(orig1, isDesktop, w1, tatweelWidth);
+                const stretches2 = getPossibleStretches(orig2, isDesktop, w2, tatweelWidth);
                 
                 let bestPair = null;
                 let bestScore = Infinity;
@@ -1614,7 +1608,7 @@
                     }
                 }
                 
-                // Set the best texts!
+                // Set the best texts! (DOM writes happen here, batched per verse, triggering only 1 reflow globally)
                 if (bestPair) {
                     s1.textContent = bestPair.st1.text;
                     s2.textContent = bestPair.st2.text;
