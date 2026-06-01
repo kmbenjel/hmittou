@@ -30,8 +30,10 @@
         body.dark-mode { --bg-color: #121212; --text-color: #d0d0d0; --title-color: #fff; --accent-color: #777; --card-bg: #1c1c1e; }
         body { font-family: 'Amiri', serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; text-align: center; transition: background-color 0.3s, color 0.3s; }
         /* By default (on mobile), hide all desktop floating controls */
-        .controls, .nav-controls, .left-controls {
-            display: none !important;
+        @media (max-width: 679px) {
+            .controls, .nav-controls, .left-controls {
+                display: none !important;
+            }
         }
 
         /* ── Bottom Film Navigation Dock (Mobile Only) ── */
@@ -115,6 +117,9 @@
                 body.dark-mode .dock-btn:hover {
                     background: rgba(255, 255, 255, 0.08);
                 }
+            }
+            footer {
+                padding: 20px 0 90px 0;
             }
         }
 
@@ -321,7 +326,7 @@
             .resource-info { margin-right: 0; margin-top: 0.8rem; align-items: center; text-align: center; }
         }
  
-        footer { width: 100%; padding: 20px 0 90px 0; text-align: center; color: var(--accent-color); border-top: 1px solid #eee; margin-top: 10px; transition: border-color 0.3s; }
+        footer { width: 100%; padding: 20px 0; text-align: center; color: var(--accent-color); border-top: 1px solid #eee; margin-top: 10px; transition: border-color 0.3s; }
         body.dark-mode footer { border-top-color: rgba(255, 255, 255, 0.08); }
  
         @media print {
