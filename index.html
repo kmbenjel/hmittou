@@ -1956,6 +1956,17 @@
             }
         }
 
+        function updateWhatsappLink() {
+            const whatsappCard = document.getElementById('whatsapp-card');
+            if (whatsappCard) {
+                const text = `*حمار الشعراء*
+رجز للعلّامة عبد الهادي حميتو رحمه الله!
+قراءة وضبط: خالد بنجلّون
+🔗 https://benjelloun.dev/hmittou`;
+                whatsappCard.setAttribute('href', 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text));
+            }
+        }
+
         function scrollToSound() {
             document.getElementById('soundcloud-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
             highlightResource('soundcloud-card');
@@ -1986,10 +1997,11 @@
         });
 
         // Run kashida and update PDF links after fonts are ready, on load, and immediately
-        document.fonts.ready.then(() => { applyKashida(); updatePdfLink(); });
-        window.addEventListener('load', () => { applyKashida(); updatePdfLink(); });
+        document.fonts.ready.then(() => { applyKashida(); updatePdfLink(); updateWhatsappLink(); });
+        window.addEventListener('load', () => { applyKashida(); updatePdfLink(); updateWhatsappLink(); });
         applyKashida();
         updatePdfLink();
+        updateWhatsappLink();
         let _kTimer;
         window.addEventListener('resize', () => {
             clearTimeout(_kTimer);
