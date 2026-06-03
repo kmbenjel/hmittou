@@ -17,7 +17,17 @@ Simply serve `index.html` via any local HTTP server:
 python3 -m http.server 8000
 ```
 
-To generate the PDFs using headless Chrome:
+To stamp build-time metadata dates before deploying:
 ```bash
-python3 scripts/generate_pdfs.py # Assuming a generation script is present
+python3 scripts/stamp_metadata_dates.py
+```
+
+Install PDF generation dependencies once:
+```bash
+npm install
+```
+
+To generate the PDFs using headless Chrome via Puppeteer:
+```bash
+python3 scripts/generate_pdfs.py
 ```

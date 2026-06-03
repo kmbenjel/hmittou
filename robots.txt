@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /hmittou/
+
+Sitemap: https://benjelloun.dev/hmittou/sitemap.xml
