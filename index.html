@@ -396,6 +396,7 @@
             .bayt { page-break-inside: avoid; break-inside: avoid; position: relative; }
             .verse { font-family: 'Amiri', serif !important; }
             .signature { page-break-inside: avoid; break-inside: avoid; }
+            .screen-poem-gap { display: none !important; }
 
             /* Keep original media links and credit in PDFs; hide only the generated timestamp. */
             .resource-section {
@@ -457,12 +458,12 @@
         @media print {
             body.print-mobile { font-size: 16pt; }
             body.print-mobile .container { padding: 0 !important; }
-            body.print-mobile .poem-section { width: 100%; margin: 0; padding: 0; }
+            body.print-mobile .poem-section { width: fit-content; max-width: 100%; margin: 0 auto; padding: 0 12pt; box-sizing: border-box; }
             body.print-mobile .title { font-size: 28pt; margin: 8pt 0 14pt 0; text-align: center; }
             body.print-mobile .subtitle { font-size: 18pt; margin-top: 5pt; margin-bottom: 15pt; }
-            body.print-mobile .bayt { display: block !important; margin: 0 0 14pt 0 !important; padding: 0 24pt 0 24pt !important; box-sizing: border-box !important; position: relative; width: 100% !important; }
-            body.print-mobile .bayt::before { content: counter(bayt-num); position: absolute; right: 2pt; top: 6pt; font-size: 9pt; color: #888; opacity: 0.7; font-family: 'Amiri', serif; width: 18pt; text-align: center; }
-            body.print-mobile .verse { font-size: 20pt !important; line-height: 1.5 !important; text-align: center !important; white-space: normal !important; width: 100% !important; display: block !important; margin: 0 auto !important; }
+            body.print-mobile .bayt { display: flex !important; flex-direction: column !important; align-items: center !important; gap: 3pt !important; margin: 0 0 18pt 0 !important; padding: 3pt 8pt !important; box-sizing: border-box !important; position: relative; width: auto !important; max-width: 100% !important; }
+            body.print-mobile .bayt::before { content: counter(bayt-num); position: absolute; right: -10pt; top: 50%; transform: translateY(-50%); font-size: 8pt; color: #888; opacity: 0.7; font-family: 'Amiri', serif; width: 12pt; text-align: center; }
+            body.print-mobile .verse { font-size: 17pt !important; line-height: 1.75 !important; text-align: center !important; white-space: nowrap !important; width: auto !important; max-width: 100% !important; display: block !important; margin: 0 auto !important; }
             body.print-mobile .verse + .verse { margin-top: 4pt !important; }
             body.print-mobile .resource-section { margin-top: 18pt !important; margin-bottom: 8pt !important; padding: 8pt 0 !important; }
             body.print-mobile .resource-grid { display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; justify-content: center !important; align-items: stretch !important; gap: 5pt !important; margin: 0 !important; }
@@ -484,8 +485,15 @@
             
             body.print-desktop .bayt { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 30pt !important; width: 100% !important; margin: 0 0 25pt 0 !important; padding: 0 45pt 0 45pt !important; box-sizing: border-box !important; position: relative; }
             body.print-desktop .bayt::before { content: counter(bayt-num); position: absolute; right: 4pt; top: 50%; transform: translateY(-50%); width: 24pt; text-align: right; color: #888; opacity: 0.75; font-size: 10pt; font-family: 'Amiri', serif; }
-            body.print-desktop .verse { font-size: 16pt !important; line-height: 1.8 !important; white-space: normal !important; width: 100% !important; display: block !important; box-sizing: border-box !important; }
+            body.print-desktop .verse { font-size: 16pt !important; line-height: 1.95 !important; white-space: normal !important; width: 100% !important; display: block !important; box-sizing: border-box !important; }
             body.print-desktop .resource-grid { display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; justify-content: center !important; gap: 20px !important; margin: 0 !important; }
+            body.print-desktop .poem-section:first-of-type .bayt:nth-of-type(n+77):nth-of-type(-n+89) { margin-bottom: 21pt !important; }
+            body.print-desktop .poem-section:first-of-type .bayt:nth-of-type(12),
+            body.print-desktop .poem-section:first-of-type .bayt:nth-of-type(64),
+            body.print-desktop .poem-section:first-of-type .bayt:nth-of-type(90),
+            body.print-desktop .poem-section:first-of-type .bayt:nth-of-type(103),
+            body.print-desktop .poem-section:first-of-type .bayt:nth-of-type(116),
+            body.print-desktop .poem-section:first-of-type .bayt:nth-of-type(129) { page-break-before: always; break-before: page; }
         }
 
     </style>
@@ -493,11 +501,11 @@
         const printLayout = new URLSearchParams(window.location.search).get('print');
         if (printLayout === 'mobile') {
             const style = document.createElement('style');
-            style.innerHTML = `@page { size: 120mm 210mm portrait; margin: 12mm 8mm 7mm 8mm }`;
+            style.innerHTML = `@page { size: 120mm 210mm portrait; margin: 12mm 8mm 13mm 8mm }`;
             document.head.appendChild(style);
         } else if (printLayout === 'desktop') {
             const style = document.createElement('style');
-            style.innerHTML = `@page { size: A4 portrait; margin: 16mm 15mm 13mm 15mm }`;
+            style.innerHTML = `@page { size: A4 portrait; margin: 16mm 15mm 18mm 15mm }`;
             document.head.appendChild(style);
         }
     </script>
@@ -1204,7 +1212,7 @@
             </div>
         </div>
 
-        <div style="margin-top: 120px;"></div>
+        <div class="screen-poem-gap" style="margin-top: 120px;"></div>
         <div class="poem-section">
             <h2 class="title">
                 <span id="part2">حمار الشعراء</span>
