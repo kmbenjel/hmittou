@@ -460,11 +460,17 @@
             body.print-mobile .poem-section { width: 100%; margin: 0; padding: 0; }
             body.print-mobile .title { font-size: 28pt; margin: 8pt 0 14pt 0; text-align: center; }
             body.print-mobile .subtitle { font-size: 18pt; margin-top: 5pt; margin-bottom: 15pt; }
-            body.print-mobile .bayt { display: block !important; margin: 0 0 16pt 0 !important; padding: 0 24pt 0 24pt !important; box-sizing: border-box !important; position: relative; width: 100% !important; }
+            body.print-mobile .bayt { display: block !important; margin: 0 0 14pt 0 !important; padding: 0 24pt 0 24pt !important; box-sizing: border-box !important; position: relative; width: 100% !important; }
             body.print-mobile .bayt::before { content: counter(bayt-num); position: absolute; right: 2pt; top: 6pt; font-size: 9pt; color: #888; opacity: 0.7; font-family: 'Amiri', serif; width: 18pt; text-align: center; }
             body.print-mobile .verse { font-size: 20pt !important; line-height: 1.5 !important; text-align: center !important; white-space: normal !important; width: 100% !important; display: block !important; margin: 0 auto !important; }
-            body.print-mobile .verse + .verse { margin-top: 5pt !important; }
-            body.print-mobile .resource-grid { display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; justify-content: center !important; gap: 10px !important; margin: 0 !important; }
+            body.print-mobile .verse + .verse { margin-top: 4pt !important; }
+            body.print-mobile .resource-section { margin-top: 18pt !important; margin-bottom: 8pt !important; padding: 8pt 0 !important; }
+            body.print-mobile .resource-grid { display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; justify-content: center !important; align-items: stretch !important; gap: 5pt !important; margin: 0 !important; }
+            body.print-mobile .resource-card { flex: 0 1 31% !important; min-width: 0 !important; padding: 6pt 3pt !important; }
+            body.print-mobile .resource-content-wrapper { width: auto !important; flex-direction: column !important; align-items: center !important; text-align: center !important; }
+            body.print-mobile .resource-icon { width: 22pt !important; height: 22pt !important; font-size: 10pt !important; }
+            body.print-mobile .resource-info { margin: 4pt 0 0 0 !important; align-items: center !important; text-align: center !important; }
+            body.print-mobile .resource-label { font-size: 9pt !important; line-height: 1.1 !important; }
             /* Natural pagination will allow 5 bayts on the first page and perfectly fill the rest. */
         }
         /* ── Desktop print (side-by-side, portrait) ── */
