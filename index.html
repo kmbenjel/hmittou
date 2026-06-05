@@ -1694,7 +1694,7 @@
                         </div>
                     </div>
                 </a>
-                <a href="hmittou.pdf" target="_blank" rel="noopener noreferrer" class="resource-card" id="pdf-card">
+                <a href="hmittou.pdf" download="hmittou.pdf" class="resource-card" id="pdf-card">
                     <div class="resource-content-wrapper">
                         <div class="resource-icon pdf-icon">
                             <i aria-hidden="true" class="fas fa-file-pdf"></i>
@@ -2101,7 +2101,9 @@
         function updatePdfLink() {
             const pdfCard = document.getElementById('pdf-card');
             if (pdfCard) {
-                pdfCard.setAttribute('href', window.innerWidth >= 680 ? 'hmittou_desktop.pdf' : 'hmittou.pdf');
+                const pdfFile = window.innerWidth >= 680 ? 'hmittou_desktop.pdf' : 'hmittou.pdf';
+                pdfCard.setAttribute('href', pdfFile);
+                pdfCard.setAttribute('download', pdfFile);
             }
         }
 
