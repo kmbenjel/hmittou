@@ -284,3 +284,22 @@ To elevate the professional presentation, sharing utility, and editorial brandin
    * **The Result**: 
       - **`hmittou.pdf` (Mobile version)**: Formatted strictly as a single-column, portrait-oriented document where Sadr and 'Ajuz are vertically stacked and centered—perfectly replicating the mobile browsing experience, utilizing all vertical space beautifully (compiled into a **40-page** portrait manuscript).
       - **`hmittou_desktop.pdf` (Desktop version)**: Formatted strictly as a side-by-side two-column, portrait-oriented document styled exactly like the white kaseedah box card (compiled into a **29-page** premium portrait manuscript).
+
+---
+
+## 16. Text Corrections, Diacritics, and Punctuation Refinements (June 6, 2026)
+We applied a set of targeted text corrections to both Poem 1 and Poem 2, focusing on calligraphic spelling, diacritics (harakat), punctuation, and quotation marks:
+* **Poem 1, Bayt 4**: Added sukun to the Lam in `البحور` (`أَلَا تَرَاهُ فِي الْبُحُورِ خَامِلًا`).
+* **Poem 1, Bayt 25**: Adjusted punctuation in the first hemistich (`لَوْ شِئْتَ؛ قُلْتَ: مَا تَرَكْتَ ذِكْرَهُ`).
+* **Poem 1, Bayt 29**: Corrected spelling of `سَمَّتْنِي` to `سَمَّتْنِ` (`"أَنَا الَّذِي سَمَّتْنِ أُمِّي حَيْدَرَا"`).
+* **Poem 1, Bayt 55**: Corrected `حَادِي أَيْنُقٍ` to `حَادِ أَيْنُقٍ` (`مِنْ حَادِ أَيْنُقٍ بِهِ الْبِيدَ فَرَى`).
+* **Poem 1, Bayt 59**: Changed `كَرَى` to `كَرَا` and added an exclamation mark inside quotes (`"أَطْرِقْ كَرَا، إِنَّ النَّعَامَ فِي الْقُرَى!"`).
+* **Poem 1, Bayt 64**: Added hamza to the word `اَهْلِ` (`مِنْ أَهْلِ بَغْدَادَ وَ سُرَّ مَنْ يَرَى`).
+* **Poem 1, Bayt 68**: Changed `أَسِيرَا` to `أَسْيَرَا` (`مَكَانَةً وَصَارَ مِنْهُ أَسْيَرَا`).
+* **Poem 1, Bayt 132**: Added double quotes around the letter `رَا` (`رَقَّتْ وَرَاقَتْ فِي رَوِيِّ حَرْفِ "رَا"`).
+* **Poem 2, Bayt 88**: Placed fatha on the Daal and shadda/fatha on the Baa in the word `دبّجته` (`وَقَائِلٌ خِتَامَ مَا دَبَّجْتُهُ`).
+
+All changes were successfully verified, and the corresponding print layouts were regenerated to yield the updated PDF documents:
+* **Mobile PDF**: [hmittou.pdf](file:///home/k/projects/hmittou/hmittou.pdf)
+* **Desktop PDF**: [hmittou_desktop.pdf](file:///home/k/projects/hmittou/hmittou_desktop.pdf)
+
