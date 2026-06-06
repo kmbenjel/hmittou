@@ -22,7 +22,7 @@ const EXPORTS = [
     width: '120mm',
     height: '210mm',
     margin: { top: '12mm', right: '8mm', bottom: '13mm', left: '8mm' },
-    pageNumberSize: '10pt',
+    pageNumberSize: '8pt',
     viewport: { width: 430, height: 820 },
   },
   {
