@@ -79,15 +79,20 @@ def stamp_sitemap(sitemap: Path = SITEMAP, date: dt.date | None = None) -> bool:
     root = tree.getroot()
     namespace = {"sm": SITEMAP_NS}
     changed = False
+    found = False
 
     for url in root.findall("sm:url", namespace):
         loc = url.find("sm:loc", namespace)
         lastmod = url.find("sm:lastmod", namespace)
         if loc is None or lastmod is None or loc.text != PAGE_URL:
             continue
+        found = True
         if lastmod.text != iso_date:
             lastmod.text = iso_date
             changed = True
+
+    if not found:
+        raise RuntimeError(f"Expected sitemap URL: {PAGE_URL}")
 
     if not changed:
         return False
