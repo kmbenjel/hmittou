@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
 SITEMAP = ROOT / "sitemap.xml"
 SITEMAP_NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
+IMAGE_SITEMAP_NS = "http://www.google.com/schemas/sitemap-image/1.1"
 PAGE_URL = "https://benjelloun.dev/hmittou/"
 MONTHS_AR_MA = [
     "يناير",
@@ -75,6 +76,7 @@ def stamp_sitemap(sitemap: Path = SITEMAP, date: dt.date | None = None) -> bool:
     iso_date = date.isoformat()
 
     ET.register_namespace("", SITEMAP_NS)
+    ET.register_namespace("image", IMAGE_SITEMAP_NS)
     tree = ET.parse(sitemap)
     root = tree.getroot()
     namespace = {"sm": SITEMAP_NS}
