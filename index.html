@@ -2268,6 +2268,15 @@
             e.clipboardData.setData('text/plain', cleanedText);
             e.preventDefault();
         });
+
+        // Register Service Worker for PWA offline support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((reg) => console.log('Service Worker registered:', reg.scope))
+                    .catch((err) => console.error('Service Worker registration failed:', err));
+            });
+        }
     </script>
     <div class="bottom-dock">
         <!-- Settings Group (Right in RTL, first in markup) -->
