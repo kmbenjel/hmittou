@@ -17,6 +17,11 @@ Simply serve `index.html` via any local HTTP server:
 python3 -m http.server 8000
 ```
 
+## Caption Archive
+The repository includes the published Arabic YouTube subtitle source at
+`data/hmittou-youtube-ar.srt`. See `data/README.md` for why it is kept and how
+to reuse it when the video or poem text changes.
+
 To stamp build-time metadata dates before deploying:
 ```bash
 python3 scripts/stamp_metadata_dates.py
