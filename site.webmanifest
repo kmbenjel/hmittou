@@ -1,0 +1,30 @@
+{
+  "name": "حمار الشعراء",
+  "short_name": "حمار الشعراء",
+  "description": "رجز للعلّامة د. عبد الهادي حميتو رحمه الله.",
+  "lang": "ar-MA",
+  "dir": "rtl",
+  "start_url": "/hmittou/",
+  "scope": "/hmittou/",
+  "display": "standalone",
+  "background_color": "#0d1f23",
+  "theme_color": "#0d1f23",
+  "icons": [
+    {
+      "src": "/hmittou/assets/hmittou-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/hmittou/assets/hmittou-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/hmittou/assets/hmittou-icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
