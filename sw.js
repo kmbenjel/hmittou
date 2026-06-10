@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hmittou-cache-v1';
+const CACHE_NAME = 'hmittou-cache-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -16,7 +16,8 @@ const ASSETS = [
   './assets/favicon.svg',
   './assets/hmittou-icon-192.png',
   './assets/hmittou-icon-512.png',
-  './assets/hmittou-icon-maskable-512.png'
+  './assets/hmittou-icon-maskable-512.png',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'
 ];
 
 // Install Service Worker and cache core assets

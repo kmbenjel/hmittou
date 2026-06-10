@@ -26,5 +26,8 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "categories": ["books", "education"],
+  "orientation": "portrait",
+  "display_override": ["standalone", "minimal-ui"]
 }
