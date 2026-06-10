@@ -303,3 +303,23 @@ All changes were successfully verified, and the corresponding print layouts were
 * **Mobile PDF**: [hmittou.pdf](file:///home/k/projects/hmittou/hmittou.pdf)
 * **Desktop PDF**: [hmittou_desktop.pdf](file:///home/k/projects/hmittou/hmittou_desktop.pdf)
 
+---
+
+## 17. Device Responsiveness, Zoom Sizing, and Rotation Layout Optimizations (June 10, 2026)
+To address layout breaks on rotated devices, over-zoomed font sizing, and overflowing screen space in mobile portrait mode, we introduced several premium responsive design upgrades:
+
+1. **Adaptive Bottom Dock Sizing and Accessibility Touch Targets**:
+   - **Multi-tiered Breakpoints**: Scaled `--dock-btn-size` and `--dock-gap` dynamically based on portrait device widths to fit exactly on standard phone viewports (e.g. `32px` size/`3px` gap on screens `<= 375px`, `30px`/`2.5px` on `<= 360px`, and `26px`/`1.5px` on `<= 320px`).
+   - **Guaranteed Circles**: Appended `flex-shrink: 0` to both `.dock-btn` and `.dock-group` to guarantee buttons remain perfectly round and do not crush under extreme scaling conditions.
+   - **Accessibility Compliance (WCAG targets)**: Added a dynamic absolute `::after` pseudo-element expanding the interactive target area to exactly `44px` on smaller screens without deforming the visual footprint.
+
+2. **Overlapping Controls Fix in Landscape & Short viewports**:
+   - **Compact Layouts**: Designed a specific height-restricted media query (`@media (min-width: 680px) and (max-height: 600px)`) targeting mobile landscape and low-height viewports.
+   - **Anti-overlap Coordinates**: Shrunk buttons to `36px` and spacing gaps to `6px`, while resetting offsets (`top: 12px`, `bottom: 12px`, `right/left: max(12px, calc(50% - 24rem - 64px))`). This ensures controls maintain proximity to the central card on wide screens but never collide or overlap on landscape phones.
+
+3. **Fluid Viewport-Relative Font Clamping (Anti-Overflow)**:
+   - **Mobile Portrait Clamp**: Applied `clamp(0.9rem, var(--verse-font-size), 6.5vw)` to `.verse` elements to cap extreme user-selected font-zooming and prevent text clipping on standard mobile screens.
+   - **Desktop/Landscape Side-by-Side Clamp**: Applied `clamp(1rem, var(--verse-font-size), 3.2vw)` to the side-by-side verses to scale down the text dynamically relative to screen width, preventing text overlap or spillover.
+   - **Intermediate Styling (680px - 1023px)**: Overrode default large spacings for intermediate tablet and landscape phone sizes, adjusting base font size to `18px`, column padding to `2rem 2.2rem`, and gap to `1.8rem`.
+
+

@@ -202,10 +202,28 @@
             --dock-btn-size: 40px;
             --dock-gap: 6px;
         }
-        @media (max-width: 359px) {
+        @media (max-width: 679px) {
             :root {
-                --dock-btn-size: 36px;
-                --dock-gap: 4px;
+                --dock-btn-size: 38px;
+                --dock-gap: 5px;
+            }
+        }
+        @media (max-width: 420px) {
+            :root {
+                --dock-btn-size: 34px;
+                --dock-gap: 3.5px;
+            }
+        }
+        @media (max-width: 360px) {
+            :root {
+                --dock-btn-size: 30px;
+                --dock-gap: 2.5px;
+            }
+        }
+        @media (max-width: 320px) {
+            :root {
+                --dock-btn-size: 26px;
+                --dock-gap: 1.5px;
             }
         }
         .bottom-dock {
@@ -245,6 +263,7 @@
             .dock-group {
                 display: flex;
                 gap: var(--dock-gap);
+                flex-shrink: 0;
             }
             .dock-btn {
                 background: rgba(0, 0, 0, 0.025);
@@ -260,6 +279,17 @@
                 font-size: calc(var(--dock-btn-size) * 0.43);
                 transition: background-color 0.2s, transform 0.15s, opacity 0.2s;
                 opacity: 0.85;
+                position: relative;
+                flex-shrink: 0;
+            }
+            .dock-btn::after {
+                content: '';
+                position: absolute;
+                top: calc(-1 * (44px - var(--dock-btn-size)) / 2);
+                bottom: calc(-1 * (44px - var(--dock-btn-size)) / 2);
+                left: calc(-1 * (44px - var(--dock-btn-size)) / 2);
+                right: calc(-1 * (44px - var(--dock-btn-size)) / 2);
+                border-radius: 50%;
             }
             body.dark-mode .dock-btn {
                 background: rgba(255, 255, 255, 0.03);
@@ -363,6 +393,31 @@
                 transform: scale(0.95);
             }
         }
+        
+        /* ── Compact Floating Controls for Landscape & Short viewports ── */
+        @media (min-width: 680px) and (max-height: 600px) {
+            .controls, .nav-controls, .left-controls {
+                gap: 6px;
+            }
+            .control-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 15px;
+            }
+            .controls {
+                top: 12px;
+                right: max(12px, calc(50% - 24rem - 64px));
+            }
+            .nav-controls {
+                bottom: 12px;
+                right: max(12px, calc(50% - 24rem - 64px));
+            }
+            .left-controls {
+                bottom: 12px;
+                left: max(12px, calc(50% - 24rem - 64px));
+            }
+        }
+
         @keyframes titleEntrance {
             from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
@@ -398,7 +453,7 @@
         #progressBar { height: 100%; width: 0%; background: linear-gradient(90deg, #a0937a, #5c4f3a); transition: width 0.15s ease-out; will-change: width; }
         body.dark-mode #progressBar { background: linear-gradient(90deg, #6b5d4f, #d4c9b8); }
         
-        .verse { font-size: var(--verse-font-size); line-height: 1.8; white-space: nowrap; margin: 0; font-family: 'Amiri', serif; position: relative; text-align: center; }
+        .verse { font-size: clamp(0.9rem, var(--verse-font-size), 6.5vw); line-height: 1.8; white-space: nowrap; margin: 0; font-family: 'Amiri', serif; position: relative; text-align: center; }
         
         @keyframes gentlePulse {
             0%, 100% { opacity: 0.45; }
@@ -489,8 +544,23 @@
             .bayt::before { right: -3.5rem; width: 2.2rem; text-align: right; font-size: 0.9rem; opacity: 0.75; }
             .verse:first-child { text-align: left; }
             .verse:last-child { text-align: right; }
-            .verse { font-feature-settings: 'calt' 1; }
+            .verse { font-feature-settings: 'calt' 1; font-size: clamp(1rem, var(--verse-font-size), 3.2vw); }
             .poem-section > .title { margin-top: 0; }
+        }
+
+        /* ── Intermediate styling for tablets & landscape phones ── */
+        @media (min-width: 680px) and (max-width: 1023px) {
+            html { font-size: 18px; }
+            .poem-section {
+                padding: 2rem 2.2rem;
+            }
+            .bayt {
+                gap: 1.8rem;
+            }
+            .bayt::before {
+                right: -2rem;
+                width: 1.5rem;
+            }
         }
  
         /* Desktop side-by-side resources */
