@@ -317,9 +317,11 @@ To address layout breaks on rotated devices, over-zoomed font sizing, and overfl
    - **Compact Layouts**: Designed a specific height-restricted media query (`@media (min-width: 680px) and (max-height: 600px)`) targeting mobile landscape and low-height viewports.
    - **Anti-overlap Coordinates**: Shrunk buttons to `36px` and spacing gaps to `6px`, while resetting offsets (`top: 12px`, `bottom: 12px`, `right/left: max(12px, calc(50% - 24rem - 64px))`). This ensures controls maintain proximity to the central card on wide screens but never collide or overlap on landscape phones.
 
-3. **Fluid Viewport-Relative Font Clamping (Anti-Overflow)**:
+3. **Fluid Card-Relative Font Clamping and Grid Constraint (Anti-Overflow)**:
    - **Mobile Portrait Clamp**: Applied `clamp(0.9rem, var(--verse-font-size), 6.5vw)` to `.verse` elements to cap extreme user-selected font-zooming and prevent text clipping on standard mobile screens.
-   - **Desktop/Landscape Side-by-Side Clamp**: Applied `clamp(1rem, var(--verse-font-size), 3.2vw)` to the side-by-side verses to scale down the text dynamically relative to screen width, preventing text overlap or spillover.
-   - **Intermediate Styling (680px - 1023px)**: Overrode default large spacings for intermediate tablet and landscape phone sizes, adjusting base font size to `18px`, column padding to `2rem 2.2rem`, and gap to `1.8rem`.
+   - **Card-Relative Container Queries**: Configured `.poem-section` as a container (`container-type: inline-size`) and updated desktop/landscape font clamping to use container query units: `clamp(1rem, var(--verse-font-size), 4.2cqw)`. Sizing is now fully responsive to the card width rather than the screen viewport, preventing overflow.
+   - **Forced Grid Boundaries**: Set `.bayt` to use `grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)`. This prevents the columns from expanding beyond the card width if the text is long, guaranteeing that the grid never overflows and verse numbers always remain inside the white box.
+   - **Intermediate Styling (680px - 1023px)**: Overrode default large spacings for intermediate tablet and landscape phone sizes, adjusting base font size to `18px`, column padding to `2rem 3.5rem`, and gap to `1.8rem`, keeping numbers at `right: -2.2rem` (safely inside the card margin).
+
 
 
