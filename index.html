@@ -2191,15 +2191,36 @@
             if (!bayts.length) return;
 
             const verses = document.querySelectorAll('.verse');
-            
+            const isDesktop = window.innerWidth >= 680;
+
+            if (!isDesktop) {
+                // On mobile, verses are stacked vertically and do not require alignment.
+                // Clear any spacing styles and restore original text.
+                verses.forEach(v => {
+                    if (v.style.wordSpacing !== '') v.style.wordSpacing = '';
+                    if (v.style.letterSpacing !== '') v.style.letterSpacing = '';
+                    if (v.dataset.orig && v.textContent !== v.dataset.orig) {
+                        v.textContent = v.dataset.orig;
+                    }
+                });
+                return;
+            }
+
             // 1. Initialize original texts and reset styles (write batch)
+            // We only write if the value actually changed to avoid layout invalidation.
             verses.forEach(v => {
                 if (!v.dataset.orig) {
                     v.dataset.orig = v.textContent;
                 }
-                v.style.wordSpacing = '';
-                v.style.letterSpacing = '';
-                v.textContent = v.dataset.orig;
+                if (v.style.wordSpacing !== '') {
+                    v.style.wordSpacing = '';
+                }
+                if (v.style.letterSpacing !== '') {
+                    v.style.letterSpacing = '';
+                }
+                if (v.textContent !== v.dataset.orig) {
+                    v.textContent = v.dataset.orig;
+                }
             });
 
             // 2. Measure tatweel width (requires a temporary element and 1 reflow)
@@ -2215,8 +2236,6 @@
             ruler.textContent = TATWEEL.repeat(50);
             const tatweelWidth = ruler.getBoundingClientRect().width / 50;
             document.body.removeChild(ruler);
-
-            const isDesktop = window.innerWidth >= 680;
 
             // 3. Measure all original natural widths directly from the DOM (read batch)
             const baytData = [];
@@ -2234,41 +2253,61 @@
                 });
             });
 
-            // 4. Calculate optimal stretched text and apply to DOM synchronously
+            // 4. Calculate optimal stretched text and apply to DOM synchronously (write batch)
             baytData.forEach(data => {
                 const { s1, s2, orig1, orig2, w1, w2 } = data;
                 
                 if (w1 >= w2) {
-                    s1.textContent = orig1;
-                    s1.style.wordSpacing = '';
+                    if (s1.textContent !== orig1) {
+                        s1.textContent = orig1;
+                    }
+                    if (s1.style.wordSpacing !== '') {
+                        s1.style.wordSpacing = '';
+                    }
                     
                     const targetW = w1;
                     const bestSt = getOptimalStretch(orig2, isDesktop, w2, targetW, tatweelWidth);
                     
-                    s2.textContent = bestSt.text;
-                    if (isDesktop) {
-                        const deficit = targetW - bestSt.width;
-                        const spaces = (bestSt.text.match(/ /g) || []).length;
-                        if (spaces > 0 && deficit > 0 && deficit < tatweelWidth) {
-                            s2.style.wordSpacing = (deficit / spaces) + 'px';
-                        } else {
+                    if (s2.textContent !== bestSt.text) {
+                        s2.textContent = bestSt.text;
+                    }
+                    
+                    const deficit = targetW - bestSt.width;
+                    const spaces = (bestSt.text.match(/ /g) || []).length;
+                    if (spaces > 0 && deficit > 0 && deficit < tatweelWidth) {
+                        const newSpacing = (deficit / spaces) + 'px';
+                        if (s2.style.wordSpacing !== newSpacing) {
+                            s2.style.wordSpacing = newSpacing;
+                        }
+                    } else {
+                        if (s2.style.wordSpacing !== '') {
                             s2.style.wordSpacing = '';
                         }
                     }
                 } else {
-                    s2.textContent = orig2;
-                    s2.style.wordSpacing = '';
+                    if (s2.textContent !== orig2) {
+                        s2.textContent = orig2;
+                    }
+                    if (s2.style.wordSpacing !== '') {
+                        s2.style.wordSpacing = '';
+                    }
                     
                     const targetW = w2;
                     const bestSt = getOptimalStretch(orig1, isDesktop, w1, targetW, tatweelWidth);
                     
-                    s1.textContent = bestSt.text;
-                    if (isDesktop) {
-                        const deficit = targetW - bestSt.width;
-                        const spaces = (bestSt.text.match(/ /g) || []).length;
-                        if (spaces > 0 && deficit > 0 && deficit < tatweelWidth) {
-                            s1.style.wordSpacing = (deficit / spaces) + 'px';
-                        } else {
+                    if (s1.textContent !== bestSt.text) {
+                        s1.textContent = bestSt.text;
+                    }
+                    
+                    const deficit = targetW - bestSt.width;
+                    const spaces = (bestSt.text.match(/ /g) || []).length;
+                    if (spaces > 0 && deficit > 0 && deficit < tatweelWidth) {
+                        const newSpacing = (deficit / spaces) + 'px';
+                        if (s1.style.wordSpacing !== newSpacing) {
+                            s1.style.wordSpacing = newSpacing;
+                        }
+                    } else {
+                        if (s1.style.wordSpacing !== '') {
                             s1.style.wordSpacing = '';
                         }
                     }
