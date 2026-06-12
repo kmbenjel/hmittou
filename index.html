@@ -2180,7 +2180,6 @@
             // 1. First pass: Measure all original natural widths using the ruler
             // We also initialize the dataset.orig to preserve the raw poetical text.
             // Note: We do NOT write to the actual DOM elements in this pass to prevent layout thrashing!
-            let maxW = 0;
             const baytData = [];
 
             bayts.forEach(bayt => {
@@ -2199,8 +2198,6 @@
                 ruler.textContent = orig2;
                 const w2 = ruler.getBoundingClientRect().width;
                 
-                maxW = Math.max(maxW, w1, w2);
-
                 baytData.push({
                     s1: shatrs[0],
                     s2: shatrs[1],
@@ -2212,75 +2209,105 @@
             });
 
             // 2. Second pass: Calculate optimal stretched text in-memory and write results batch-wise
-            const thresholdW = maxW * 0.92; // Wise threshold to identify small bayts
-            
             baytData.forEach(data => {
                 const { s1, s2, orig1, orig2, w1, w2 } = data;
                 
-                let targetW = Math.max(w1, w2);
-                if (isDesktop) {
-                    // On desktop, dynamic threshold extension for small bayts
-                    if (targetW < thresholdW) {
-                        const isVeryPoor = targetW < maxW * 0.80;
-                        const extension = isVeryPoor ? 130 : 100;
-                        targetW = Math.min(thresholdW, targetW + extension);
-                    }
-                }
-                
-                // Generate all possible stretched states and their widths purely in-memory!
-                const stretches1 = getPossibleStretches(orig1, isDesktop, w1, tatweelWidth);
-                const stretches2 = getPossibleStretches(orig2, isDesktop, w2, tatweelWidth);
-                
-                let bestPair = null;
-                let bestScore = Infinity;
-                
-                for (let i = 0; i < stretches1.length; i++) {
-                    const st1 = stretches1[i];
-                    for (let j = 0; j < stretches2.length; j++) {
-                        const st2 = stretches2[j];
-                        
-                        const widthDiff = Math.abs(st1.width - st2.width);
-                        const avgW = (st1.width + st2.width) / 2;
-                        
-                        let targetPenalty = 0;
-                        if (avgW < targetW) {
-                            targetPenalty = (targetW - avgW) * 0.5;
+                if (w1 >= w2) {
+                    // s1 is major, s2 is minor
+                    s1.textContent = orig1;
+                    s1.style.wordSpacing = '';
+                    
+                    const targetW = w1;
+                    const stretches = getPossibleStretches(orig2, isDesktop, w2, tatweelWidth);
+                    
+                    let bestSt = stretches[0];
+                    let bestScore = Infinity;
+                    
+                    for (let i = 0; i < stretches.length; i++) {
+                        const st = stretches[i];
+                        const diff = targetW - st.width;
+                        let score;
+                        if (isDesktop) {
+                            const spaces = (st.text.match(/ /g) || []).length;
+                            if (spaces > 0) {
+                                if (diff >= 0 && diff < tatweelWidth) {
+                                    score = diff * 0.1;
+                                } else if (diff >= 0) {
+                                    score = diff * 1.0;
+                                } else {
+                                    score = (-diff) * 5.0;
+                                }
+                            } else {
+                                score = Math.abs(diff) * 2.0;
+                            }
                         } else {
-                            targetPenalty = (avgW - targetW) * 0.15;
+                            score = Math.abs(diff);
                         }
-                        
-                        // Total score: heavily weight uniformity (widthDiff), with target guidance
-                        const score = widthDiff * 8.0 + targetPenalty;
                         
                         if (score < bestScore) {
                             bestScore = score;
-                            bestPair = { st1, st2 };
+                            bestSt = st;
                         }
                     }
-                }
-                
-                // Set the best texts! (DOM writes happen here, batched per verse, triggering only 1 reflow globally)
-                if (bestPair) {
-                    s1.textContent = bestPair.st1.text;
-                    s2.textContent = bestPair.st2.text;
                     
+                    s2.textContent = bestSt.text;
                     if (isDesktop) {
-                        const deficit1 = targetW - bestPair.st1.width;
-                        const deficit2 = targetW - bestPair.st2.width;
-                        
-                        const spaces1 = (bestPair.st1.text.match(/ /g) || []).length;
-                        const spaces2 = (bestPair.st2.text.match(/ /g) || []).length;
-                        
-                        if (spaces1 > 0 && deficit1 > 0 && deficit1 < tatweelWidth) {
-                            s1.style.wordSpacing = (deficit1 / spaces1) + 'px';
-                        }
-                        if (spaces2 > 0 && deficit2 > 0 && deficit2 < tatweelWidth) {
-                            s2.style.wordSpacing = (deficit2 / spaces2) + 'px';
+                        const deficit = targetW - bestSt.width;
+                        const spaces = (bestSt.text.match(/ /g) || []).length;
+                        if (spaces > 0 && deficit > 0 && deficit < tatweelWidth) {
+                            s2.style.wordSpacing = (deficit / spaces) + 'px';
+                        } else {
+                            s2.style.wordSpacing = '';
                         }
                     }
                 } else {
-                    s1.textContent = orig1;
+                    // s2 is major, s1 is minor
                     s2.textContent = orig2;
+                    s2.style.wordSpacing = '';
+                    
+                    const targetW = w2;
+                    const stretches = getPossibleStretches(orig1, isDesktop, w1, tatweelWidth);
+                    
+                    let bestSt = stretches[0];
+                    let bestScore = Infinity;
+                    
+                    for (let i = 0; i < stretches.length; i++) {
+                        const st = stretches[i];
+                        const diff = targetW - st.width;
+                        let score;
+                        if (isDesktop) {
+                            const spaces = (st.text.match(/ /g) || []).length;
+                            if (spaces > 0) {
+                                if (diff >= 0 && diff < tatweelWidth) {
+                                    score = diff * 0.1;
+                                } else if (diff >= 0) {
+                                    score = diff * 1.0;
+                                } else {
+                                    score = (-diff) * 5.0;
+                                }
+                            } else {
+                                score = Math.abs(diff) * 2.0;
+                            }
+                        } else {
+                            score = Math.abs(diff);
+                        }
+                        
+                        if (score < bestScore) {
+                            bestScore = score;
+                            bestSt = st;
+                        }
+                    }
+                    
+                    s1.textContent = bestSt.text;
+                    if (isDesktop) {
+                        const deficit = targetW - bestSt.width;
+                        const spaces = (bestSt.text.match(/ /g) || []).length;
+                        if (spaces > 0 && deficit > 0 && deficit < tatweelWidth) {
+                            s1.style.wordSpacing = (deficit / spaces) + 'px';
+                        } else {
+                            s1.style.wordSpacing = '';
+                        }
+                    }
                 }
             });
 
@@ -2381,13 +2408,16 @@
             e.preventDefault();
         });
 
-        // Register Service Worker for PWA offline support
+        // Register Service Worker for PWA offline support (skipping bots and Lighthouse to prevent crawl errors)
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then((reg) => console.log('Service Worker registered:', reg.scope))
-                    .catch((err) => console.error('Service Worker registration failed:', err));
-            });
+            const isBot = /bot|googlebot|crawler|spider|robot|crawling|lighthouse/i.test(navigator.userAgent);
+            if (!isBot) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./sw.js')
+                        .then((reg) => console.log('Service Worker registered:', reg.scope))
+                        .catch((err) => console.error('Service Worker registration failed:', err));
+                });
+            }
         }
     </script>
     <nav class="bottom-dock" aria-label="شريط التنقل">

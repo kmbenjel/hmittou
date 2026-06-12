@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hmittou-cache-v4';
+const CACHE_NAME = 'hmittou-cache-v6';
 const ASSETS = [
   './',
   './index.html',
@@ -48,7 +48,21 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - Network-First for HTML/root, Cache-First for static assets
 self.addEventListener('fetch', (event) => {
+  // Only handle GET requests
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
   const url = new URL(event.request.url);
+
+  // Do not intercept tracking/analytics requests to avoid Service Worker errors
+  if (
+    url.hostname.includes('google-analytics.com') ||
+    url.hostname.includes('analytics') ||
+    url.pathname.includes('/collect')
+  ) {
+    return;
+  }
 
   // For index.html or root requests, use Network-First strategy
   if (event.request.mode === 'navigate' || url.pathname === '/' || url.pathname.endsWith('index.html')) {
@@ -74,17 +88,23 @@ self.addEventListener('fetch', (event) => {
         if (cachedResponse) {
           return cachedResponse;
         }
-        return fetch(event.request).then((response) => {
-          // Cache newly fetched requests on the fly (excluding third-party like FontAwesome if dynamic, but let's check)
-          if (!response || response.status !== 200 || response.type !== 'basic') {
+        return fetch(event.request)
+          .then((response) => {
+            // Cache newly fetched requests on the fly
+            // Allow caching same-origin ('basic') and cross-origin CORS ('cors') responses (e.g. FontAwesome fonts)
+            if (!response || response.status !== 200 || (response.type !== 'basic' && response.type !== 'cors')) {
+              return response;
+            }
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseClone);
+            });
             return response;
-          }
-          const responseClone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseClone);
+          })
+          .catch(() => {
+            // Handle fetch failures (like offline or aborted requests) gracefully
+            return Response.error();
           });
-          return response;
-        });
       })
     );
   }
