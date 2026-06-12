@@ -12,7 +12,7 @@
 
   // Lazy-load Google Analytics/GTM only for real users after page load
   window.addEventListener('load', () => {
-    const isBot = /bot|googlebot|crawler|spider|robot|crawling|lighthouse/i.test(navigator.userAgent);
+    const isBot = navigator.webdriver || /bot|googlebot|crawler|spider|robot|crawling|lighthouse|headless/i.test(navigator.userAgent);
     if (!isBot) {
       const script = document.createElement('script');
       script.async = true;
@@ -2425,7 +2425,7 @@
 
         // Register Service Worker for PWA offline support (skipping bots and Lighthouse to prevent crawl errors)
         if ('serviceWorker' in navigator) {
-            const isBot = /bot|googlebot|crawler|spider|robot|crawling|lighthouse/i.test(navigator.userAgent);
+            const isBot = navigator.webdriver || /bot|googlebot|crawler|spider|robot|crawling|lighthouse|headless/i.test(navigator.userAgent);
             if (!isBot) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('./sw.js')
