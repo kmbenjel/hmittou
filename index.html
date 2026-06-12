@@ -193,6 +193,7 @@
         }
         :root { --bg-color: #f5f5f4; --text-color: #333; --title-color: #111; --accent-color: #6b6b6b; --verse-font-size: 1.4rem; --card-bg: #ffffff; }
         body.dark-mode { --bg-color: #121212; --text-color: #d0d0d0; --title-color: #fff; --accent-color: #888; --card-bg: #1c1c1e; }
+        html, body { overflow-x: hidden; }
         body { font-family: 'Amiri', serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; text-align: center; transition: background-color 0.3s, color 0.3s; overscroll-behavior-y: contain; }
         .skip-link { position: absolute; top: -100%; left: 50%; transform: translateX(-50%); background: var(--title-color); color: var(--bg-color); padding: 8px 16px; border-radius: 0 0 8px 8px; z-index: 9999; font-size: 0.9rem; text-decoration: none; transition: top 0.2s; }
         .skip-link:focus { top: 0; }
@@ -205,6 +206,9 @@
             .controls, .nav-controls, .left-controls {
                 display: none !important;
             }
+            body { padding: 0.5rem 0.25rem !important; }
+            .container { padding: 0.5rem 0.25rem !important; }
+            .poem-section { padding: 0 0.25rem !important; }
         }
 
         /* ── Bottom Film Navigation Dock (Mobile Only) ── */
@@ -433,9 +437,9 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; display: block; }
-        .title { font-size: 2.2rem; font-weight: 350; margin: 40px 0 50px 0; color: var(--title-color); scroll-margin-top: 80px; position: relative; padding-bottom: 25px; font-family: 'Amiri', serif; text-align: center; animation: titleEntrance 0.8s ease-out backwards; }
+        .title { font-size: 35px; font-weight: 350; margin: 40px 0 50px 0; color: var(--title-color); scroll-margin-top: 80px; position: relative; padding-bottom: 25px; font-family: 'Amiri', serif; text-align: center; animation: titleEntrance 0.8s ease-out backwards; }
         .title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent-color), transparent); opacity: 0.6; }
-        .subtitle { display: block; font-size: 1.2rem; color: var(--accent-color); margin-top: 8px; font-weight: normal; }
+        .subtitle { display: block; font-size: 19px; color: var(--accent-color); margin-top: 8px; font-weight: normal; }
         
         .poem-section { display: block; margin: 0 auto 0.93rem auto; margin-top: 0.625rem; counter-reset: bayt-num; padding: 0 1.5rem 0 0.75rem; width: fit-content; max-width: 100%; box-sizing: border-box; }
         .bayt { margin-bottom: 2.18rem; display: flex; flex-direction: column; align-items: center; gap: 0.31rem; position: relative; counter-increment: bayt-num; padding: 0.375rem 0.75rem; margin-inline: -0.5rem; border-radius: 0.375rem; transition: background-color 0.25s ease, transform 0.25s ease, border-color 0.25s ease; border-right: 2px solid transparent; }
@@ -2029,8 +2033,6 @@
         }
 
         // ── Kashida (Tatweel) Stretching ──────────────────────────────────────
-        // Arabic left-joining letters: those that connect to the following letter
-        // We include U+0640 (Tatweel 'ـ') in KASHIDA_JOINERS so that original tatweels can be extended.
         const KASHIDA_JOINERS = /[بتثجحخسشصضطظعغفقكلمنهيئـ][ً-ٰٟ]*/g;
         const TATWEEL = 'ـ';
 
@@ -2051,11 +2053,8 @@
             return false;
         }
 
-        function getOptimalStretch(orig, isDesktop, naturalWidth, targetW, tatweelWidth) {
-            const KASHIDA_JOINERS = /[بتثجحخسشصضطظعغفقكلمنهيئـ][ً-ٰٟ]*/g;
-            const TATWEEL = 'ـ';
-            
-            // Find all valid positions
+        // Get all valid positions for kashida insertion
+        function getKashidaPositions(orig) {
             const positions = [];
             KASHIDA_JOINERS.lastIndex = 0;
             let m;
@@ -2066,49 +2065,7 @@
                 if (!/[بتثجحخدذرزسشصضطظعغفقكلمنهويىئؤةـ]/.test(orig[p])) continue;
                 if (isInsideLa(orig, m.index, p)) continue;
                 
-                // Rule: Block stretching after any letter carrying tanween (fatha U+064B, damma U+064C, kasra U+064D)
-                if (m[0].includes('\u064B') || m[0].includes('\u064C') || m[0].includes('\u064D')) continue;
-                
-                // Rule: Block stretching before final yaa / alif maqsura to preserve font ligatures
-                const followingChar = orig[p];
-                if (['ى', 'ي'].includes(followingChar)) {
-                    let nextIdx = p + 1;
-                    const diacritics = /[\u064B-\u065F\u0670]/;
-                    while (nextIdx < orig.length && diacritics.test(orig[nextIdx])) {
-                        nextIdx++;
-                    }
-                    if (nextIdx >= orig.length || /[\s\p{P}]/u.test(orig[nextIdx])) {
-                        continue;
-                    }
-                }
-                
-                // Prefix check (for letters like ل, ب, ف, ك at the start of a word)
-                const matchedChar = orig[m.index];
-                if (['ل', 'ب', 'ف', 'ك'].includes(matchedChar)) {
-                    const lastSpaceBefore = orig.lastIndexOf(' ', m.index);
-                    const isWordStart = lastSpaceBefore === -1 || m.index === lastSpaceBefore + 1;
-                    
-                    if (isWordStart) {
-                        const wordPrefix = orig.slice(lastSpaceBefore === -1 ? 0 : lastSpaceBefore + 1, m.index + 1);
-                        const cleanPrefix = wordPrefix.replace(/[\u064B-\u065F\u0670\u0640]/g, '');
-                        
-                        // For baa, faa, kaf: only block if followed by ال
-                        if (['ب', 'ف', 'ك'].includes(matchedChar)) {
-                            const remainder = orig.slice(p).replace(/[\u064B-\u065F\u0670\u0640]/g, '');
-                            if (remainder.startsWith('ال')) {
-                                continue;
-                            }
-                        } else if (matchedChar === 'ل') {
-                            // For laam: block all standard prefixes
-                            const blockedPrefixes = ['ل', 'ول', 'فل', 'بل', 'كل', 'ال', 'لل', 'وال', 'ولل', 'فال', 'فلل', 'بال', 'بلل', 'كال', 'كلل'];
-                            if (blockedPrefixes.includes(cleanPrefix)) {
-                                continue;
-                            }
-                        }
-                    }
-                }
-                
-                // Rule: Do not stretch very short words (fewer than 3 letters, excluding diacritics/tatweels)
+                // Rule: Do not stretch very short words (fewer than 3 letters)
                 const lastSpaceBefore = orig.lastIndexOf(' ', m.index);
                 const startOfWord = lastSpaceBefore === -1 ? 0 : lastSpaceBefore + 1;
                 let endOfWord = orig.indexOf(' ', p);
@@ -2133,68 +2090,23 @@
                     lastSpaceIdx = currentWordStart;
                 }
             }
-            positions.length = 0;
-            positions.push(...uniquePositions);
-            
-            // If no valid positions are found, we cannot stretch this verse
-            if (positions.length === 0) {
-                return { text: orig, width: naturalWidth, tatweels: 0 };
-            }
-            
-            // Find the optimal number of tatweels (R) mathematically
-            const maxTatweels = isDesktop ? 36 : 30;
-            const spaces = (orig.match(/ /g) || []).length;
-            let bestR = 0;
-            let bestScore = Infinity;
-            
-            for (let R = 0; R <= maxTatweels; R++) {
-                const width = naturalWidth + R * tatweelWidth;
-                const diff = targetW - width;
-                let score;
-                if (isDesktop) {
-                    if (spaces > 0) {
-                        if (diff >= 0 && diff < tatweelWidth) {
-                            score = diff * 0.1;
-                        } else if (diff >= 0) {
-                            score = diff * 1.0;
-                        } else {
-                            score = (-diff) * 5.0;
-                        }
-                    } else {
-                        score = Math.abs(diff) * 2.0;
-                    }
-                } else {
-                    score = Math.abs(diff);
-                }
-                
-                if (score < bestScore) {
-                    bestScore = score;
-                    bestR = R;
-                }
-            }
-            
-            // Construct the optimal stretched text
-            if (bestR === 0) {
-                return { text: orig, width: naturalWidth, tatweels: 0 };
-            }
-            
+            return uniquePositions;
+        }
+
+        // Reconstruct string with R tatweels distributed evenly
+        function insertTatweels(orig, positions, R) {
+            if (R <= 0 || positions.length === 0) return orig;
             let counts = new Array(positions.length).fill(0);
-            for (let round = 0; round < bestR; round++) {
+            for (let round = 0; round < R; round++) {
                 counts[round % positions.length]++;
             }
-            
             let out = '', prev = 0;
             for (let i = 0; i < positions.length; i++) {
                 out += orig.slice(prev, positions[i]) + TATWEEL.repeat(counts[i]);
                 prev = positions[i];
             }
             out += orig.slice(prev);
-            
-            return {
-                text: out,
-                width: naturalWidth + bestR * tatweelWidth,
-                tatweels: bestR
-            };
+            return out;
         }
 
         function applyKashida() {
@@ -2203,162 +2115,172 @@
 
             const verses = document.querySelectorAll('.verse');
             const isDesktop = window.innerWidth >= 680;
+            const maxTatweels = isDesktop ? 36 : 30;
 
-            // 1. Initialize original texts (ensure dataset.orig is saved before any changes)
+            // 1. Initialize original texts (trimming leading/trailing whitespace)
             verses.forEach(v => {
                 if (!v.dataset.orig) {
-                    v.dataset.orig = v.textContent;
+                    v.dataset.orig = v.textContent.trim();
                 }
             });
 
-            // 2. Setup canvas context for font metrics measurement
+            // 2. Measure tatweel width mathematically using the canvas context (for initial R_est estimation)
             const cs = getComputedStyle(verses[0]);
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+            const tatweelWidth = ctx.measureText(TATWEEL.repeat(50)).width / 50 || 5.0;
 
-            // Measure tatweel width mathematically using the canvas context
-            const tatweelWidth = ctx.measureText(TATWEEL.repeat(50)).width / 50;
+            const activeSearches = [];
 
-            // 3. Measure all original natural widths using canvas (layout-free, 0 reflows)
-            const baytData = [];
-            bayts.forEach(bayt => {
+            // 3. Batch restore original texts and measure natural widths (1 reflow)
+            bayts.forEach((bayt, idx) => {
                 const shatrs = bayt.querySelectorAll('.verse');
                 if (shatrs.length !== 2) return;
                 
                 const orig1 = shatrs[0].dataset.orig;
                 const orig2 = shatrs[1].dataset.orig;
-                
-                const w1 = ctx.measureText(orig1).width;
-                const w2 = ctx.measureText(orig2).width;
 
-                baytData.push({
+                shatrs[0].textContent = orig1;
+                shatrs[0].style.wordSpacing = '';
+                shatrs[0].style.letterSpacing = '';
+                shatrs[0].style.width = 'max-content';
+
+                shatrs[1].textContent = orig2;
+                shatrs[1].style.wordSpacing = '';
+                shatrs[1].style.letterSpacing = '';
+                shatrs[1].style.width = 'max-content';
+            });
+
+            // Read natural widths
+            const naturalWidths = [];
+            bayts.forEach((bayt, idx) => {
+                const shatrs = bayt.querySelectorAll('.verse');
+                if (shatrs.length !== 2) return;
+                naturalWidths.push({
                     s1: shatrs[0],
                     s2: shatrs[1],
-                    orig1,
-                    orig2,
-                    w1,
-                    w2
+                    w1: shatrs[0].getBoundingClientRect().width,
+                    w2: shatrs[1].getBoundingClientRect().width,
+                    orig1: shatrs[0].dataset.orig,
+                    orig2: shatrs[1].dataset.orig
                 });
             });
 
-            // 4. Calculate optimal stretched text and apply to DOM synchronously
-            const targetW = isDesktop ? verses[0].getBoundingClientRect().width : 0;
+            // Reset width styling back to grid defaults (1 write batch)
+            naturalWidths.forEach(data => {
+                data.s1.style.width = '';
+                data.s2.style.width = '';
+            });
 
-            baytData.forEach(data => {
-                const { s1, s2, orig1, orig2, w1, w2 } = data;
-                
-                if (isDesktop) {
-                    // Desktop: double-justify both verses of every bayt to the grid column width
-                    // Stretch s1 to targetW
-                    const bestSt1 = getOptimalStretch(orig1, isDesktop, w1, targetW, tatweelWidth);
-                    if (s1.textContent !== bestSt1.text) {
-                        s1.textContent = bestSt1.text;
-                    }
-                    const deficit1 = targetW - bestSt1.width;
-                    const spaces1 = (bestSt1.text.match(/ /g) || []).length;
-                    if (spaces1 > 0 && deficit1 > 0 && deficit1 < tatweelWidth) {
-                        const newSpacing = (deficit1 / spaces1) + 'px';
-                        if (s1.style.wordSpacing !== newSpacing) {
-                            s1.style.wordSpacing = newSpacing;
-                        }
-                    } else {
-                        if (s1.style.wordSpacing !== '') {
-                            s1.style.wordSpacing = '';
-                        }
-                    }
-                    if (s1.style.letterSpacing !== '') {
-                        s1.style.letterSpacing = '';
-                    }
+            // 4. Set up parallel search parameters
+            naturalWidths.forEach(data => {
+                const { s1, s2, w1, w2, orig1, orig2 } = data;
+                let targetW, sStretched, origStretched, wNatural;
 
-                    // Stretch s2 to targetW
-                    const bestSt2 = getOptimalStretch(orig2, isDesktop, w2, targetW, tatweelWidth);
-                    if (s2.textContent !== bestSt2.text) {
-                        s2.textContent = bestSt2.text;
-                    }
-                    const deficit2 = targetW - bestSt2.width;
-                    const spaces2 = (bestSt2.text.match(/ /g) || []).length;
-                    if (spaces2 > 0 && deficit2 > 0 && deficit2 < tatweelWidth) {
-                        const newSpacing = (deficit2 / spaces2) + 'px';
-                        if (s2.style.wordSpacing !== newSpacing) {
-                            s2.style.wordSpacing = newSpacing;
-                        }
-                    } else {
-                        if (s2.style.wordSpacing !== '') {
-                            s2.style.wordSpacing = '';
-                        }
-                    }
-                    if (s2.style.letterSpacing !== '') {
-                        s2.style.letterSpacing = '';
-                    }
+                if (w1 >= w2) {
+                    targetW = w1; // s1 is anchor
+                    sStretched = s2;
+                    origStretched = orig2;
+                    wNatural = w2;
                 } else {
-                    // Mobile: align the shorter verse to the longer verse of the same bayt
-                    if (w1 >= w2) {
-                        if (s1.textContent !== orig1) {
-                            s1.textContent = orig1;
-                        }
-                        if (s1.style.wordSpacing !== '') {
-                            s1.style.wordSpacing = '';
-                        }
-                        if (s1.style.letterSpacing !== '') {
-                            s1.style.letterSpacing = '';
-                        }
+                    targetW = w2; // s2 is anchor
+                    sStretched = s1;
+                    origStretched = orig1;
+                    wNatural = w1;
+                }
+
+                // If the mismatch is extremely small (< 0.5px), do not apply kashida at all
+                const diff = targetW - wNatural;
+                const positions = getKashidaPositions(origStretched);
+
+                if (diff < 0.5 || positions.length === 0) {
+                    sStretched.textContent = origStretched;
+                    sStretched.style.wordSpacing = '';
+                    sStretched.style.letterSpacing = '';
+                    return;
+                }
+
+                // Initial estimate of required tatweels
+                const R_est = Math.round(diff / tatweelWidth);
+                const limitR = Math.max(1, Math.min(maxTatweels, R_est));
+
+                activeSearches.push({
+                    s: sStretched,
+                    orig: origStretched,
+                    positions: positions,
+                    targetW: targetW,
+                    low: 0,
+                    high: limitR,
+                    bestR: 0,
+                    bestDiff: Infinity,
+                    bestW: wNatural,
+                    mid: 0
+                });
+            });
+
+            // 5. Parallel Binary Search Loop (exactly 6 steps)
+            for (let step = 0; step < 6; step++) {
+                // Write Batch: Set candidates
+                activeSearches.forEach(search => {
+                    if (search.low <= search.high) {
+                        search.mid = Math.floor((search.low + search.high) / 2);
+                        search.s.textContent = insertTatweels(search.orig, search.positions, search.mid);
+                        search.s.style.width = 'max-content';
+                    }
+                });
+
+                // Read Batch: Measure candidates
+                activeSearches.forEach(search => {
+                    if (search.low <= search.high) {
+                        const w = search.s.getBoundingClientRect().width;
+                        const diff = w - search.targetW;
                         
-                        const targetLocal = w1;
-                        const bestSt = getOptimalStretch(orig2, isDesktop, w2, targetLocal, tatweelWidth);
-                        
-                        if (s2.textContent !== bestSt.text) {
-                            s2.textContent = bestSt.text;
+                        if (Math.abs(diff) < search.bestDiff) {
+                            search.bestDiff = Math.abs(diff);
+                            search.bestR = search.mid;
+                            search.bestW = w;
                         }
-                        
-                        const deficit = targetLocal - bestSt.width;
-                        const spaces = (bestSt.text.match(/ /g) || []).length;
-                        if (spaces > 0 && deficit > 0 && deficit < tatweelWidth) {
-                            const newSpacing = (deficit / spaces) + 'px';
-                            if (s2.style.wordSpacing !== newSpacing) {
-                                s2.style.wordSpacing = newSpacing;
-                            }
+
+                        if (w < search.targetW) {
+                            search.low = search.mid + 1;
                         } else {
-                            if (s2.style.wordSpacing !== '') {
-                                s2.style.wordSpacing = '';
-                            }
+                            search.high = search.mid - 1;
                         }
-                        if (s2.style.letterSpacing !== '') {
-                            s2.style.letterSpacing = '';
-                        }
-                    } else {
-                        if (s2.textContent !== orig2) {
-                            s2.textContent = orig2;
-                        }
-                        if (s2.style.wordSpacing !== '') {
-                            s2.style.wordSpacing = '';
-                        }
-                        if (s2.style.letterSpacing !== '') {
-                            s2.style.letterSpacing = '';
-                        }
-                        
-                        const targetLocal = w2;
-                        const bestSt = getOptimalStretch(orig1, isDesktop, w1, targetLocal, tatweelWidth);
-                        
-                        if (s1.textContent !== bestSt.text) {
-                            s1.textContent = bestSt.text;
-                        }
-                        
-                        const deficit = targetLocal - bestSt.width;
-                        const spaces = (bestSt.text.match(/ /g) || []).length;
-                        if (spaces > 0 && deficit > 0 && deficit < tatweelWidth) {
-                            const newSpacing = (deficit / spaces) + 'px';
-                            if (s1.style.wordSpacing !== newSpacing) {
-                                s1.style.wordSpacing = newSpacing;
-                            }
-                        } else {
-                            if (s1.style.wordSpacing !== '') {
-                                s1.style.wordSpacing = '';
-                            }
-                        }
-                        if (s1.style.letterSpacing !== '') {
-                            s1.style.letterSpacing = '';
-                        }
+                    }
+                });
+            }
+
+            // 6. Write final optimal texts (1 write batch)
+            activeSearches.forEach(search => {
+                search.s.style.width = '';
+                const finalText = insertTatweels(search.orig, search.positions, search.bestR);
+                search.s.textContent = finalText;
+            });
+
+            // 7. Measure final widths to calculate remaining deficits (1 read batch)
+            activeSearches.forEach(search => {
+                search.s.style.width = 'max-content';
+            });
+            activeSearches.forEach(search => {
+                search.finalW = search.s.getBoundingClientRect().width;
+            });
+            activeSearches.forEach(search => {
+                search.s.style.width = '';
+            });
+
+            // 8. Apply final sub-pixel spacings (1 write batch)
+            activeSearches.forEach(search => {
+                const deficit = search.targetW - search.finalW;
+                const text = search.s.textContent;
+                const spaces = (text.match(/ /g) || []).length;
+
+                if (spaces > 0) {
+                    search.s.style.wordSpacing = (deficit / spaces) + 'px';
+                } else {
+                    const charCount = [...text].length;
+                    if (charCount > 1) {
+                        search.s.style.letterSpacing = (deficit / (charCount - 1)) + 'px';
                     }
                 }
             });
