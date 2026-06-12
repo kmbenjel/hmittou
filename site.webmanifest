@@ -4,24 +4,24 @@
   "description": "حمار الشعراء، رجز للعلّامة د. عبد الهادي حميتو رحمه الله. قراءة وضبط وبرمجة خالد بنجلّون.",
   "lang": "ar-MA",
   "dir": "rtl",
-  "start_url": "/hmittou/",
-  "scope": "/hmittou/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#f5f5f4",
   "theme_color": "#f5f5f4",
   "icons": [
     {
-      "src": "/hmittou/assets/hmittou-icon-192.png",
+      "src": "/assets/hmittou-icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/hmittou/assets/hmittou-icon-512.png",
+      "src": "/assets/hmittou-icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "/hmittou/assets/hmittou-icon-maskable-512.png",
+      "src": "/assets/hmittou-icon-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

@@ -13,7 +13,7 @@ INDEX = ROOT / "index.html"
 SITEMAP = ROOT / "sitemap.xml"
 SITEMAP_NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
 IMAGE_SITEMAP_NS = "http://www.google.com/schemas/sitemap-image/1.1"
-PAGE_URL = "https://benjelloun.dev/hmittou/"
+PAGE_URL = "https://hmittou.benjelloun.dev/"
 MONTHS_AR_MA = [
     "يناير",
     "فبراير",
