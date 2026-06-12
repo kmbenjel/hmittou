@@ -2204,19 +2204,6 @@
             const verses = document.querySelectorAll('.verse');
             const isDesktop = window.innerWidth >= 680;
 
-            if (!isDesktop) {
-                // On mobile, verses are stacked vertically and do not require alignment.
-                // Clear any spacing styles and restore original text.
-                verses.forEach(v => {
-                    if (v.style.wordSpacing !== '') v.style.wordSpacing = '';
-                    if (v.style.letterSpacing !== '') v.style.letterSpacing = '';
-                    if (v.dataset.orig && v.textContent !== v.dataset.orig) {
-                        v.textContent = v.dataset.orig;
-                    }
-                });
-                return;
-            }
-
             // 1. Initialize original texts (ensure dataset.orig is saved before any changes)
             verses.forEach(v => {
                 if (!v.dataset.orig) {
