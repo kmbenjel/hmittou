@@ -527,6 +527,13 @@
             100% { box-shadow: 0 0 0 0px rgba(136, 136, 136, 0); }
         }
         .highlight-flash { animation: flashEffect 1.5s ease-out; }
+
+        /* Defer rendering of off-screen verses to reduce initial Style & Layout times */
+        .poem-section:first-of-type .bayt:nth-child(n + 12),
+        .poem-section:nth-of-type(2) .bayt {
+            content-visibility: auto;
+            contain-intrinsic-size: auto 100px;
+        }
  
         @media (min-width: 680px) {
             html { font-size: 22px; }
@@ -552,6 +559,10 @@
                 margin-bottom: 2rem;
             }
             .bayt { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3.75rem; margin-bottom: 1.5rem; padding: 0.5rem 1rem; margin-inline: -1rem; }
+            .poem-section:first-of-type .bayt:nth-child(n + 12),
+            .poem-section:nth-of-type(2) .bayt {
+                contain-intrinsic-size: auto 60px;
+            }
             .bayt::before { right: -3.5rem; width: 2.2rem; text-align: right; font-size: 0.9rem; opacity: 0.75; }
             .verse:first-child { text-align: left; }
             .verse:last-child { text-align: right; }
