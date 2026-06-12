@@ -2123,16 +2123,16 @@
                 }
             });
 
-            // 2. Measure tatweel width mathematically using the canvas context (for initial R_est estimation)
+            // 2. Setup canvas context for font metrics measurement
             const cs = getComputedStyle(verses[0]);
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
             const tatweelWidth = ctx.measureText(TATWEEL.repeat(50)).width / 50 || 5.0;
 
-            const activeSearches = [];
+            const updates = [];
 
-            // 3. Batch restore original texts and measure natural widths (1 reflow)
+            // 3. Process each bayt in-memory using canvas (0 DOM operations!)
             bayts.forEach((bayt, idx) => {
                 const shatrs = bayt.querySelectorAll('.verse');
                 if (shatrs.length !== 2) return;
@@ -2140,146 +2140,116 @@
                 const orig1 = shatrs[0].dataset.orig;
                 const orig2 = shatrs[1].dataset.orig;
 
-                shatrs[0].textContent = orig1;
-                shatrs[0].style.wordSpacing = '';
-                shatrs[0].style.letterSpacing = '';
-                shatrs[0].style.width = 'max-content';
+                // Measure natural widths using canvas (0 reflows)
+                const w1 = ctx.measureText(orig1).width;
+                const w2 = ctx.measureText(orig2).width;
 
-                shatrs[1].textContent = orig2;
-                shatrs[1].style.wordSpacing = '';
-                shatrs[1].style.letterSpacing = '';
-                shatrs[1].style.width = 'max-content';
-            });
-
-            // Read natural widths
-            const naturalWidths = [];
-            bayts.forEach((bayt, idx) => {
-                const shatrs = bayt.querySelectorAll('.verse');
-                if (shatrs.length !== 2) return;
-                naturalWidths.push({
-                    s1: shatrs[0],
-                    s2: shatrs[1],
-                    w1: shatrs[0].getBoundingClientRect().width,
-                    w2: shatrs[1].getBoundingClientRect().width,
-                    orig1: shatrs[0].dataset.orig,
-                    orig2: shatrs[1].dataset.orig
-                });
-            });
-
-            // Reset width styling back to grid defaults (1 write batch)
-            naturalWidths.forEach(data => {
-                data.s1.style.width = '';
-                data.s2.style.width = '';
-            });
-
-            // 4. Set up parallel search parameters
-            naturalWidths.forEach(data => {
-                const { s1, s2, w1, w2, orig1, orig2 } = data;
-                let targetW, sStretched, origStretched, wNatural;
-
+                let sAnchor, sStretched, origStretched, targetW, wNatural, isS1Anchor;
                 if (w1 >= w2) {
-                    targetW = w1; // s1 is anchor
-                    sStretched = s2;
+                    sAnchor = shatrs[0];
+                    sStretched = shatrs[1];
                     origStretched = orig2;
+                    targetW = w1;
                     wNatural = w2;
+                    isS1Anchor = true;
                 } else {
-                    targetW = w2; // s2 is anchor
-                    sStretched = s1;
+                    sAnchor = shatrs[1];
+                    sStretched = shatrs[0];
                     origStretched = orig1;
+                    targetW = w2;
                     wNatural = w1;
+                    isS1Anchor = false;
                 }
 
-                // If the mismatch is extremely small (< 0.5px), do not apply kashida at all
                 const diff = targetW - wNatural;
                 const positions = getKashidaPositions(origStretched);
 
                 if (diff < 0.5 || positions.length === 0) {
-                    sStretched.textContent = origStretched;
-                    sStretched.style.wordSpacing = '';
-                    sStretched.style.letterSpacing = '';
+                    updates.push({
+                        sAnchor,
+                        sStretched,
+                        textAnchor: isS1Anchor ? orig1 : orig2,
+                        textStretched: origStretched,
+                        bestR: 0,
+                        targetW
+                    });
                     return;
                 }
 
-                // Initial estimate of required tatweels
+                // In-memory binary search on canvas
                 const R_est = Math.round(diff / tatweelWidth);
                 const limitR = Math.max(1, Math.min(maxTatweels, R_est));
 
-                activeSearches.push({
-                    s: sStretched,
-                    orig: origStretched,
-                    positions: positions,
-                    targetW: targetW,
-                    low: 0,
-                    high: limitR,
-                    bestR: 0,
-                    bestDiff: Infinity,
-                    bestW: wNatural,
-                    mid: 0
-                });
-            });
+                let low = 0;
+                let high = limitR;
+                let bestR = 0;
+                let bestDiff = Infinity;
 
-            // 5. Parallel Binary Search Loop (exactly 6 steps)
-            for (let step = 0; step < 6; step++) {
-                // Write Batch: Set candidates
-                activeSearches.forEach(search => {
-                    if (search.low <= search.high) {
-                        search.mid = Math.floor((search.low + search.high) / 2);
-                        search.s.textContent = insertTatweels(search.orig, search.positions, search.mid);
-                        search.s.style.width = 'max-content';
+                while (low <= high) {
+                    let mid = Math.floor((low + high) / 2);
+                    const candidateText = insertTatweels(origStretched, positions, mid);
+                    const w = ctx.measureText(candidateText).width;
+                    const d = w - targetW;
+                    
+                    if (Math.abs(d) < bestDiff) {
+                        bestDiff = Math.abs(d);
+                        bestR = mid;
                     }
-                });
 
-                // Read Batch: Measure candidates
-                activeSearches.forEach(search => {
-                    if (search.low <= search.high) {
-                        const w = search.s.getBoundingClientRect().width;
-                        const diff = w - search.targetW;
-                        
-                        if (Math.abs(diff) < search.bestDiff) {
-                            search.bestDiff = Math.abs(diff);
-                            search.bestR = search.mid;
-                            search.bestW = w;
-                        }
-
-                        if (w < search.targetW) {
-                            search.low = search.mid + 1;
-                        } else {
-                            search.high = search.mid - 1;
-                        }
+                    if (w < targetW) {
+                        low = mid + 1;
+                    } else {
+                        high = mid - 1;
                     }
+                }
+
+                updates.push({
+                    sAnchor,
+                    sStretched,
+                    textAnchor: isS1Anchor ? orig1 : orig2,
+                    textStretched: insertTatweels(origStretched, positions, bestR),
+                    bestR,
+                    targetW
                 });
-            }
-
-            // 6. Write final optimal texts (1 write batch)
-            activeSearches.forEach(search => {
-                search.s.style.width = '';
-                const finalText = insertTatweels(search.orig, search.positions, search.bestR);
-                search.s.textContent = finalText;
             });
 
-            // 7. Measure final widths to calculate remaining deficits (1 read batch)
-            activeSearches.forEach(search => {
-                search.s.style.width = 'max-content';
-            });
-            activeSearches.forEach(search => {
-                search.finalW = search.s.getBoundingClientRect().width;
-            });
-            activeSearches.forEach(search => {
-                search.s.style.width = '';
+            // 4. Batch DOM Write 1: Apply initial stretched texts
+            updates.forEach(up => {
+                up.sAnchor.textContent = up.textAnchor;
+                up.sAnchor.style.wordSpacing = '';
+                up.sAnchor.style.letterSpacing = '';
+
+                up.sStretched.textContent = up.textStretched;
+                up.sStretched.style.wordSpacing = '';
+                up.sStretched.style.letterSpacing = '';
             });
 
-            // 8. Apply final sub-pixel spacings (1 write batch)
-            activeSearches.forEach(search => {
-                const deficit = search.targetW - search.finalW;
-                const text = search.s.textContent;
+            // 5. Batch DOM Read: Measure actual rendered widths of both verses (1 layout reflow)
+            updates.forEach(up => {
+                up.sAnchor.style.width = 'max-content';
+                up.sStretched.style.width = 'max-content';
+            });
+            updates.forEach(up => {
+                up.actualWAnchor = up.sAnchor.getBoundingClientRect().width;
+                up.actualWStretched = up.sStretched.getBoundingClientRect().width;
+            });
+            updates.forEach(up => {
+                up.sAnchor.style.width = '';
+                up.sStretched.style.width = '';
+            });
+
+            // 6. Batch DOM Write 2: Apply final sub-pixel spacing corrections
+            updates.forEach(up => {
+                const deficit = up.actualWAnchor - up.actualWStretched;
+                const text = up.textStretched;
                 const spaces = (text.match(/ /g) || []).length;
 
                 if (spaces > 0) {
-                    search.s.style.wordSpacing = (deficit / spaces) + 'px';
+                    up.sStretched.style.wordSpacing = (deficit / spaces) + 'px';
                 } else {
                     const charCount = [...text].length;
                     if (charCount > 1) {
-                        search.s.style.letterSpacing = (deficit / (charCount - 1)) + 'px';
+                        up.sStretched.style.letterSpacing = (deficit / (charCount - 1)) + 'px';
                     }
                 }
             });
