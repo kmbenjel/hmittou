@@ -2243,31 +2243,43 @@
             });
 
             // 4. Calculate optimal stretched text and apply to DOM synchronously
+            const targetW = isDesktop ? verses[0].getBoundingClientRect().width : 0;
+
             baytData.forEach(data => {
                 const { s1, s2, orig1, orig2, w1, w2 } = data;
                 
-                if (w1 >= w2) {
-                    if (s1.textContent !== orig1) {
-                        s1.textContent = orig1;
+                if (isDesktop) {
+                    // Desktop: double-justify both verses of every bayt to the grid column width
+                    // Stretch s1 to targetW
+                    const bestSt1 = getOptimalStretch(orig1, isDesktop, w1, targetW, tatweelWidth);
+                    if (s1.textContent !== bestSt1.text) {
+                        s1.textContent = bestSt1.text;
                     }
-                    if (s1.style.wordSpacing !== '') {
-                        s1.style.wordSpacing = '';
+                    const deficit1 = targetW - bestSt1.width;
+                    const spaces1 = (bestSt1.text.match(/ /g) || []).length;
+                    if (spaces1 > 0 && deficit1 > 0 && deficit1 < tatweelWidth) {
+                        const newSpacing = (deficit1 / spaces1) + 'px';
+                        if (s1.style.wordSpacing !== newSpacing) {
+                            s1.style.wordSpacing = newSpacing;
+                        }
+                    } else {
+                        if (s1.style.wordSpacing !== '') {
+                            s1.style.wordSpacing = '';
+                        }
                     }
                     if (s1.style.letterSpacing !== '') {
                         s1.style.letterSpacing = '';
                     }
-                    
-                    const targetW = w1;
-                    const bestSt = getOptimalStretch(orig2, isDesktop, w2, targetW, tatweelWidth);
-                    
-                    if (s2.textContent !== bestSt.text) {
-                        s2.textContent = bestSt.text;
+
+                    // Stretch s2 to targetW
+                    const bestSt2 = getOptimalStretch(orig2, isDesktop, w2, targetW, tatweelWidth);
+                    if (s2.textContent !== bestSt2.text) {
+                        s2.textContent = bestSt2.text;
                     }
-                    
-                    const deficit = targetW - bestSt.width;
-                    const spaces = (bestSt.text.match(/ /g) || []).length;
-                    if (spaces > 0 && deficit > 0 && deficit < tatweelWidth) {
-                        const newSpacing = (deficit / spaces) + 'px';
+                    const deficit2 = targetW - bestSt2.width;
+                    const spaces2 = (bestSt2.text.match(/ /g) || []).length;
+                    if (spaces2 > 0 && deficit2 > 0 && deficit2 < tatweelWidth) {
+                        const newSpacing = (deficit2 / spaces2) + 'px';
                         if (s2.style.wordSpacing !== newSpacing) {
                             s2.style.wordSpacing = newSpacing;
                         }
@@ -2280,37 +2292,73 @@
                         s2.style.letterSpacing = '';
                     }
                 } else {
-                    if (s2.textContent !== orig2) {
-                        s2.textContent = orig2;
-                    }
-                    if (s2.style.wordSpacing !== '') {
-                        s2.style.wordSpacing = '';
-                    }
-                    if (s2.style.letterSpacing !== '') {
-                        s2.style.letterSpacing = '';
-                    }
-                    
-                    const targetW = w2;
-                    const bestSt = getOptimalStretch(orig1, isDesktop, w1, targetW, tatweelWidth);
-                    
-                    if (s1.textContent !== bestSt.text) {
-                        s1.textContent = bestSt.text;
-                    }
-                    
-                    const deficit = targetW - bestSt.width;
-                    const spaces = (bestSt.text.match(/ /g) || []).length;
-                    if (spaces > 0 && deficit > 0 && deficit < tatweelWidth) {
-                        const newSpacing = (deficit / spaces) + 'px';
-                        if (s1.style.wordSpacing !== newSpacing) {
-                            s1.style.wordSpacing = newSpacing;
+                    // Mobile: align the shorter verse to the longer verse of the same bayt
+                    if (w1 >= w2) {
+                        if (s1.textContent !== orig1) {
+                            s1.textContent = orig1;
                         }
-                    } else {
                         if (s1.style.wordSpacing !== '') {
                             s1.style.wordSpacing = '';
                         }
-                    }
-                    if (s1.style.letterSpacing !== '') {
-                        s1.style.letterSpacing = '';
+                        if (s1.style.letterSpacing !== '') {
+                            s1.style.letterSpacing = '';
+                        }
+                        
+                        const targetLocal = w1;
+                        const bestSt = getOptimalStretch(orig2, isDesktop, w2, targetLocal, tatweelWidth);
+                        
+                        if (s2.textContent !== bestSt.text) {
+                            s2.textContent = bestSt.text;
+                        }
+                        
+                        const deficit = targetLocal - bestSt.width;
+                        const spaces = (bestSt.text.match(/ /g) || []).length;
+                        if (spaces > 0 && deficit > 0 && deficit < tatweelWidth) {
+                            const newSpacing = (deficit / spaces) + 'px';
+                            if (s2.style.wordSpacing !== newSpacing) {
+                                s2.style.wordSpacing = newSpacing;
+                            }
+                        } else {
+                            if (s2.style.wordSpacing !== '') {
+                                s2.style.wordSpacing = '';
+                            }
+                        }
+                        if (s2.style.letterSpacing !== '') {
+                            s2.style.letterSpacing = '';
+                        }
+                    } else {
+                        if (s2.textContent !== orig2) {
+                            s2.textContent = orig2;
+                        }
+                        if (s2.style.wordSpacing !== '') {
+                            s2.style.wordSpacing = '';
+                        }
+                        if (s2.style.letterSpacing !== '') {
+                            s2.style.letterSpacing = '';
+                        }
+                        
+                        const targetLocal = w2;
+                        const bestSt = getOptimalStretch(orig1, isDesktop, w1, targetLocal, tatweelWidth);
+                        
+                        if (s1.textContent !== bestSt.text) {
+                            s1.textContent = bestSt.text;
+                        }
+                        
+                        const deficit = targetLocal - bestSt.width;
+                        const spaces = (bestSt.text.match(/ /g) || []).length;
+                        if (spaces > 0 && deficit > 0 && deficit < tatweelWidth) {
+                            const newSpacing = (deficit / spaces) + 'px';
+                            if (s1.style.wordSpacing !== newSpacing) {
+                                s1.style.wordSpacing = newSpacing;
+                            }
+                        } else {
+                            if (s1.style.wordSpacing !== '') {
+                                s1.style.wordSpacing = '';
+                            }
+                        }
+                        if (s1.style.letterSpacing !== '') {
+                            s1.style.letterSpacing = '';
+                        }
                     }
                 }
             });
