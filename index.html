@@ -2206,54 +2206,45 @@
                 return;
             }
 
-            // 1. Initialize original texts and reset styles (write batch)
-            // We only write if the value actually changed to avoid layout invalidation.
+            // 1. Initialize original texts (ensure dataset.orig is saved before any changes)
             verses.forEach(v => {
                 if (!v.dataset.orig) {
                     v.dataset.orig = v.textContent;
                 }
-                if (v.style.wordSpacing !== '') {
-                    v.style.wordSpacing = '';
-                }
-                if (v.style.letterSpacing !== '') {
-                    v.style.letterSpacing = '';
-                }
-                if (v.textContent !== v.dataset.orig) {
-                    v.textContent = v.dataset.orig;
-                }
             });
 
-            // 2. Measure tatweel width (requires a temporary element and 1 reflow)
+            // 2. Setup canvas context for font metrics measurement
             const cs = getComputedStyle(verses[0]);
-            const ruler = document.createElement('span');
-            Object.assign(ruler.style, {
-                position: 'fixed', top: '-9999px', left: '-9999px',
-                visibility: 'hidden', whiteSpace: 'nowrap',
-                fontFamily: cs.fontFamily, fontSize: cs.fontSize,
-                fontWeight: cs.fontWeight, direction: 'rtl'
-            });
-            document.body.appendChild(ruler);
-            ruler.textContent = TATWEEL.repeat(50);
-            const tatweelWidth = ruler.getBoundingClientRect().width / 50;
-            document.body.removeChild(ruler);
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
 
-            // 3. Measure all original natural widths directly from the DOM (read batch)
+            // Measure tatweel width mathematically using the canvas context
+            const tatweelWidth = ctx.measureText(TATWEEL.repeat(50)).width / 50;
+
+            // 3. Measure all original natural widths using canvas (layout-free, 0 reflows)
             const baytData = [];
             bayts.forEach(bayt => {
                 const shatrs = bayt.querySelectorAll('.verse');
                 if (shatrs.length !== 2) return;
                 
+                const orig1 = shatrs[0].dataset.orig;
+                const orig2 = shatrs[1].dataset.orig;
+                
+                const w1 = ctx.measureText(orig1).width;
+                const w2 = ctx.measureText(orig2).width;
+
                 baytData.push({
                     s1: shatrs[0],
                     s2: shatrs[1],
-                    orig1: shatrs[0].dataset.orig,
-                    orig2: shatrs[1].dataset.orig,
-                    w1: shatrs[0].getBoundingClientRect().width,
-                    w2: shatrs[1].getBoundingClientRect().width
+                    orig1,
+                    orig2,
+                    w1,
+                    w2
                 });
             });
 
-            // 4. Calculate optimal stretched text and apply to DOM synchronously (write batch)
+            // 4. Calculate optimal stretched text and apply to DOM synchronously
             baytData.forEach(data => {
                 const { s1, s2, orig1, orig2, w1, w2 } = data;
                 
@@ -2263,6 +2254,9 @@
                     }
                     if (s1.style.wordSpacing !== '') {
                         s1.style.wordSpacing = '';
+                    }
+                    if (s1.style.letterSpacing !== '') {
+                        s1.style.letterSpacing = '';
                     }
                     
                     const targetW = w1;
@@ -2284,12 +2278,18 @@
                             s2.style.wordSpacing = '';
                         }
                     }
+                    if (s2.style.letterSpacing !== '') {
+                        s2.style.letterSpacing = '';
+                    }
                 } else {
                     if (s2.textContent !== orig2) {
                         s2.textContent = orig2;
                     }
                     if (s2.style.wordSpacing !== '') {
                         s2.style.wordSpacing = '';
+                    }
+                    if (s2.style.letterSpacing !== '') {
+                        s2.style.letterSpacing = '';
                     }
                     
                     const targetW = w2;
@@ -2310,6 +2310,9 @@
                         if (s1.style.wordSpacing !== '') {
                             s1.style.wordSpacing = '';
                         }
+                    }
+                    if (s1.style.letterSpacing !== '') {
+                        s1.style.letterSpacing = '';
                     }
                 }
             });
