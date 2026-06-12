@@ -2153,14 +2153,19 @@
             if (!bayts.length) return;
 
             const verses = document.querySelectorAll('.verse');
-            // Clear any lingering spacing styles from the DOM elements
+            
+            // 1. Initialize original texts and reset styles (write batch)
             verses.forEach(v => {
+                if (!v.dataset.orig) {
+                    v.dataset.orig = v.textContent;
+                }
                 v.style.wordSpacing = '';
                 v.style.letterSpacing = '';
+                v.textContent = v.dataset.orig;
             });
 
+            // 2. Measure tatweel width (requires a temporary element and 1 reflow)
             const cs = getComputedStyle(verses[0]);
-
             const ruler = document.createElement('span');
             Object.assign(ruler.style, {
                 position: 'fixed', top: '-9999px', left: '-9999px',
@@ -2169,46 +2174,30 @@
                 fontWeight: cs.fontWeight, direction: 'rtl'
             });
             document.body.appendChild(ruler);
+            ruler.textContent = TATWEEL.repeat(50);
+            const tatweelWidth = ruler.getBoundingClientRect().width / 50;
+            document.body.removeChild(ruler);
 
             const isDesktop = window.innerWidth >= 680;
 
-            // Measure the width of a single tatweel character under current styles.
-            // We use 50 repetitions to achieve extremely precise subpixel decimal resolution.
-            ruler.textContent = TATWEEL.repeat(50);
-            const tatweelWidth = ruler.getBoundingClientRect().width / 50;
-
-            // 1. First pass: Measure all original natural widths using the ruler
-            // We also initialize the dataset.orig to preserve the raw poetical text.
-            // Note: We do NOT write to the actual DOM elements in this pass to prevent layout thrashing!
+            // 3. Measure all original natural widths directly from the DOM (read batch)
+            // This is layout-thrashing-free because we do not write to the DOM in between!
             const baytData = [];
-
             bayts.forEach(bayt => {
                 const shatrs = bayt.querySelectorAll('.verse');
                 if (shatrs.length !== 2) return;
                 
-                if (!shatrs[0].dataset.orig) shatrs[0].dataset.orig = shatrs[0].textContent;
-                if (!shatrs[1].dataset.orig) shatrs[1].dataset.orig = shatrs[1].textContent;
-                
-                const orig1 = shatrs[0].dataset.orig;
-                const orig2 = shatrs[1].dataset.orig;
-                
-                ruler.textContent = orig1;
-                const w1 = ruler.getBoundingClientRect().width;
-                
-                ruler.textContent = orig2;
-                const w2 = ruler.getBoundingClientRect().width;
-                
                 baytData.push({
                     s1: shatrs[0],
                     s2: shatrs[1],
-                    orig1: orig1,
-                    orig2: orig2,
-                    w1: w1,
-                    w2: w2
+                    orig1: shatrs[0].dataset.orig,
+                    orig2: shatrs[1].dataset.orig,
+                    w1: shatrs[0].getBoundingClientRect().width,
+                    w2: shatrs[1].getBoundingClientRect().width
                 });
             });
 
-            // 2. Second pass: Calculate optimal stretched text in-memory and write results batch-wise
+            // 4. Second pass: Calculate optimal stretched text in-memory and write results batch-wise
             baytData.forEach(data => {
                 const { s1, s2, orig1, orig2, w1, w2 } = data;
                 
@@ -2310,8 +2299,6 @@
                     }
                 }
             });
-
-            document.body.removeChild(ruler);
         }
 
         function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
