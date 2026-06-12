@@ -2030,7 +2030,7 @@
             return false;
         }
 
-        function getPossibleStretches(orig, isDesktop, naturalWidth, tatweelWidth) {
+        function getOptimalStretch(orig, isDesktop, naturalWidth, targetW, tatweelWidth) {
             const KASHIDA_JOINERS = /[بتثجحخسشصضطظعغفقكلمنهيئـ][ً-ٰٟ]*/g;
             const TATWEEL = 'ـ';
             
@@ -2115,42 +2115,68 @@
             positions.length = 0;
             positions.push(...uniquePositions);
             
-            const results = [];
-            // State 0: natural width
-            results.push({
-                text: orig,
-                width: naturalWidth,
-                tatweels: 0
-            });
-            
-            if (positions.length === 0) return results;
-            
-            let counts = new Array(positions.length).fill(0);
-            const maxTatweels = isDesktop ? 36 : 30;
-            
-            for (let round = 0; round < maxTatweels; round++) {
-                counts[round % positions.length]++;
-                
-                let out = '', prev = 0;
-                for (let i = 0; i < positions.length; i++) {
-                    out += orig.slice(prev, positions[i]) + TATWEEL.repeat(counts[i]);
-                    prev = positions[i];
-                }
-                out += orig.slice(prev);
-                
-                results.push({
-                    text: out,
-                    width: naturalWidth + (round + 1) * tatweelWidth,
-                    tatweels: round + 1
-                });
+            // If no valid positions are found, we cannot stretch this verse
+            if (positions.length === 0) {
+                return { text: orig, width: naturalWidth, tatweels: 0 };
             }
             
-            return results;
+            // Find the optimal number of tatweels (R) mathematically
+            const maxTatweels = isDesktop ? 36 : 30;
+            const spaces = (orig.match(/ /g) || []).length;
+            let bestR = 0;
+            let bestScore = Infinity;
+            
+            for (let R = 0; R <= maxTatweels; R++) {
+                const width = naturalWidth + R * tatweelWidth;
+                const diff = targetW - width;
+                let score;
+                if (isDesktop) {
+                    if (spaces > 0) {
+                        if (diff >= 0 && diff < tatweelWidth) {
+                            score = diff * 0.1;
+                        } else if (diff >= 0) {
+                            score = diff * 1.0;
+                        } else {
+                            score = (-diff) * 5.0;
+                        }
+                    } else {
+                        score = Math.abs(diff) * 2.0;
+                    }
+                } else {
+                    score = Math.abs(diff);
+                }
+                
+                if (score < bestScore) {
+                    bestScore = score;
+                    bestR = R;
+                }
+            }
+            
+            // Construct the optimal stretched text
+            if (bestR === 0) {
+                return { text: orig, width: naturalWidth, tatweels: 0 };
+            }
+            
+            let counts = new Array(positions.length).fill(0);
+            for (let round = 0; round < bestR; round++) {
+                counts[round % positions.length]++;
+            }
+            
+            let out = '', prev = 0;
+            for (let i = 0; i < positions.length; i++) {
+                out += orig.slice(prev, positions[i]) + TATWEEL.repeat(counts[i]);
+                prev = positions[i];
+            }
+            out += orig.slice(prev);
+            
+            return {
+                text: out,
+                width: naturalWidth + bestR * tatweelWidth,
+                tatweels: bestR
+            };
         }
 
-        let _kashidaTimeout;
         function applyKashida() {
-            clearTimeout(_kashidaTimeout);
             const bayts = document.querySelectorAll('.bayt');
             if (!bayts.length) return;
 
@@ -2183,7 +2209,6 @@
             const isDesktop = window.innerWidth >= 680;
 
             // 3. Measure all original natural widths directly from the DOM (read batch)
-            // This is layout-thrashing-free because we do not write to the DOM in between!
             const baytData = [];
             bayts.forEach(bayt => {
                 const shatrs = bayt.querySelectorAll('.verse');
@@ -2199,121 +2224,46 @@
                 });
             });
 
-            // 4. Second pass: Calculate optimal stretched text in-memory and write results chunk-by-chunk to prevent TBT blocks
-            let index = 0;
-            const chunkSize = 20;
-
-            function processChunk() {
-                const end = Math.min(index + chunkSize, baytData.length);
-                for (let i = index; i < end; i++) {
-                    const data = baytData[i];
-                    const { s1, s2, orig1, orig2, w1, w2 } = data;
+            // 4. Calculate optimal stretched text and apply to DOM synchronously
+            baytData.forEach(data => {
+                const { s1, s2, orig1, orig2, w1, w2 } = data;
+                
+                if (w1 >= w2) {
+                    s1.textContent = orig1;
+                    s1.style.wordSpacing = '';
                     
-                    if (w1 >= w2) {
-                        // s1 is major, s2 is minor
-                        s1.textContent = orig1;
-                        s1.style.wordSpacing = '';
-                        
-                        const targetW = w1;
-                        const stretches = getPossibleStretches(orig2, isDesktop, w2, tatweelWidth);
-                        
-                        let bestSt = stretches[0];
-                        let bestScore = Infinity;
-                        
-                        for (let j = 0; j < stretches.length; j++) {
-                            const st = stretches[j];
-                            const diff = targetW - st.width;
-                            let score;
-                            if (isDesktop) {
-                                const spaces = (st.text.match(/ /g) || []).length;
-                                if (spaces > 0) {
-                                    if (diff >= 0 && diff < tatweelWidth) {
-                                        score = diff * 0.1;
-                                    } else if (diff >= 0) {
-                                        score = diff * 1.0;
-                                    } else {
-                                        score = (-diff) * 5.0;
-                                    }
-                                } else {
-                                    score = Math.abs(diff) * 2.0;
-                                }
-                            } else {
-                                score = Math.abs(diff);
-                            }
-                            
-                            if (score < bestScore) {
-                                bestScore = score;
-                                bestSt = st;
-                            }
+                    const targetW = w1;
+                    const bestSt = getOptimalStretch(orig2, isDesktop, w2, targetW, tatweelWidth);
+                    
+                    s2.textContent = bestSt.text;
+                    if (isDesktop) {
+                        const deficit = targetW - bestSt.width;
+                        const spaces = (bestSt.text.match(/ /g) || []).length;
+                        if (spaces > 0 && deficit > 0 && deficit < tatweelWidth) {
+                            s2.style.wordSpacing = (deficit / spaces) + 'px';
+                        } else {
+                            s2.style.wordSpacing = '';
                         }
-                        
-                        s2.textContent = bestSt.text;
-                        if (isDesktop) {
-                            const deficit = targetW - bestSt.width;
-                            const spaces = (bestSt.text.match(/ /g) || []).length;
-                            if (spaces > 0 && deficit > 0 && deficit < tatweelWidth) {
-                                s2.style.wordSpacing = (deficit / spaces) + 'px';
-                            } else {
-                                s2.style.wordSpacing = '';
-                            }
-                        }
-                    } else {
-                        // s2 is major, s1 is minor
-                        s2.textContent = orig2;
-                        s2.style.wordSpacing = '';
-                        
-                        const targetW = w2;
-                        const stretches = getPossibleStretches(orig1, isDesktop, w1, tatweelWidth);
-                        
-                        let bestSt = stretches[0];
-                        let bestScore = Infinity;
-                        
-                        for (let j = 0; j < stretches.length; j++) {
-                            const st = stretches[j];
-                            const diff = targetW - st.width;
-                            let score;
-                            if (isDesktop) {
-                                const spaces = (st.text.match(/ /g) || []).length;
-                                if (spaces > 0) {
-                                    if (diff >= 0 && diff < tatweelWidth) {
-                                        score = diff * 0.1;
-                                    } else if (diff >= 0) {
-                                        score = diff * 1.0;
-                                    } else {
-                                        score = (-diff) * 5.0;
-                                    }
-                                } else {
-                                    score = Math.abs(diff) * 2.0;
-                                }
-                            } else {
-                                score = Math.abs(diff);
-                            }
-                            
-                            if (score < bestScore) {
-                                bestScore = score;
-                                bestSt = st;
-                            }
-                        }
-                        
-                        s1.textContent = bestSt.text;
-                        if (isDesktop) {
-                            const deficit = targetW - bestSt.width;
-                            const spaces = (bestSt.text.match(/ /g) || []).length;
-                            if (spaces > 0 && deficit > 0 && deficit < tatweelWidth) {
-                                s1.style.wordSpacing = (deficit / spaces) + 'px';
-                            } else {
-                                s1.style.wordSpacing = '';
-                            }
+                    }
+                } else {
+                    s2.textContent = orig2;
+                    s2.style.wordSpacing = '';
+                    
+                    const targetW = w2;
+                    const bestSt = getOptimalStretch(orig1, isDesktop, w1, targetW, tatweelWidth);
+                    
+                    s1.textContent = bestSt.text;
+                    if (isDesktop) {
+                        const deficit = targetW - bestSt.width;
+                        const spaces = (bestSt.text.match(/ /g) || []).length;
+                        if (spaces > 0 && deficit > 0 && deficit < tatweelWidth) {
+                            s1.style.wordSpacing = (deficit / spaces) + 'px';
+                        } else {
+                            s1.style.wordSpacing = '';
                         }
                     }
                 }
-                
-                index = end;
-                if (index < baytData.length) {
-                    _kashidaTimeout = setTimeout(processChunk, 0);
-                }
-            }
-            processChunk();
+            });
         }
 
         function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
