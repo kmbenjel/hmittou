@@ -2170,8 +2170,8 @@
                         sStretched,
                         textAnchor: isS1Anchor ? orig1 : orig2,
                         textStretched: origStretched,
-                        bestR: 0,
-                        targetW
+                        wordSpacing: '',
+                        letterSpacing: ''
                     });
                     return;
                 }
@@ -2184,6 +2184,7 @@
                 let high = limitR;
                 let bestR = 0;
                 let bestDiff = Infinity;
+                let bestW = wNatural;
 
                 while (low <= high) {
                     let mid = Math.floor((low + high) / 2);
@@ -2194,6 +2195,7 @@
                     if (Math.abs(d) < bestDiff) {
                         bestDiff = Math.abs(d);
                         bestR = mid;
+                        bestW = w;
                     }
 
                     if (w < targetW) {
@@ -2203,55 +2205,41 @@
                     }
                 }
 
+                const textStretched = insertTatweels(origStretched, positions, bestR);
+                const deficit = targetW - bestW;
+                const spaces = (textStretched.match(/ /g) || []).length;
+
+                let wordSpacing = '';
+                let letterSpacing = '';
+
+                if (spaces > 0) {
+                    wordSpacing = (deficit / spaces) + 'px';
+                } else {
+                    const charCount = [...textStretched].length;
+                    if (charCount > 1) {
+                        letterSpacing = (deficit / (charCount - 1)) + 'px';
+                    }
+                }
+
                 updates.push({
                     sAnchor,
                     sStretched,
                     textAnchor: isS1Anchor ? orig1 : orig2,
-                    textStretched: insertTatweels(origStretched, positions, bestR),
-                    bestR,
-                    targetW
+                    textStretched,
+                    wordSpacing,
+                    letterSpacing
                 });
             });
 
-            // 4. Batch DOM Write 1: Apply initial stretched texts
+            // 4. Batch DOM Write: Apply final texts and subpixel styles (1 single write batch, 0 reads!)
             updates.forEach(up => {
                 up.sAnchor.textContent = up.textAnchor;
                 up.sAnchor.style.wordSpacing = '';
                 up.sAnchor.style.letterSpacing = '';
 
                 up.sStretched.textContent = up.textStretched;
-                up.sStretched.style.wordSpacing = '';
-                up.sStretched.style.letterSpacing = '';
-            });
-
-            // 5. Batch DOM Read: Measure actual rendered widths of both verses (1 layout reflow)
-            updates.forEach(up => {
-                up.sAnchor.style.width = 'max-content';
-                up.sStretched.style.width = 'max-content';
-            });
-            updates.forEach(up => {
-                up.actualWAnchor = up.sAnchor.getBoundingClientRect().width;
-                up.actualWStretched = up.sStretched.getBoundingClientRect().width;
-            });
-            updates.forEach(up => {
-                up.sAnchor.style.width = '';
-                up.sStretched.style.width = '';
-            });
-
-            // 6. Batch DOM Write 2: Apply final sub-pixel spacing corrections
-            updates.forEach(up => {
-                const deficit = up.actualWAnchor - up.actualWStretched;
-                const text = up.textStretched;
-                const spaces = (text.match(/ /g) || []).length;
-
-                if (spaces > 0) {
-                    up.sStretched.style.wordSpacing = (deficit / spaces) + 'px';
-                } else {
-                    const charCount = [...text].length;
-                    if (charCount > 1) {
-                        up.sStretched.style.letterSpacing = (deficit / (charCount - 1)) + 'px';
-                    }
-                }
+                up.sStretched.style.wordSpacing = up.wordSpacing;
+                up.sStretched.style.letterSpacing = up.letterSpacing;
             });
         }
 
