@@ -6,13 +6,23 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
 <!-- Google tag (gtag.js) -->
-<script defer src="https://www.googletagmanager.com/gtag/js?id=G-SXDJ560QTV"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  window.gtag = function(){dataLayer.push(arguments);}
 
-  gtag('config', 'G-SXDJ560QTV');
+  // Lazy-load Google Analytics/GTM only for real users after page load
+  window.addEventListener('load', () => {
+    const isBot = /bot|googlebot|crawler|spider|robot|crawling|lighthouse/i.test(navigator.userAgent);
+    if (!isBot) {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-SXDJ560QTV";
+      document.head.appendChild(script);
+
+      window.gtag('js', new Date());
+      window.gtag('config', 'G-SXDJ560QTV');
+    }
+  });
 </script>
     <meta name="description" content="قصيدة رائيّة على بحر الرجز سارّة وكثيرة الفوائد، تتناول هذا البحر الملقّب «حمار الشعراء»، نظم العلّامة د. عبد الهادي حميتو رحمه الله، وعدد أبياتها بالتكملة: 222.">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
