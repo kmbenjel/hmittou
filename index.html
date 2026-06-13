@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
-    <link rel="preload" href="https://cdn.jsdelivr.net/gh/kmbenjel/hmittou/fonts/amiri-regular-arabic.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="https://cdn.jsdelivr.net/gh/kmbenjel/hmittou/fonts/amiri-bold-arabic.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://cdn.jsdelivr.net/gh/kmbenjel/hmittou@2342077526e296ebb26273cf0f3d42d5d98f0d4e/fonts/amiri-regular-arabic.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://cdn.jsdelivr.net/gh/kmbenjel/hmittou@2342077526e296ebb26273cf0f3d42d5d98f0d4e/fonts/amiri-bold-arabic.woff2" as="font" type="font/woff2" crossorigin>
 <!-- Google tag (gtag.js) -->
 <script>
   window.dataLayer = window.dataLayer || [];
   window.gtag = function(){dataLayer.push(arguments);}
 
-  // Lazy-load Google Analytics/GTM only for real users on interaction or after 4s (blocking bots, local dev, and Lighthouse)
+  // Lazy-load Google Analytics/GTM only for real users on interaction or after 8s (blocking bots, local dev, and Lighthouse)
   window.addEventListener('load', () => {
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '';
     const isBot = navigator.webdriver || /bot|googlebot|crawler|spider|robot|crawling|lighthouse|headless/i.test(navigator.userAgent);
@@ -25,7 +25,7 @@
         window.removeEventListener('scroll', loadGTM);
         window.removeEventListener('click', loadGTM);
         window.removeEventListener('touchstart', loadGTM);
-        window.removeEventListener('mousemove', loadGTM);
+        window.removeEventListener('keydown', loadGTM);
         
         const script = document.createElement('script');
         script.async = true;
@@ -39,9 +39,9 @@
       window.addEventListener('scroll', loadGTM, { passive: true });
       window.addEventListener('click', loadGTM, { passive: true });
       window.addEventListener('touchstart', loadGTM, { passive: true });
-      window.addEventListener('mousemove', loadGTM, { passive: true });
+      window.addEventListener('keydown', loadGTM, { passive: true });
 
-      setTimeout(loadGTM, 4000);
+      setTimeout(loadGTM, 8000);
     }
   });
 </script>
@@ -162,31 +162,9 @@
     </script>
 
     <style>
-        /* Amiri fallback font with metric overrides to eliminate CLS during swap */
-        @font-face {
-            font-family: 'Amiri Fallback';
-            src: local('Noto Naskh Arabic'), local('Times New Roman'), local('serif');
-            ascent-override: 112.40%;
-            descent-override: 63.40%;
-            line-gap-override: 0%;
-        }
-        /* Amiri local font declarations */
-        @font-face {
-            font-family: 'Amiri';
-            font-style: normal;
-            font-weight: 400;
-            font-display: swap;
-            src: url('https://cdn.jsdelivr.net/gh/kmbenjel/hmittou/fonts/amiri-regular-arabic.woff2') format('woff2');
-            unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
-        }
-        @font-face {
-            font-family: 'Amiri';
-            font-style: normal;
-            font-weight: 700;
-            font-display: swap;
-            src: url('https://cdn.jsdelivr.net/gh/kmbenjel/hmittou/fonts/amiri-bold-arabic.woff2') format('woff2');
-            unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
-        }
+        @font-face{font-family:'Amiri Fallback';src:local('Noto Naskh Arabic'),local('Times New Roman'),local('serif');ascent-override:112.40%;descent-override:63.40%;line-gap-override:0%;}
+        @font-face{font-family:'Amiri';font-style:normal;font-weight:400;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/kmbenjel/hmittou@2342077526e296ebb26273cf0f3d42d5d98f0d4e/fonts/amiri-regular-arabic.woff2') format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EC2-10EC4,U+10EFC-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1;}
+        @font-face{font-family:'Amiri';font-style:normal;font-weight:700;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/kmbenjel/hmittou@2342077526e296ebb26273cf0f3d42d5d98f0d4e/fonts/amiri-bold-arabic.woff2') format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EC2-10EC4,U+10EFC-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1;}
 
         :root { --bg-color: #f5f5f4; --text-color: #333; --title-color: #111; --accent-color: #6b6b6b; --verse-font-size: 1.4rem; --card-bg: #ffffff; }
         body.dark-mode { --bg-color: #121212; --text-color: #d0d0d0; --title-color: #fff; --accent-color: #888; --card-bg: #1c1c1e; }
