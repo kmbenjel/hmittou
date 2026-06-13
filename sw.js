@@ -1,10 +1,10 @@
-const CACHE_NAME = 'hmittou-cache-v14';
+const CACHE_NAME = 'hmittou-cache-v15';
 const ASSETS = [
   './',
   './index.html',
   './site.webmanifest',
-  './fonts/amiri-bold-arabic.woff2',
-  './fonts/amiri-regular-arabic.woff2',
+  'https://cdn.jsdelivr.net/gh/kmbenjel/hmittou/fonts/amiri-bold-arabic.woff2',
+  'https://cdn.jsdelivr.net/gh/kmbenjel/hmittou/fonts/amiri-regular-arabic.woff2',
   './assets/apple-touch-icon.png',
   './assets/favicon-16x16.png',
   './assets/favicon-32x32.png',
@@ -12,8 +12,7 @@ const ASSETS = [
   './assets/favicon.svg',
   './assets/hmittou-icon-192.png',
   './assets/hmittou-icon-512.png',
-  './assets/hmittou-icon-maskable-512.png',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'
+  './assets/hmittou-icon-maskable-512.png'
 ];
 
 // Install Service Worker and cache core assets
