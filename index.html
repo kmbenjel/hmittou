@@ -466,7 +466,7 @@
         #progressBar { height: 100%; width: 0%; background: linear-gradient(90deg, #a0937a, #5c4f3a); transition: width 0.15s ease-out; will-change: width; }
         body.dark-mode #progressBar { background: linear-gradient(90deg, #6b5d4f, #d4c9b8); }
         
-        .verse { font-size: clamp(0.9rem, var(--verse-font-size), 6.5vw); line-height: 1.8; white-space: nowrap; margin: 0; font-family: 'Amiri', serif; position: relative; text-align: center; }
+        .verse { font-size: var(--verse-font-size); line-height: 1.8; white-space: nowrap; margin: 0; font-family: 'Amiri', serif; position: relative; text-align: center; }
         
         @keyframes gentlePulse {
             0%, 100% { opacity: 0.45; }
