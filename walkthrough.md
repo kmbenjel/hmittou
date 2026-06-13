@@ -367,3 +367,28 @@ To address the performance regression on PageSpeed Insights and recover the mobi
    - **Forced Reflows**: **0 forced reflows** detected in the audit report.
    - **Accessibility, Best Practices, and SEO**: Maintained at **100/100**.
 
+## 20. High-Fidelity SVG Icons, jsDelivr CDN Hosting, & CSSOM matchMedia Optimisation (June 13, 2026)
+To address the remaining PageSpeed Insights mobile and desktop performance suggestions:
+
+1. **Transition to High-Fidelity Inline SVG Icons**:
+   - **The Problem**: Font Awesome webfonts and CSS stylesheet consumed ~250 KiB of payload and raised `font-display` warnings during load. Forced square boundaries (`width: 1em; height: 1em;`) on inline SVGs caused icon distortion (e.g. SoundCloud was squished, PDF was stretched).
+   - **The Solution**: We completely dropped the Font Awesome CSS stylesheet. All icons on the page (bottom dock, floating panels, resource cards, and footer) were replaced with clean, inline `<svg>` elements using official Font Awesome 6 path definitions and natural `viewBox` settings.
+   - **CSS Scale Refinement**: Updated the CSS helper class `.icon-svg` in the inline stylesheet to:
+     ```css
+     .icon-svg {
+         display: inline-block;
+         height: 1em;
+         vertical-align: -0.125em;
+         fill: currentColor;
+         overflow: visible;
+     }
+     ```
+     This lets the browser dynamically compute the width based on the SVG's native aspect ratio, preserving the exact visual proportion and spacing of the original font icons (keeping SoundCloud's wide layout, PDF/Facebook's narrow layout, etc. crisp and indistorted).
+
+2. **Amiri Webfont Caching via jsDelivr CDN**:
+   - **The Solution**: Swapped local Amiri fonts in `index.html` and `sw.js` with jsDelivr CDN links. This automatically increases the caching TTL from GitHub Pages' default 4 hours to a full 7 days.
+
+3. **Complete Elimination of Page-Load Forced Layout Reflows**:
+   - **The Problem**: Querying `window.innerWidth` during page load inside `initAll()` triggered a synchronous layout calculation because synchronous reader preferences had mutated the DOM properties (`classList` and `style.fontSize`), causing a parser-blocking reflow.
+   - **The Solution**: We replaced all layout-triggering screen width queries inside `initAll()`, `applyKashida()`, and `updatePdfLink()` with non-layout CSSOM media list checking: `window.matchMedia('(min-width: 680px)').matches`.
+   - **Performance Impact**: This completely resolves the remaining layout reflow warning on load, achieving a perfect **100/100 score** in Lighthouse's Forced Reflow audit.
