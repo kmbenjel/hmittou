@@ -35,7 +35,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="date" content="2025-12-26">
-    <meta name="last-modified" content="2026-06-12">
+    <meta name="last-modified" content="2026-06-13">
     <link rel="icon" href="/assets/favicon.ico" sizes="any">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
@@ -142,6 +142,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
     <style>
+        /* Amiri fallback font with metric overrides to eliminate CLS during swap */
+        @font-face {
+            font-family: 'Amiri Fallback';
+            src: local('Noto Naskh Arabic'), local('Times New Roman'), local('serif');
+            ascent-override: 112.40%;
+            descent-override: 63.40%;
+            line-gap-override: 0%;
+        }
         /* Amiri local font declarations */
         @font-face {
             font-family: 'Amiri';
@@ -193,7 +201,7 @@
         }
         :root { --bg-color: #f5f5f4; --text-color: #333; --title-color: #111; --accent-color: #6b6b6b; --verse-font-size: 1.4rem; --card-bg: #ffffff; }
         body.dark-mode { --bg-color: #121212; --text-color: #d0d0d0; --title-color: #fff; --accent-color: #888; --card-bg: #1c1c1e; }
-        body { font-family: 'Amiri', serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; text-align: center; transition: background-color 0.3s, color 0.3s; overscroll-behavior-y: contain; overflow-x: hidden; }
+        body { font-family: 'Amiri', 'Amiri Fallback', serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; text-align: center; transition: background-color 0.3s, color 0.3s; overscroll-behavior-y: contain; overflow-x: hidden; }
         .skip-link { position: absolute; top: -100%; left: 50%; transform: translateX(-50%); background: var(--title-color); color: var(--bg-color); padding: 8px 16px; border-radius: 0 0 8px 8px; z-index: 9999; font-size: 0.9rem; text-decoration: none; transition: top 0.2s; }
         .skip-link:focus { top: 0; }
         a:focus-visible, button:focus-visible, .dock-btn:focus-visible, .control-btn:focus-visible { outline: 2px solid var(--title-color); outline-offset: 4px; }
