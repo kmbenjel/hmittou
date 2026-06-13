@@ -2361,8 +2361,7 @@
                     navigator.serviceWorker.register('./sw.js')
                         .then((reg) => console.log('Service Worker registered:', reg.scope))
                         .catch((err) => {
-                            // Silent catch/warning for crawlers and incognito mode that block service worker registration
-                            console.warn('Service Worker registration skipped or failed:', err);
+                            // Silent catch for search crawlers/incognito mode that block service workers
                         });
                 });
             }
