@@ -213,9 +213,9 @@
             .controls, .nav-controls, .left-controls {
                 display: none !important;
             }
-            body { padding: 0.5rem 0.25rem !important; }
-            .container { padding: 0.5rem 0.25rem !important; }
-            .poem-section { padding: 0 0.25rem !important; }
+            body { padding: 0.5rem max(0.25rem, env(safe-area-inset-right)) 0.5rem max(0.25rem, env(safe-area-inset-left)) !important; }
+            .container { padding: 0.5rem max(0.25rem, env(safe-area-inset-right)) 0.5rem max(0.25rem, env(safe-area-inset-left)) !important; }
+            .poem-section { padding: 0 max(0.25rem, env(safe-area-inset-right)) 0 max(0.25rem, env(safe-area-inset-left)) !important; }
         }
 
         /* ── Bottom Film Navigation Dock (Mobile Only) ── */
@@ -265,15 +265,20 @@
                 backdrop-filter: blur(20px); /* Heavy iOS-like blur */
                 -webkit-backdrop-filter: blur(20px);
                 border-top: 1px solid rgba(0, 0, 0, 0.05);
-                padding: 8px 10px max(8px, env(safe-area-inset-bottom, 8px)) 10px;
+                padding: 8px max(10px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom, 8px)) max(10px, env(safe-area-inset-left));
                 box-sizing: border-box;
                 z-index: 1000;
                 box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
-                transition: background-color 0.3s, border-color 0.3s;
+                transition: background-color 0.3s, border-color 0.3s, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+            }
+            .bottom-dock.dock-hidden {
+                transform: translate(-50%, 120%);
+                opacity: 0;
+                pointer-events: none;
             }
             @media (max-width: 359px) {
                 .bottom-dock {
-                    padding: 6px 6px max(6px, env(safe-area-inset-bottom, 6px)) 6px;
+                    padding: 6px max(6px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom, 6px)) max(6px, env(safe-area-inset-left));
                 }
             }
             body.dark-mode .bottom-dock {
@@ -341,32 +346,50 @@
             .controls {
                 position: fixed;
                 top: 80px;
-                right: max(16px, calc(50% - 24rem - 72px));
+                right: max(16px, env(safe-area-inset-right), calc(50% - 24rem - 72px));
                 display: flex;
                 flex-direction: column;
                 gap: 12px;
                 z-index: 1000;
                 animation: slideInControls 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards;
+                transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
             }
             .nav-controls {
                 position: fixed;
                 bottom: max(16px, env(safe-area-inset-bottom, 16px));
-                right: max(16px, calc(50% - 24rem - 72px));
+                right: max(16px, env(safe-area-inset-right), calc(50% - 24rem - 72px));
                 display: flex;
                 flex-direction: column;
                 gap: 12px;
                 z-index: 1000;
                 animation: slideInNav 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards;
+                transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
             }
             .left-controls {
                 position: fixed;
                 bottom: max(16px, env(safe-area-inset-bottom, 16px));
-                left: max(16px, calc(50% - 24rem - 72px));
+                left: max(16px, env(safe-area-inset-left), calc(50% - 24rem - 72px));
                 display: flex;
                 flex-direction: column;
                 gap: 12px;
                 z-index: 1000;
                 animation: slideInLeftControls 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s backwards;
+                transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+            }
+            .controls.controls-hidden {
+                transform: translateX(120%);
+                opacity: 0;
+                pointer-events: none;
+            }
+            .nav-controls.controls-hidden {
+                transform: translate(120%, 120%);
+                opacity: 0;
+                pointer-events: none;
+            }
+            .left-controls.controls-hidden {
+                transform: translate(-120%, 120%);
+                opacity: 0;
+                pointer-events: none;
             }
             @keyframes slideInControls {
                 0% { transform: translateX(80px); opacity: 0; }
@@ -427,15 +450,44 @@
             }
             .controls {
                 top: 12px;
-                right: max(12px, calc(50% - 24rem - 64px));
+                right: max(12px, env(safe-area-inset-right), calc(50% - 24rem - 64px));
             }
             .nav-controls {
                 bottom: 12px;
-                right: max(12px, calc(50% - 24rem - 64px));
+                right: max(12px, env(safe-area-inset-right), calc(50% - 24rem - 64px));
             }
             .left-controls {
                 bottom: 12px;
-                left: max(12px, calc(50% - 24rem - 64px));
+                left: max(12px, env(safe-area-inset-left), calc(50% - 24rem - 64px));
+            }
+            /* Tight margins & paddings for reading comfort on short viewports */
+            .title {
+                margin: 15px 0 25px 0 !important;
+                font-size: 28px !important;
+                padding-bottom: 15px !important;
+            }
+            .subtitle {
+                font-size: 16px !important;
+            }
+            .poem-section {
+                padding: 1.5rem 2.5rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+            .bayt {
+                margin-bottom: 0.75rem !important;
+                gap: 1.5rem !important;
+            }
+            .signature {
+                margin: 40px auto 20px auto !important;
+                padding: 25px 0 5px 0 !important;
+            }
+            .resource-section {
+                padding: 1.5rem 2.5rem !important;
+                margin-top: 1.5rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+            .resource-card {
+                padding: 1rem 0.75rem !important;
             }
         }
 
@@ -577,7 +629,7 @@
             .bayt::before { right: -3.5rem; width: 2.2rem; text-align: right; font-size: 0.9rem; opacity: 0.75; }
             .verse:first-child { text-align: left; }
             .verse:last-child { text-align: right; }
-            .verse { font-feature-settings: 'calt' 1; font-size: clamp(1rem, var(--verse-font-size), 4.2cqw); }
+            .verse { font-feature-settings: 'calt' 1; font-size: var(--verse-font-size); }
             .poem-section > .title { margin-top: 0; }
         }
 
@@ -2306,14 +2358,42 @@
 
 
 
-        // Progress Bar (debounced with requestAnimationFrame)
+        // Progress Bar & Auto-Hiding Controls (debounced with requestAnimationFrame)
         let _scrollTicking = false;
+        let lastScrollTop = 0;
+        let bottomDockElement = null;
+        let desktopControlsElements = null;
+
         window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            
             if (!_scrollTicking) {
                 requestAnimationFrame(() => {
-                    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                    // 1. Update progress bar
                     const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                    document.getElementById('progressBar').style.width = ((winScroll / height) * 100) + '%';
+                    const pb = document.getElementById('progressBar');
+                    if (pb) pb.style.width = ((winScroll / height) * 100) + '%';
+                    
+                    // 2. Dynamic controls hiding (on scroll down) / showing (on scroll up)
+                    if (!bottomDockElement) bottomDockElement = document.querySelector('.bottom-dock');
+                    if (!desktopControlsElements) desktopControlsElements = document.querySelectorAll('.controls, .nav-controls, .left-controls');
+                    
+                    if (winScroll < 50) {
+                        // Always show near the top
+                        if (bottomDockElement) bottomDockElement.classList.remove('dock-hidden');
+                        if (desktopControlsElements) desktopControlsElements.forEach(c => c.classList.remove('controls-hidden'));
+                    } else if (Math.abs(lastScrollTop - winScroll) > 10) {
+                        if (winScroll > lastScrollTop) {
+                            // Scrolling down: hide controls to maximize reading space
+                            if (bottomDockElement) bottomDockElement.classList.add('dock-hidden');
+                            if (desktopControlsElements) desktopControlsElements.forEach(c => c.classList.add('controls-hidden'));
+                        } else {
+                            // Scrolling up: reveal controls
+                            if (bottomDockElement) bottomDockElement.classList.remove('dock-hidden');
+                            if (desktopControlsElements) desktopControlsElements.forEach(c => c.classList.remove('controls-hidden'));
+                        }
+                        lastScrollTop = winScroll;
+                    }
                     _scrollTicking = false;
                 });
                 _scrollTicking = true;

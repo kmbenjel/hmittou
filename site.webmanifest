@@ -28,6 +28,6 @@
     }
   ],
   "categories": ["books", "education"],
-  "orientation": "portrait",
+  "orientation": "any",
   "display_override": ["standalone", "minimal-ui"]
 }
