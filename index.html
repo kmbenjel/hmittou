@@ -1580,11 +1580,20 @@
                 });
             }
 
-            // 2. Setup canvas context for font metrics measurement
-            const cs = getComputedStyle(verses[0]);
+            // 2. Setup canvas context for font metrics measurement (0 layout reflows!)
+            const isWide = window.matchMedia('(min-width: 1024px)').matches;
+            const prefs = getReaderPrefs();
+            let rootSize = 16;
+            if (typeof prefs.fontSize === 'number' && prefs.fontSize >= 12 && prefs.fontSize <= 32) {
+                rootSize = prefs.fontSize;
+            } else if (isDesktop) {
+                rootSize = isWide ? 22 : 18;
+            }
+            const fontSizePx = 1.4 * rootSize;
+
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+            ctx.font = `normal ${fontSizePx}px Amiri, serif`;
             const tatweelWidth = ctx.measureText(TATWEEL.repeat(50)).width / 50 || 5.0;
 
             const updates = [];
