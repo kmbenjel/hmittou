@@ -1,14 +1,10 @@
-const CACHE_NAME = 'hmittou-cache-v10';
+const CACHE_NAME = 'hmittou-cache-v11';
 const ASSETS = [
   './',
   './index.html',
   './site.webmanifest',
   './fonts/amiri-bold-arabic.woff2',
-  './fonts/amiri-bold-latin.woff2',
-  './fonts/amiri-bold-latinext.woff2',
   './fonts/amiri-regular-arabic.woff2',
-  './fonts/amiri-regular-latin.woff2',
-  './fonts/amiri-regular-latinext.woff2',
   './assets/apple-touch-icon.png',
   './assets/favicon-16x16.png',
   './assets/favicon-32x32.png',
