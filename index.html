@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="preload" href="./fonts/amiri-regular-arabic.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="./fonts/amiri-bold-arabic.woff2" as="font" type="font/woff2" crossorigin>
 <!-- Google tag (gtag.js) -->
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -2334,12 +2336,12 @@
         let desktopControlsElements = null;
 
         window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            
             if (!_scrollTicking) {
                 requestAnimationFrame(() => {
-                    // 1. Update progress bar
+                    const winScroll = window.scrollY || document.documentElement.scrollTop;
                     const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    
+                    // 1. Update progress bar
                     const pb = document.getElementById('progressBar');
                     if (pb) pb.style.width = ((winScroll / height) * 100) + '%';
                     
