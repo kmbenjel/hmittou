@@ -84,6 +84,28 @@ function toggleTheme() {
 }
 
 function changeFontSize(delta) { 
+    if (delta > 0) {
+        const isDesktop = window.matchMedia('(min-width: 680px)').matches;
+        let reachedLimit = false;
+
+        if (!isDesktop) {
+            const verses = document.querySelectorAll('.verse');
+            for (const v of verses) {
+                if (v.scrollWidth >= v.clientWidth * 0.96) {
+                    reachedLimit = true;
+                    break;
+                }
+            }
+        }
+
+        const container = document.querySelector('.poem-section');
+        if (container && container.scrollWidth >= window.innerWidth * 0.96) {
+            reachedLimit = true;
+        }
+
+        if (reachedLimit) return;
+    }
+
     let html = document.documentElement;
     let currentSize = parseFloat(getComputedStyle(html).fontSize) || 16;
     let newSize = currentSize + (delta * 16);
@@ -137,11 +159,27 @@ function getKashidaPositions(orig) {
         if (endOfWord === -1) endOfWord = orig.length;
         const word = orig.slice(startOfWord, endOfWord);
         const cleanWord = word.replace(/[\u064B-\u065F\u0670\u0640]/g, '');
+        
+        // Exclude all variations of "Allah" from stretching
+        if (/^(و|ف)?(ب|ل)?(ال|ل)لهم?$/.test(cleanWord)) {
+            continue;
+        }
+        
         let effectiveLength = cleanWord.length;
         if (cleanWord.length > 0 && (cleanWord[0] === 'و' || cleanWord[0] === 'ف')) {
             effectiveLength = cleanWord.length - 1;
         }
         if (effectiveLength < 3) {
+            continue;
+        }
+        
+        // Exclude the prefixes لل (indices < 2) and [وفب]لل (indices < 3) in words
+        const cleanBeforeSlice = orig.slice(startOfWord, p).replace(/[\u064B-\u065F\u0670\u0640]/g, '');
+        const cleanIndexInWord = cleanBeforeSlice.length;
+        if (cleanWord.startsWith('لل') && cleanIndexInWord < 2) {
+            continue;
+        }
+        if (/^[وفب]لل/.test(cleanWord) && cleanIndexInWord < 3) {
             continue;
         }
         
