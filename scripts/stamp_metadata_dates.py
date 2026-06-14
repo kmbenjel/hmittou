@@ -11,6 +11,7 @@ import xml.etree.ElementTree as ET
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
 SITEMAP = ROOT / "sitemap.xml"
+SERVICE_WORKER = ROOT / "sw.js"
 SITEMAP_NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
 IMAGE_SITEMAP_NS = "http://www.google.com/schemas/sitemap-image/1.1"
 PAGE_URL = "https://hmittou.benjelloun.dev/"
@@ -112,11 +113,30 @@ def stamp_sitemap(sitemap: Path = SITEMAP, date: dt.date | None = None) -> bool:
     return True
 
 
+def stamp_service_worker(sw: Path = SERVICE_WORKER, date: dt.date | None = None) -> bool:
+    date = date or dt.date.today()
+    cache_version = f"hmittou-cache-{date.strftime('%Y%m%d')}"
+    text = sw.read_text(encoding="utf-8")
+
+    new_text = replace_once(
+        r"const CACHE_NAME = '[^']+';",
+        f"const CACHE_NAME = '{cache_version}';",
+        text,
+    )
+
+    if new_text == text:
+        return False
+
+    sw.write_text(new_text, encoding="utf-8")
+    return True
+
+
 def stamp(date: dt.date | None = None) -> dict[str, bool]:
     date = date or dt.date.today()
     return {
         "metadata": stamp_index(date=date),
         "sitemap": stamp_sitemap(date=date),
+        "service-worker": stamp_service_worker(date=date),
     }
 
 
