@@ -95,6 +95,11 @@ function toggleTheme() {
 }
 
 function changeFontSize(delta) {
+    const html = document.documentElement;
+    const currentSize = parseFloat(getComputedStyle(html).fontSize) || 16;
+    const newSize = currentSize + (delta * 16);
+    if (newSize < 12 || newSize > 32) return;
+
     if (delta > 0) {
         const isDesktop = window.matchMedia('(min-width: 680px)').matches;
         if (isDesktop) {
@@ -103,18 +108,16 @@ function changeFontSize(delta) {
             }
         } else {
             const container = document.querySelector('.poem-section');
-            if (container && container.scrollWidth > window.innerWidth * 1.2) return;
+            if (container) {
+                const predictedWidth = container.scrollWidth * (newSize / currentSize);
+                if (predictedWidth > window.innerWidth - 16) return;
+            }
         }
     }
 
-    const html = document.documentElement;
-    const currentSize = parseFloat(getComputedStyle(html).fontSize) || 16;
-    const newSize = currentSize + (delta * 16);
-    if (newSize >= 12 && newSize <= 32) {
-        html.style.fontSize = newSize + 'px';
-        setReaderPrefs({ fontSize: newSize });
-        setTimeout(() => safeCall(applyKashida), 60);
-    }
+    html.style.fontSize = newSize + 'px';
+    setReaderPrefs({ fontSize: newSize });
+    setTimeout(() => safeCall(applyKashida), 60);
 }
 
 // ── Kashida (Tatweel) Stretching ──────────────────────────────────────
