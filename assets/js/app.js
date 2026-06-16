@@ -103,7 +103,7 @@ function changeFontSize(delta) {
             }
         } else {
             const container = document.querySelector('.poem-section');
-            if (container && container.scrollWidth > container.clientWidth + 1) return;
+            if (container && container.scrollWidth > window.innerWidth * 1.2) return;
         }
     }
 
