@@ -1,3 +1,17 @@
+// Apply saved reader preferences before first paint (prevents theme / font-size flash)
+(function () {
+    try {
+        const prefs = JSON.parse(localStorage.getItem('hmittou.readerPrefs')) || {};
+        const dark = prefs.darkMode === true ||
+            (prefs.darkMode == null && window.matchMedia &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (dark) document.documentElement.classList.add('dark-mode');
+        if (typeof prefs.fontSize === 'number' && prefs.fontSize >= 12 && prefs.fontSize <= 32) {
+            document.documentElement.style.fontSize = prefs.fontSize + 'px';
+        }
+    } catch (e) {}
+})();
+
 if (window.trustedTypes && window.trustedTypes.createPolicy) {
     if (!window.trustedTypes.defaultPolicy) {
         window.trustedTypes.createPolicy('default', {

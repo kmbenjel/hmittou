@@ -67,11 +67,11 @@ function setReaderPrefs(nextPrefs) {
 function applyReaderPrefs() {
     const prefs = getReaderPrefs();
     if (prefs.darkMode === true) {
-        document.body.classList.add('dark-mode');
+        document.documentElement.classList.add('dark-mode');
     } else if (prefs.darkMode === false) {
-        document.body.classList.remove('dark-mode');
+        document.documentElement.classList.remove('dark-mode');
     } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.body.classList.add('dark-mode');
+        document.documentElement.classList.add('dark-mode');
     }
     if (typeof prefs.fontSize === 'number' && prefs.fontSize >= 12 && prefs.fontSize <= 32) {
         document.documentElement.style.fontSize = prefs.fontSize + 'px';
@@ -79,8 +79,8 @@ function applyReaderPrefs() {
 }
 
 function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    setReaderPrefs({ darkMode: document.body.classList.contains('dark-mode') });
+    document.documentElement.classList.toggle('dark-mode');
+    setReaderPrefs({ darkMode: document.documentElement.classList.contains('dark-mode') });
 }
 
 function changeFontSize(delta) { 
