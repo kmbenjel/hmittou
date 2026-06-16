@@ -110,6 +110,15 @@ Uses Headless Chrome (via Puppeteer) to compile two dedicated PDF print outputs:
 #### C. Build Master (`scripts/generate_pdfs.py`)
 A wrapper Python script that aggregates the stamping and Puppeteer PDF builds.
 
+#### D. JS Build (`npm run build`)
+Minifies `assets/js/app.js` and `gtm-loader.js` with esbuild into fingerprinted
+`*.min.js?v=<hash>` files and rewrites the references in `index.html` and `sw.js`.
+The `?v=` hash lets the minified JS be cached for a year while still updating on
+change. A pre-commit hook (`.githooks/pre-commit`, enabled once per clone via
+`git config core.hooksPath .githooks`) runs this automatically when a JS source is
+committed. Both this step and the metadata stamper bump the service worker's
+`hmittou-cache-vN` cache name, so there is a single cache-versioning scheme.
+
 ---
 
 ### 5. Developer Guide (Local Run)

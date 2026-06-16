@@ -113,30 +113,34 @@ def stamp_sitemap(sitemap: Path = SITEMAP, date: dt.date | None = None) -> bool:
     return True
 
 
-def stamp_service_worker(sw: Path = SERVICE_WORKER, date: dt.date | None = None) -> bool:
-    date = date or dt.date.today()
-    cache_version = f"hmittou-cache-{date.strftime('%Y%m%d')}"
+def bump_service_worker(sw: Path = SERVICE_WORKER) -> bool:
+    """Increment the numeric CACHE_NAME (hmittou-cache-vN) so the service worker
+    refreshes its precache. Uses the same vN scheme as scripts/build.mjs, so the
+    two never disagree on the cache name."""
     text = sw.read_text(encoding="utf-8")
+    match = re.search(r"hmittou-cache-v(\d+)", text)
+    if match is None:
+        raise RuntimeError("CACHE_NAME 'hmittou-cache-vN' not found in sw.js")
 
     new_text = replace_once(
-        r"const CACHE_NAME = '[^']+';",
-        f"const CACHE_NAME = '{cache_version}';",
+        r"hmittou-cache-v\d+",
+        f"hmittou-cache-v{int(match.group(1)) + 1}",
         text,
     )
-
-    if new_text == text:
-        return False
-
     sw.write_text(new_text, encoding="utf-8")
     return True
 
 
 def stamp(date: dt.date | None = None) -> dict[str, bool]:
     date = date or dt.date.today()
+    metadata = stamp_index(date=date)
+    sitemap = stamp_sitemap(date=date)
+    # Bump the SW cache only when the stamped page/sitemap actually changed.
+    service_worker = bump_service_worker() if (metadata or sitemap) else False
     return {
-        "metadata": stamp_index(date=date),
-        "sitemap": stamp_sitemap(date=date),
-        "service-worker": stamp_service_worker(date=date),
+        "metadata": metadata,
+        "sitemap": sitemap,
+        "service-worker": service_worker,
     }
 
 
