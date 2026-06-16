@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hmittou-cache-v24';
+const CACHE_NAME = 'hmittou-cache-v25';
 const ASSETS = [
   './',
   './index.html',
@@ -13,8 +13,8 @@ const ASSETS = [
   './assets/hmittou-icon-192.png',
   './assets/hmittou-icon-512.png',
   './assets/hmittou-icon-maskable-512.png',
-  './assets/js/gtm-loader.js',
-  './assets/js/app.js'
+  './assets/js/gtm-loader.min.js?v=8f6bed256c',
+  './assets/js/app.min.js?v=429f7ce09c'
 ];
 
 // Install Service Worker and cache core assets
