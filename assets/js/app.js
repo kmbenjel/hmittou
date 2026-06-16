@@ -116,7 +116,7 @@ function changeFontSize(deltaPx) {
     }
 
     setReaderPrefs({ fontSize: next });
-    setTimeout(() => safeCall(applyKashida), 60);
+    setTimeout(() => { safeCall(applyKashida); safeCall(updateNumberVisibility); }, 60);
 }
 
 // True if any verse text no longer fits. On desktop/landscape verses live in
@@ -384,6 +384,22 @@ function applyKashida() {
     });
 }
 
+// Hide the verse numbers on mobile portrait once they would reach the screen
+// edge. They sit at right:-0.6rem of the bayt; the widest verse keeps a
+// comfortable gap from the text at every zoom level, so the edge is the only
+// binding constraint. Runs on load, zoom and resize — never on scroll.
+function updateNumberVisibility() {
+    const bayt = document.querySelector('.bayt');
+    if (!bayt) return;
+    let hide = false;
+    if (window.matchMedia('(max-width: 679px)').matches) {
+        const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+        const numberRight = bayt.getBoundingClientRect().right + 0.6 * rem;
+        hide = numberRight > window.innerWidth - 4; // fade just before the glyph clips
+    }
+    document.body.classList.toggle('hide-bayt-numbers', hide);
+}
+
 
 function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
 function scrollToBottom() { document.getElementById('bottom').scrollIntoView({behavior: 'smooth'}); }
@@ -436,6 +452,20 @@ let _scrollTicking = false;
 let lastScrollTop = 0;
 let bottomDockElement = null;
 let desktopControlsElements = null;
+let dockHideTimer = null;
+const DOCK_HIDE_DELAY = 1500; // let the dock linger so readers notice it before it slides away
+
+function scheduleDockHide() {
+    if (!bottomDockElement || dockHideTimer || bottomDockElement.classList.contains('dock-hidden')) return;
+    dockHideTimer = setTimeout(() => {
+        if (bottomDockElement) bottomDockElement.classList.add('dock-hidden');
+        dockHideTimer = null;
+    }, DOCK_HIDE_DELAY);
+}
+function showDock() {
+    if (dockHideTimer) { clearTimeout(dockHideTimer); dockHideTimer = null; }
+    if (bottomDockElement) bottomDockElement.classList.remove('dock-hidden');
+}
 
 window.addEventListener('scroll', () => {
     if (!_scrollTicking) {
@@ -453,16 +483,16 @@ window.addEventListener('scroll', () => {
             
             if (winScroll < 50) {
                 // Always show near the top
-                if (bottomDockElement) bottomDockElement.classList.remove('dock-hidden');
+                showDock();
                 if (desktopControlsElements) desktopControlsElements.forEach(c => c.classList.remove('controls-hidden'));
             } else if (Math.abs(lastScrollTop - winScroll) > 10) {
                 if (winScroll > lastScrollTop) {
-                    // Scrolling down: hide controls to maximize reading space
-                    if (bottomDockElement) bottomDockElement.classList.add('dock-hidden');
+                    // Scrolling down: let the dock linger briefly, then hide it
+                    scheduleDockHide();
                     if (desktopControlsElements) desktopControlsElements.forEach(c => c.classList.add('controls-hidden'));
                 } else {
-                    // Scrolling up: reveal controls
-                    if (bottomDockElement) bottomDockElement.classList.remove('dock-hidden');
+                    // Scrolling up: reveal controls immediately
+                    showDock();
                     if (desktopControlsElements) desktopControlsElements.forEach(c => c.classList.remove('controls-hidden'));
                 }
                 lastScrollTop = winScroll;
@@ -486,6 +516,7 @@ function initAll() {
     // 2. Run other layout writes afterwards
     safeCall(updatePdfLink);
     safeCall(updateWhatsappLink);
+    safeCall(updateNumberVisibility);
     _initialized = true;
 }
 safeCall(applyReaderPrefs);
@@ -498,6 +529,7 @@ window.addEventListener('resize', () => {
     _kTimer = setTimeout(() => {
         safeCall(updatePdfLink);
         safeCall(applyKashida);
+        safeCall(updateNumberVisibility);
     }, 250);
 }, { passive: true });
 
