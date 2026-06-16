@@ -95,34 +95,48 @@ function toggleTheme() {
     syncThemeUi();
 }
 
-function changeFontSize(delta) {
+// deltaPx: change in root font size, in pixels (fine 1px steps so zoom can
+// creep right up to the screen edge instead of overshooting it).
+function changeFontSize(deltaPx) {
     const html = document.documentElement;
-    const currentSize = parseFloat(getComputedStyle(html).fontSize) || 16;
-    const newSize = currentSize + (delta * 16);
-    if (newSize < 12 || newSize > 32) return;
+    const current = parseFloat(getComputedStyle(html).fontSize) || 16;
+    const next = current + deltaPx;
+    if (next < 12 || next > 32) return;
 
-    if (delta > 0) {
-        const isDesktop = window.matchMedia('(min-width: 680px)').matches;
-        if (isDesktop) {
-            for (const v of document.querySelectorAll('.verse')) {
-                if (v.scrollWidth > v.clientWidth + 1) return;
-            }
-        } else {
-            // Measure the widest verse (text that must stay on screen); the
-            // bayt::before numbers are allowed to overflow, so we don't count
-            // them. Predict the width at the next size and stop before it
-            // would exceed the viewport, leaving a small edge margin.
-            let maxVerseWidth = 0;
-            for (const v of document.querySelectorAll('.verse')) {
-                if (v.scrollWidth > maxVerseWidth) maxVerseWidth = v.scrollWidth;
-            }
-            if (maxVerseWidth * (newSize / currentSize) > window.innerWidth - 12) return;
-        }
+    // Apply first, then measure the real result and revert if it overflows.
+    // This avoids any assumption about how width scales with font size.
+    const prevValue = html.style.getPropertyValue('font-size');
+    const prevPriority = html.style.getPropertyPriority('font-size');
+    html.style.setProperty('font-size', next + 'px', 'important');
+
+    if (deltaPx > 0 && wouldOverflow()) {
+        if (prevValue) html.style.setProperty('font-size', prevValue, prevPriority);
+        else html.style.removeProperty('font-size');
+        return;
     }
 
-    html.style.setProperty('font-size', newSize + 'px', 'important');
-    setReaderPrefs({ fontSize: newSize });
+    setReaderPrefs({ fontSize: next });
     setTimeout(() => safeCall(applyKashida), 60);
+}
+
+// True if any verse text no longer fits. On desktop/landscape verses live in
+// fixed columns, so we test against the column box. On portrait phones the
+// verse spans the viewport, so we test against the screen width (the
+// bayt::before numbers are allowed to overflow, so they are not measured).
+function wouldOverflow() {
+    const isColumned = window.matchMedia('(min-width: 680px)').matches;
+    const verses = document.querySelectorAll('.verse');
+    if (isColumned) {
+        for (const v of verses) {
+            if (v.scrollWidth > v.clientWidth + 1) return true;
+        }
+    } else {
+        const limit = window.innerWidth - 10;
+        for (const v of verses) {
+            if (v.scrollWidth > limit) return true;
+        }
+    }
+    return false;
 }
 
 // ── Kashida (Tatweel) Stretching ──────────────────────────────────────
@@ -515,8 +529,8 @@ if ('serviceWorker' in navigator) {
 // Bind all buttons with data-action attributes to their corresponding functions
 const actionMap = {
     'toggle-theme': toggleTheme,
-    'zoom-in': () => changeFontSize(0.1),
-    'zoom-out': () => changeFontSize(-0.1),
+    'zoom-in': () => changeFontSize(1),
+    'zoom-out': () => changeFontSize(-1),
     'scroll-top': scrollToTop,
     'scroll-part2': scrollToPart2,
     'scroll-bottom': scrollToBottom,
