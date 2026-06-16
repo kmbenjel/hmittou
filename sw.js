@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hmittou-cache-v25';
+const CACHE_NAME = 'hmittou-cache-v26';
 const ASSETS = [
   './',
   './index.html',
