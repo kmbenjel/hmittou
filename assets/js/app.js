@@ -74,7 +74,8 @@ function applyReaderPrefs() {
         document.documentElement.classList.add('dark-mode');
     }
     if (typeof prefs.fontSize === 'number' && prefs.fontSize >= 12 && prefs.fontSize <= 32) {
-        document.documentElement.style.fontSize = prefs.fontSize + 'px';
+        // inline !important so user zoom wins over the landscape font-size override
+        document.documentElement.style.setProperty('font-size', prefs.fontSize + 'px', 'important');
     }
     syncThemeUi();
 }
@@ -107,15 +108,19 @@ function changeFontSize(delta) {
                 if (v.scrollWidth > v.clientWidth + 1) return;
             }
         } else {
-            const container = document.querySelector('.poem-section');
-            if (container) {
-                const predictedWidth = container.scrollWidth * (newSize / currentSize);
-                if (predictedWidth > window.innerWidth - 16) return;
+            // Measure the widest verse (text that must stay on screen); the
+            // bayt::before numbers are allowed to overflow, so we don't count
+            // them. Predict the width at the next size and stop before it
+            // would exceed the viewport, leaving a small edge margin.
+            let maxVerseWidth = 0;
+            for (const v of document.querySelectorAll('.verse')) {
+                if (v.scrollWidth > maxVerseWidth) maxVerseWidth = v.scrollWidth;
             }
+            if (maxVerseWidth * (newSize / currentSize) > window.innerWidth - 12) return;
         }
     }
 
-    html.style.fontSize = newSize + 'px';
+    html.style.setProperty('font-size', newSize + 'px', 'important');
     setReaderPrefs({ fontSize: newSize });
     setTimeout(() => safeCall(applyKashida), 60);
 }
