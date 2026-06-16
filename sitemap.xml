@@ -21,16 +21,4 @@
       <image:caption>صورة مصغرة لقصيدة حمار الشعراء</image:caption>
     </image:image>
   </url>
-  <url>
-    <loc>https://hmittou.benjelloun.dev/hmittou.pdf</loc>
-    <lastmod>2026-06-10</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://hmittou.benjelloun.dev/hmittou_desktop.pdf</loc>
-    <lastmod>2026-06-10</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.7</priority>
-  </url>
 </urlset>
