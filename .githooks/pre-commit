@@ -1,0 +1,11 @@
+#!/bin/sh
+# Auto-build the page JS when a JS source is part of the commit, then stage the
+# regenerated outputs — so a commit can never ship a stale .min.js / ?v= hash.
+#
+# Enabled via:  git config core.hooksPath .githooks   (also done by npm postinstall)
+# Requires:     npm install   (esbuild)
+if git diff --cached --name-only | grep -qE '^assets/js/(app|gtm-loader)\.js$'; then
+  echo "[pre-commit] JS source changed -> npm run build"
+  npm run build --silent || { echo "[pre-commit] build failed — commit aborted"; exit 1; }
+  git add index.html sw.js assets/js/app.min.js assets/js/gtm-loader.min.js
+fi
