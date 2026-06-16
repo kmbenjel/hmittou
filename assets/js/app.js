@@ -76,11 +76,22 @@ function applyReaderPrefs() {
     if (typeof prefs.fontSize === 'number' && prefs.fontSize >= 12 && prefs.fontSize <= 32) {
         document.documentElement.style.fontSize = prefs.fontSize + 'px';
     }
+    syncThemeUi();
+}
+
+function syncThemeUi() {
+    const isDark = document.documentElement.classList.contains('dark-mode');
+    document.querySelectorAll('[data-action="toggle-theme"]').forEach(function (b) {
+        b.setAttribute('aria-pressed', String(isDark));
+    });
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    if (themeColor) themeColor.setAttribute('content', isDark ? '#121212' : '#f5f5f4');
 }
 
 function toggleTheme() {
     document.documentElement.classList.toggle('dark-mode');
     setReaderPrefs({ darkMode: document.documentElement.classList.contains('dark-mode') });
+    syncThemeUi();
 }
 
 function changeFontSize(delta) { 
