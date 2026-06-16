@@ -94,38 +94,26 @@ function toggleTheme() {
     syncThemeUi();
 }
 
-function changeFontSize(delta) { 
+function changeFontSize(delta) {
     if (delta > 0) {
         const isDesktop = window.matchMedia('(min-width: 680px)').matches;
-        let reachedLimit = false;
-
-        if (!isDesktop) {
-            const verses = document.querySelectorAll('.verse');
-            for (const v of verses) {
-                if (v.scrollWidth >= v.clientWidth * 0.96) {
-                    reachedLimit = true;
-                    break;
-                }
+        if (isDesktop) {
+            for (const v of document.querySelectorAll('.verse')) {
+                if (v.scrollWidth > v.clientWidth + 1) return;
             }
+        } else {
+            const container = document.querySelector('.poem-section');
+            if (container && container.scrollWidth > container.clientWidth + 1) return;
         }
-
-        const container = document.querySelector('.poem-section');
-        if (container && container.scrollWidth >= window.innerWidth * 0.96) {
-            reachedLimit = true;
-        }
-
-        if (reachedLimit) return;
     }
 
-    let html = document.documentElement;
-    let currentSize = parseFloat(getComputedStyle(html).fontSize) || 16;
-    let newSize = currentSize + (delta * 16);
+    const html = document.documentElement;
+    const currentSize = parseFloat(getComputedStyle(html).fontSize) || 16;
+    const newSize = currentSize + (delta * 16);
     if (newSize >= 12 && newSize <= 32) {
         html.style.fontSize = newSize + 'px';
         setReaderPrefs({ fontSize: newSize });
-        setTimeout(() => {
-            safeCall(applyKashida);
-        }, 60);
+        setTimeout(() => safeCall(applyKashida), 60);
     }
 }
 
