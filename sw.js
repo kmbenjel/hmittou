@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hmittou-cache-v23';
+const CACHE_NAME = 'hmittou-cache-v24';
 const ASSETS = [
   './',
   './index.html',
@@ -13,7 +13,6 @@ const ASSETS = [
   './assets/hmittou-icon-192.png',
   './assets/hmittou-icon-512.png',
   './assets/hmittou-icon-maskable-512.png',
-  './assets/js/init.js',
   './assets/js/gtm-loader.js',
   './assets/js/app.js'
 ];

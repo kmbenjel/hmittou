@@ -3,11 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
     <link rel="preload" href="./fonts/amiri-regular-arabic.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="./fonts/amiri-bold-arabic.woff2" as="font" type="font/woff2" crossorigin>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com; font-src 'self'; connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; form-action 'self'; require-trusted-types-for 'script';">
-    <script src="./assets/js/init.js"></script>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-gO3qX6KPQV+LPqY0p8zYTSDun6UsziU/VCPxYI5yQBY=' https://www.googletagmanager.com https://www.google-analytics.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com; font-src 'self'; connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; form-action 'self'; require-trusted-types-for 'script';">
+    <script>
+// Apply saved reader preferences before first paint (prevents theme / font-size flash)
+(function () {
+    try {
+        const prefs = JSON.parse(localStorage.getItem('hmittou.readerPrefs')) || {};
+        const dark = prefs.darkMode === true ||
+            (prefs.darkMode == null && window.matchMedia &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (dark) document.documentElement.classList.add('dark-mode');
+        if (typeof prefs.fontSize === 'number' && prefs.fontSize >= 12 && prefs.fontSize <= 32) {
+            document.documentElement.style.fontSize = prefs.fontSize + 'px';
+        }
+    } catch (e) {}
+})();
+
+if (window.trustedTypes && window.trustedTypes.createPolicy) {
+    if (!window.trustedTypes.defaultPolicy) {
+        window.trustedTypes.createPolicy('default', {
+            createHTML: (string) => string,
+            createScriptURL: (string) => string,
+            createScript: (string) => string,
+        });
+    }
+}
+
+const printLayout = new URLSearchParams(window.location.search).get('print');
+if (printLayout === 'mobile') {
+    const style = document.createElement('style');
+    style.textContent = `@page { size: 120mm 210mm portrait; margin: 12mm 8mm 13mm 8mm }`;
+    document.head.appendChild(style);
+} else if (printLayout === 'desktop') {
+    const style = document.createElement('style');
+    style.textContent = `@page { size: A4 portrait; margin: 16mm 15mm 18mm 15mm }`;
+    document.head.appendChild(style);
+}
+
+if (printLayout) {
+    const addPrintClass = () => {
+        if (document.body) {
+            document.body.classList.add('print-' + printLayout);
+        } else {
+            setTimeout(addPrintClass, 0);
+        }
+    };
+    addPrintClass();
+}
+</script>
     <script src="./assets/js/gtm-loader.js" defer></script>
     <meta name="description" content="قصيدة رائية على بحر الرجز سارة وكثيرة الفوائد، تتناول هذا البحر الملقب «حمار الشعراء»، نظم العلامة د. عبد الهادي حميتو رحمه الله، عدد أبياتها بالتكملة: 222.">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
