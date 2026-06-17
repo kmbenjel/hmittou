@@ -116,7 +116,7 @@ function changeFontSize(deltaPx) {
     }
 
     setReaderPrefs({ fontSize: next });
-    setTimeout(() => { safeCall(refreshKashida); safeCall(updateNumberVisibility); }, 60);
+    setTimeout(() => { safeCall(applyKashida); safeCall(updateNumberVisibility); }, 60);
 }
 
 // True if any verse text no longer fits. On desktop/landscape verses live in
@@ -237,147 +237,153 @@ function insertTatweels(orig, positions, R) {
     return out;
 }
 
-let _kashidaGen = 0;
-let _kashidaObserver = null;
+function applyKashida() {
+    const bayts = document.querySelectorAll('.bayt');
+    if (!bayts.length) return;
 
-// Cache a verse's untouched text + kashida positions once, the first time its
-// bayt is processed (before any tatweel is written). Lazy so off-screen bayts
-// pay nothing until needed.
-function ensureVerseCache(v) {
-    if (v._origText === undefined) {
-        v._origText = v.textContent.trim();
-        v._kashidaPositions = getKashidaPositions(v._origText);
-    }
-}
-
-function buildKashidaCtx() {
+    const verses = document.querySelectorAll('.verse');
     const isDesktop = window.matchMedia('(min-width: 680px)').matches;
+    const maxTatweels = isDesktop ? 36 : 30;
+
+    // 1. Initialize original texts and cache kashida positions on first run
+    if (!verses[0]._origText) {
+        verses.forEach(v => {
+            v._origText = v.textContent.trim();
+            v._kashidaPositions = getKashidaPositions(v._origText);
+        });
+    }
+
+    // 2. Setup canvas context for font metrics measurement (0 layout reflows!)
     const isWide = window.matchMedia('(min-width: 1024px)').matches;
     const prefs = getReaderPrefs();
     let rootSize = 16;
-    if (typeof prefs.fontSize === 'number' && prefs.fontSize >= 12 && prefs.fontSize <= 32) rootSize = prefs.fontSize;
-    else if (isDesktop) rootSize = isWide ? 22 : 18;
+    if (typeof prefs.fontSize === 'number' && prefs.fontSize >= 12 && prefs.fontSize <= 32) {
+        rootSize = prefs.fontSize;
+    } else if (isDesktop) {
+        rootSize = isWide ? 22 : 18;
+    }
+    const fontSizePx = 1.4 * rootSize;
+
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    ctx.font = `normal ${1.4 * rootSize}px Amiri, serif`;
+    ctx.font = `normal ${fontSizePx}px Amiri, serif`;
     const tatweelWidth = ctx.measureText(TATWEEL.repeat(50)).width / 50 || 5.0;
-    return { ctx, tatweelWidth, maxTatweels: isDesktop ? 36 : 30 };
-}
 
-// Compute (but don't apply) the justified text/spacing for one bayt, on canvas.
-function computeBaytUpdate(bayt, k) {
-    const vs = bayt.querySelectorAll('.verse');
-    const s1 = vs[0], s2 = vs[1];
-    if (!s1 || !s2) return null;
-    ensureVerseCache(s1);
-    ensureVerseCache(s2);
-    const orig1 = s1._origText, orig2 = s2._origText;
-
-    const w1 = k.ctx.measureText(orig1).width;
-    const w2 = k.ctx.measureText(orig2).width;
-
-    let sAnchor, sStretched, origStretched, targetW, wNatural, isS1Anchor;
-    if (w1 >= w2) { sAnchor = s1; sStretched = s2; origStretched = orig2; targetW = w1; wNatural = w2; isS1Anchor = true; }
-    else { sAnchor = s2; sStretched = s1; origStretched = orig1; targetW = w2; wNatural = w1; isS1Anchor = false; }
-
-    const positions = sStretched._kashidaPositions;
-    const diff = targetW - wNatural;
-
-    if (diff < 0.5 || positions.length === 0) {
-        return { sAnchor, sStretched, textAnchor: isS1Anchor ? orig1 : orig2, textStretched: origStretched, wordSpacing: '', letterSpacing: '' };
-    }
-
-    const R_est = Math.round(diff / k.tatweelWidth);
-    const limitR = Math.max(1, Math.min(k.maxTatweels, R_est));
-    let low = 0, high = limitR, bestR = 0, bestDiff = Infinity, bestW = wNatural;
-    while (low <= high) {
-        const mid = Math.floor((low + high) / 2);
-        const w = k.ctx.measureText(insertTatweels(origStretched, positions, mid)).width;
-        const d = w - targetW;
-        if (Math.abs(d) < bestDiff) { bestDiff = Math.abs(d); bestR = mid; bestW = w; }
-        if (w < targetW) low = mid + 1; else high = mid - 1;
-    }
-
-    const textStretched = insertTatweels(origStretched, positions, bestR);
-    const deficit = targetW - bestW;
-    const spaces = (textStretched.match(/ /g) || []).length;
-    let wordSpacing = '', letterSpacing = '';
-    if (spaces > 0) {
-        wordSpacing = (deficit / spaces) + 'px';
-    } else {
-        const charCount = [...textStretched].length;
-        if (charCount > 1) letterSpacing = (deficit / (charCount - 1)) + 'px';
-    }
-    return { sAnchor, sStretched, textAnchor: isS1Anchor ? orig1 : orig2, textStretched, wordSpacing, letterSpacing };
-}
-
-// Justify a set of bayts (default: all). Canvas-measured, single DOM write batch.
-function applyKashida(baytList) {
-    const bayts = baytList || document.querySelectorAll('.bayt');
-    if (!bayts.length) return;
-    const k = buildKashidaCtx();
     const updates = [];
-    bayts.forEach(b => {
-        const u = computeBaytUpdate(b, k);
-        if (u) updates.push(u);
-        b._kGen = _kashidaGen;
+
+    // 3. Process each bayt in-memory using canvas (0 DOM operations!)
+    bayts.forEach((bayt, idx) => {
+        // Symmetrical indexing: v1 and v2 are at 2*idx and 2*idx+1
+        const s1 = verses[2 * idx];
+        const s2 = verses[2 * idx + 1];
+        if (!s1 || !s2) return;
+        
+        const orig1 = s1._origText;
+        const orig2 = s2._origText;
+
+        // Measure natural widths using canvas (0 reflows)
+        const w1 = ctx.measureText(orig1).width;
+        const w2 = ctx.measureText(orig2).width;
+
+        let sAnchor, sStretched, origStretched, targetW, wNatural, isS1Anchor;
+        if (w1 >= w2) {
+            sAnchor = s1;
+            sStretched = s2;
+            origStretched = orig2;
+            targetW = w1;
+            wNatural = w2;
+            isS1Anchor = true;
+        } else {
+            sAnchor = s2;
+            sStretched = s1;
+            origStretched = orig1;
+            targetW = w2;
+            wNatural = w1;
+            isS1Anchor = false;
+        }
+
+        const positions = sStretched._kashidaPositions;
+        const diff = targetW - wNatural;
+
+        if (diff < 0.5 || positions.length === 0) {
+            updates.push({
+                sAnchor,
+                sStretched,
+                textAnchor: isS1Anchor ? orig1 : orig2,
+                textStretched: origStretched,
+                wordSpacing: '',
+                letterSpacing: ''
+            });
+            return;
+        }
+
+        // In-memory binary search on canvas
+        const R_est = Math.round(diff / tatweelWidth);
+        const limitR = Math.max(1, Math.min(maxTatweels, R_est));
+
+        let low = 0;
+        let high = limitR;
+        let bestR = 0;
+        let bestDiff = Infinity;
+        let bestW = wNatural;
+
+        while (low <= high) {
+            let mid = Math.floor((low + high) / 2);
+            const candidateText = insertTatweels(origStretched, positions, mid);
+            const w = ctx.measureText(candidateText).width;
+            const d = w - targetW;
+            
+            if (Math.abs(d) < bestDiff) {
+                bestDiff = Math.abs(d);
+                bestR = mid;
+                bestW = w;
+            }
+
+            if (w < targetW) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        const textStretched = insertTatweels(origStretched, positions, bestR);
+        const deficit = targetW - bestW;
+        const spaces = (textStretched.match(/ /g) || []).length;
+
+        let wordSpacing = '';
+        let letterSpacing = '';
+
+        if (spaces > 0) {
+            wordSpacing = (deficit / spaces) + 'px';
+        } else {
+            const charCount = [...textStretched].length;
+            if (charCount > 1) {
+                letterSpacing = (deficit / (charCount - 1)) + 'px';
+            }
+        }
+
+        updates.push({
+            sAnchor,
+            sStretched,
+            textAnchor: isS1Anchor ? orig1 : orig2,
+            textStretched,
+            wordSpacing,
+            letterSpacing
+        });
     });
+
+    // 4. Batch DOM Write: Apply final texts and subpixel styles (1 single write batch, 0 reads!)
     updates.forEach(up => {
         up.sAnchor.textContent = up.textAnchor;
         up.sAnchor.style.wordSpacing = '';
         up.sAnchor.style.letterSpacing = '';
+
         up.sStretched.textContent = up.textStretched;
         up.sStretched.style.wordSpacing = up.wordSpacing;
         up.sStretched.style.letterSpacing = up.letterSpacing;
     });
 }
 
-// Bayts in/near the current viewport (scroll-aware band: ~half a screen above
-// to ~one-and-a-half below).
-function visibleBand() {
-    const lo = -window.innerHeight * 0.5, hi = window.innerHeight * 1.5;
-    return [...document.querySelectorAll('.bayt')].filter(b => {
-        const r = b.getBoundingClientRect();
-        return r.bottom > lo && r.top < hi;
-    });
-}
-
-// Justify the band around a target element. Used before jump-scrolls so the
-// destination is justified before it paints (the observer is async — a teleport
-// would otherwise flash ragged for a frame).
-function justifyNear(el) {
-    if (!el) return;
-    const t = el.getBoundingClientRect().top;
-    const lo = t - window.innerHeight * 0.5, hi = t + window.innerHeight * 1.5;
-    const band = [...document.querySelectorAll('.bayt')].filter(b => {
-        const r = b.getBoundingClientRect();
-        return r.bottom > lo && r.top < hi;
-    });
-    if (band.length) applyKashida(band);
-}
-
-// Lazy justification: justify the visible band now; defer the rest until they
-// near the viewport via one persistent IntersectionObserver. Kashida is
-// ~scale-invariant (the tatweel count that equalises a pair at one size still
-// equalises it at another — both verses scale together), so on zoom we only
-// re-justify the visible band and let off-screen bayts self-heal as they
-// re-enter the observer on scroll.
-function refreshKashida() {
-    _kashidaGen++;
-    applyKashida(visibleBand());
-    if ('IntersectionObserver' in window) {
-        if (!_kashidaObserver) {
-            _kashidaObserver = new IntersectionObserver((entries) => {
-                const todo = [];
-                for (const e of entries) if (e.isIntersecting && e.target._kGen !== _kashidaGen) todo.push(e.target);
-                if (todo.length) applyKashida(todo);
-            }, { rootMargin: '200% 0px' });
-            document.querySelectorAll('.bayt').forEach(b => _kashidaObserver.observe(b));
-        }
-    } else {
-        applyKashida(); // no observer support: justify everything
-    }
-}
 // Hide the verse numbers on mobile portrait once they would reach the screen
 // edge. They sit at right:-0.6rem of the bayt; the widest verse keeps a
 // comfortable gap from the text at every zoom level, so the edge is the only
@@ -395,9 +401,9 @@ function updateNumberVisibility() {
 }
 
 
-function scrollToTop() { justifyNear(document.querySelector('.bayt')); window.scrollTo({top: 0, behavior: 'smooth'}); }
-function scrollToBottom() { const el = document.getElementById('bottom'); justifyNear(el); el.scrollIntoView({behavior: 'smooth'}); }
-function scrollToPart2() { const el = document.getElementById('part2'); justifyNear(el); el.scrollIntoView({behavior: 'smooth'}); }
+function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
+function scrollToBottom() { document.getElementById('bottom').scrollIntoView({behavior: 'smooth'}); }
+function scrollToPart2() { document.getElementById('part2').scrollIntoView({behavior: 'smooth'}); }
 
 function updatePdfLink() {
     const pdfCard = document.getElementById('pdf-card');
@@ -505,8 +511,8 @@ function safeCall(fn) {
 // Consolidated initialization — runs once, with font-ready and load as retries
 let _initialized = false;
 function initAll() {
-    // 1. Justify the visible band first (rest is deferred lazily via observer)
-    safeCall(refreshKashida);
+    // 1. Run applyKashida first so its DOM style queries run against a clean DOM state
+    safeCall(applyKashida);
     // 2. Run other layout writes afterwards
     safeCall(updatePdfLink);
     safeCall(updateWhatsappLink);
@@ -522,7 +528,7 @@ window.addEventListener('resize', () => {
     clearTimeout(_kTimer);
     _kTimer = setTimeout(() => {
         safeCall(updatePdfLink);
-        safeCall(refreshKashida);
+        safeCall(applyKashida);
         safeCall(updateNumberVisibility);
     }, 250);
 }, { passive: true });
