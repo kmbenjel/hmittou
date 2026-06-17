@@ -3,6 +3,11 @@
 
 const READER_PREFS_KEY = 'hmittou.readerPrefs';
 
+// Current-session zoom (px), or null for the responsive default. Deliberately
+// NOT persisted: the +/- reading aid resets to default on every load (refresh /
+// revisit) and on device rotation. Dark mode, by contrast, stays persisted.
+let _zoomFontSize = null;
+
 function toIsoDate(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -73,10 +78,7 @@ function applyReaderPrefs() {
     } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         document.documentElement.classList.add('dark-mode');
     }
-    if (typeof prefs.fontSize === 'number' && prefs.fontSize >= 12 && prefs.fontSize <= 32) {
-        // inline !important so user zoom wins over the landscape font-size override
-        document.documentElement.style.setProperty('font-size', prefs.fontSize + 'px', 'important');
-    }
+    // Zoom is intentionally not restored — it resets to the default each load.
     syncThemeUi();
 }
 
@@ -115,7 +117,7 @@ function changeFontSize(deltaPx) {
         return;
     }
 
-    setReaderPrefs({ fontSize: next });
+    _zoomFontSize = next; // session-only, not persisted
     _scrollMax = 0; // font-size change alters document height
     setTimeout(() => { safeCall(applyKashida); safeCall(updateNumberVisibility); }, 60);
 }
@@ -256,10 +258,9 @@ function applyKashida() {
 
     // 2. Setup canvas context for font metrics measurement (0 layout reflows!)
     const isWide = window.matchMedia('(min-width: 1024px)').matches;
-    const prefs = getReaderPrefs();
     let rootSize = 16;
-    if (typeof prefs.fontSize === 'number' && prefs.fontSize >= 12 && prefs.fontSize <= 32) {
-        rootSize = prefs.fontSize;
+    if (typeof _zoomFontSize === 'number' && _zoomFontSize >= 12 && _zoomFontSize <= 32) {
+        rootSize = _zoomFontSize;
     } else if (isDesktop) {
         rootSize = isWide ? 22 : 18;
     }
@@ -535,14 +536,24 @@ safeCall(updateLastModifiedMetadata);
 document.fonts.ready.then(() => { initAll(); });
 window.addEventListener('load', () => { if (!_initialized) initAll(); });
 let _kTimer;
+let _wasPortrait = window.innerHeight >= window.innerWidth;
 window.addEventListener('resize', () => {
     _scrollMax = 0; // viewport/content height may have changed; refresh on next scroll
     clearTimeout(_kTimer);
     _kTimer = setTimeout(() => {
+        // Rotating the device resets the +/- zoom to the responsive default —
+        // portrait (1 column) and landscape (2 columns) have different zoom-fit.
+        const isPortrait = window.innerHeight >= window.innerWidth;
+        const flipped = isPortrait !== _wasPortrait;
+        _wasPortrait = isPortrait;
+        if (flipped && _zoomFontSize !== null) {
+            _zoomFontSize = null;
+            document.documentElement.style.removeProperty('font-size');
+        }
         // PDF link, justification and number visibility all depend only on width.
         // Same-width resizes (mobile URL-bar show/hide, headless setup) change
         // nothing — skip the whole geometry pass so it never forces a reflow.
-        if (window.innerWidth === _lastKashidaWidth) return;
+        if (window.innerWidth === _lastKashidaWidth && !flipped) return;
         _lastKashidaWidth = window.innerWidth;
         safeCall(updateNumberVisibility); // read before the writes below
         safeCall(applyKashida);
