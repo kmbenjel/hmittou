@@ -116,6 +116,7 @@ function changeFontSize(deltaPx) {
     }
 
     setReaderPrefs({ fontSize: next });
+    _scrollMax = 0; // font-size change alters document height
     setTimeout(() => { safeCall(applyKashida); safeCall(updateNumberVisibility); }, 60);
 }
 
@@ -453,6 +454,7 @@ let lastScrollTop = 0;
 let bottomDockElement = null;
 let desktopControlsElements = null;
 let dockHideTimer = null;
+let _scrollMax = 0; // cached (scrollHeight - clientHeight); reading it every scroll forces a reflow
 const DOCK_HIDE_DELAY = 1500; // let the dock linger so readers notice it before it slides away
 
 function scheduleDockHide() {
@@ -471,8 +473,11 @@ window.addEventListener('scroll', () => {
     if (!_scrollTicking) {
         requestAnimationFrame(() => {
             const winScroll = window.scrollY || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            
+            // Read document height only when the cache is stale (invalidated on
+            // resize/zoom), not every scroll frame — avoids a per-scroll forced reflow.
+            if (_scrollMax <= 0) _scrollMax = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const height = _scrollMax || 1;
+
             // 1. Update progress bar
             const pb = document.getElementById('progressBar');
             if (pb) pb.style.width = ((winScroll / height) * 100) + '%';
@@ -512,13 +517,17 @@ function safeCall(fn) {
 let _initialized = false;
 let _lastKashidaWidth = -1;
 function initAll() {
-    // 1. Run applyKashida first so its DOM style queries run against a clean DOM state
     safeCall(applyKashida);
     _lastKashidaWidth = window.innerWidth;
-    // 2. Run other layout writes afterwards
     safeCall(updatePdfLink);
     safeCall(updateWhatsappLink);
-    safeCall(updateNumberVisibility);
+    // updateNumberVisibility needs a getBoundingClientRect; right here (just after
+    // the font swap + kashida writes) that forces a synchronous reflow on the
+    // critical path. It's a no-op at default zoom and only matters at high zoom,
+    // so defer it to idle — out of the load/TBT window.
+    const deferNV = () => safeCall(updateNumberVisibility);
+    if ('requestIdleCallback' in window) requestIdleCallback(deferNV, { timeout: 600 });
+    else setTimeout(deferNV, 200);
     _initialized = true;
 }
 safeCall(applyReaderPrefs);
@@ -527,17 +536,17 @@ document.fonts.ready.then(() => { initAll(); });
 window.addEventListener('load', () => { if (!_initialized) initAll(); });
 let _kTimer;
 window.addEventListener('resize', () => {
+    _scrollMax = 0; // viewport/content height may have changed; refresh on next scroll
     clearTimeout(_kTimer);
     _kTimer = setTimeout(() => {
+        // PDF link, justification and number visibility all depend only on width.
+        // Same-width resizes (mobile URL-bar show/hide, headless setup) change
+        // nothing — skip the whole geometry pass so it never forces a reflow.
+        if (window.innerWidth === _lastKashidaWidth) return;
+        _lastKashidaWidth = window.innerWidth;
+        safeCall(updateNumberVisibility); // read before the writes below
+        safeCall(applyKashida);
         safeCall(updatePdfLink);
-        // Kashida depends only on viewport width (and font size, handled by the
-        // zoom buttons). Mobile URL-bar show/hide and headless setup fire resize
-        // with the width unchanged — re-justifying then is identical work, so skip it.
-        if (window.innerWidth !== _lastKashidaWidth) {
-            _lastKashidaWidth = window.innerWidth;
-            safeCall(applyKashida);
-        }
-        safeCall(updateNumberVisibility);
     }, 250);
 }, { passive: true });
 
