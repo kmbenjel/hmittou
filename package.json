@@ -3,7 +3,9 @@
     "build": "node scripts/build.mjs"
   },
   "devDependencies": {
+    "chrome-launcher": "^1.2.1",
     "esbuild": "^0.28.1",
+    "lighthouse": "^13.4.0",
     "puppeteer-core": "^25.1.0"
   }
 }

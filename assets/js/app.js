@@ -510,9 +510,11 @@ function safeCall(fn) {
 
 // Consolidated initialization — runs once, with font-ready and load as retries
 let _initialized = false;
+let _lastKashidaWidth = -1;
 function initAll() {
     // 1. Run applyKashida first so its DOM style queries run against a clean DOM state
     safeCall(applyKashida);
+    _lastKashidaWidth = window.innerWidth;
     // 2. Run other layout writes afterwards
     safeCall(updatePdfLink);
     safeCall(updateWhatsappLink);
@@ -528,7 +530,13 @@ window.addEventListener('resize', () => {
     clearTimeout(_kTimer);
     _kTimer = setTimeout(() => {
         safeCall(updatePdfLink);
-        safeCall(applyKashida);
+        // Kashida depends only on viewport width (and font size, handled by the
+        // zoom buttons). Mobile URL-bar show/hide and headless setup fire resize
+        // with the width unchanged — re-justifying then is identical work, so skip it.
+        if (window.innerWidth !== _lastKashidaWidth) {
+            _lastKashidaWidth = window.innerWidth;
+            safeCall(applyKashida);
+        }
         safeCall(updateNumberVisibility);
     }, 250);
 }, { passive: true });
