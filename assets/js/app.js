@@ -456,7 +456,7 @@ let bottomDockElement = null;
 let desktopControlsElements = null;
 let dockHideTimer = null;
 let _scrollMax = 0; // cached (scrollHeight - clientHeight); reading it every scroll forces a reflow
-const DOCK_HIDE_DELAY = 1500; // let the dock linger so readers notice it before it slides away
+const DOCK_HIDE_DELAY = 2800; // give readers comfortable time to interact before sliding away
 
 function scheduleDockHide() {
     if (!bottomDockElement || dockHideTimer || bottomDockElement.classList.contains('dock-hidden')) return;
