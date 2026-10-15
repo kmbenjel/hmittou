@@ -251,6 +251,8 @@ def main(lang):
     # narration, placed where the timeline says
     dry = np.zeros(total)
     for seg in tl["segments"]:
+        if seg.get("kind") == "recite":
+            continue
         x = decode(ROOT / "build" / "voice" / lang / seg["audio"])
         i = int(round(seg["start"] * SR))
         dry[i:i + len(x)] += x[: total - i]
