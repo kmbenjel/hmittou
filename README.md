@@ -46,6 +46,36 @@ Welcome to the official repository for **Hmittou**, an interactive reading platf
 
 This repository is built as a self-contained, high-performance web experience and publishing pipeline. It adheres to a strict Single-File build principle to ensure instant loading and zero server-side compilation requirements.
 
+```mermaid
+flowchart TB
+    subgraph ClientRuntime ["🌐 Client Runtime (hmittou.benjelloun.dev)"]
+        DOM["Semantic HTML5 Structure\n- Two-column Symmetrical Spine Grid\n- Sticky Bottom Floating Console"]
+        KashidaEngine["In-Memory Kashida Layout Engine\n- Hidden Canvas/DOM Ruler\n- Dynamic Tatweel Permutations\n- Subpixel Word-Spacing Tuning"]
+        PWA["Service Worker & Offline Cache\n- Cache-First Asset Delivery\n- Versioned Cache Invalidation"]
+    end
+
+    subgraph BuildPipeline ["⚙️ Automated Build & Publication Pipeline"]
+        Scripts["Build Scripts (Node / Python)\n- esbuild Minification & Fingerprinting\n- stamp_metadata_dates.py"]
+        Puppeteer["Headless Chromium Compiler\n(generate_pdfs_puppeteer.js)"]
+    end
+
+    subgraph Deliverables ["📦 Multi-Channel Deliverables"]
+        LiveSite["Interactive Web Application\n(100/100 PageSpeed, Zero Reflow)"]
+        MobilePDF["Mobile PDF Edition\n(120mm x 210mm Portrait Booklet)"]
+        DesktopPDF["Desktop PDF Edition\n(A4 Symmetrical Dual-Column Layout)"]
+    end
+
+    BuildPipeline --> PWA
+    BuildPipeline --> Puppeteer
+    Puppeteer --> MobilePDF
+    Puppeteer --> DesktopPDF
+    PWA --> LiveSite
+    DOM --> KashidaEngine
+    KashidaEngine --> LiveSite
+```
+
+---
+
 ### 1. Structural File Layout
 * [index.html](index.html): The complete frontend application containing HTML5 markup, CSS3 styling, and JavaScript logic in one unified, high-performance file.
 * [assets/](assets/): Brand assets including responsive favicons, Apple touch icons, and social graph cards (`og:image`).
@@ -89,10 +119,68 @@ To solve this, we implement a custom **Dynamic Kashida (Tatweel) justification a
 3. **Simulated State Selector**: The algorithm generates all possible stretched variations in-memory (calculating the width mathematically using `naturalWidth + count * tatweelWidth`), completely avoiding browser layout thrashing. It picks the pair (Sadr & 'Ajuz) that minimizes the width difference and aligns closest to the target line width.
 4. **Subpixel Word Spacing Justification**: To eliminate the minor residual pixel variations remaining after integer tatweel insertions, the script calculates the tiny remaining deficit and distributes it microscopically using CSS `word-spacing`. This yields pixel-perfect alignment.
 
+```mermaid
+flowchart TD
+    subgraph Input ["1. Hemistich Input & Measurement"]
+        Sadr["Sadr (First Hemistich)"]
+        Ajuz["'Ajuz (Second Hemistich)"]
+        Ruler["Measure naturalWidth in hidden DOM ruler\n(Zero browser layout reflow)"]
+    end
+
+    subgraph Filter ["2. Calligraphic Integrity Engine"]
+        Rules{"Exclusion Rules:\n- Non-connecting letters (ا، د، ر، ز، و...)\n- Short words (< 3 chars)\n- Pre-final ligatures (ي / ى)\n- Tanween markers"}
+    end
+
+    subgraph Optimization ["3. Delta Minimization Algorithm"]
+        Permutations["Generate candidate Tatweel permutations\nTarget width = max(width_sadr, width_ajuz)"]
+        Selector["Evaluate width deltas in-memory\nSelect optimal (Sadr, 'Ajuz) stretch pair"]
+    end
+
+    subgraph Output ["4. Pixel-Perfect DOM Paint"]
+        WordSpacing["Distribute microscopic residual deficit\nvia CSS word-spacing"]
+        Spine["Align inward to central vertical spine\n(dir='rtl' inward text-alignment)"]
+    end
+
+    Input --> Ruler
+    Ruler --> Filter
+    Filter --> Rules
+    Rules --> Permutations
+    Permutations --> Selector
+    Selector --> WordSpacing
+    WordSpacing --> Spine
+```
+
 ---
 
 ### 4. Build Pipeline & Scripting Tools
-To update build metadata and generate printed PDF assets, the repository provides three automated scripts:
+To update build metadata and generate printed PDF assets, the repository provides automated scripts and pipelines:
+
+```mermaid
+flowchart LR
+    subgraph Sources ["📄 Source Tree"]
+        HTML["index.html"]
+        JS["assets/js/app.js"]
+        Metadata["scripts/stamp_metadata_dates.py"]
+    end
+
+    subgraph Build ["⚡ Build & Minification Engine"]
+        ESBuild["esbuild Bundler\nMinify + Hash Fingerprinting"]
+        PuppeteerEngine["Headless Chromium (Puppeteer)\nPrint Stylesheet + Page-Break Rules"]
+    end
+
+    subgraph Artifacts ["🚀 Deployed Artifacts"]
+        DistWeb["PWA Deployment\n(PWA SW cache-busted, Brotli/HTTP3)"]
+        PrintA4["hmittou_desktop.pdf\n(A4 Dual-Column Print Edition)"]
+        PrintMobile["hmittou.pdf\n(120x210mm Mobile Booklet)"]
+    end
+
+    Sources --> Metadata
+    Metadata --> ESBuild
+    ESBuild --> DistWeb
+    Sources --> PuppeteerEngine
+    PuppeteerEngine --> PrintA4
+    PuppeteerEngine --> PrintMobile
+```
 
 #### A. Metadata Stamping (`scripts/stamp_metadata_dates.py`)
 Stamps the build-time compilation date dynamically before deployment:
